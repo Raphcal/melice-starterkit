@@ -1,0 +1,14 @@
+{
+    "spriteNames": {
+        "getDefinitionType": "pointer"
+    },
+    "instances": {
+        "order": "zIndex"
+    },
+    "maps": {
+        "flattenLayers": true,
+        "writeTileSize": false
+    },
+    "enableDithering": false,
+    "createDirectories": true
+}
