@@ -6,6 +6,9 @@
 //
 
 #include "bitmap.h"
+#include "melmath.h"
+
+MELListImplement(LCDBitmapRef);
 
 typedef struct {
     char magic[2];
@@ -130,6 +133,7 @@ void LCDBitmapFadeImage(LCDBitmap * _Nonnull bitmap, uint8_t value) {
     int width, height, rowBytes;
     uint8_t *data, *mask;
     playdate->graphics->getBitmapData(bitmap, &width, &height, &rowBytes, &mask, &data);
+    memset(data, 0, rowBytes * height);
 
     const uint8_t threshold = (value * 64) / 100;
     const unsigned int size = width * height;
@@ -146,8 +150,49 @@ void LCDBitmapFadeImage(LCDBitmap * _Nonnull bitmap, uint8_t value) {
             const int32_t byteIndex = x / bitsInAByte + y * rowBytes;
             const int bitIndex = (1 << (bitsInAByte - 1)) >> (x % bitsInAByte);
 
-            data[byteIndex] = data[byteIndex] & ~bitIndex;
+            // NOTE: Avant j'affectais la valeur "data[byteIndex] & ~bitIndex" à data[byteIndex] mais vu que data[byteIndex] vaut toujours zéro, cela n'a pas d'utilité.
             mask[byteIndex] = mask[byteIndex] | bitIndex;
+        }
+    }
+}
+
+LCDBitmap * _Nonnull LCDBitmapCopyAndShadeImage(LCDBitmap * _Nonnull bitmap, float brightness) {
+    int width, height;
+    playdate->graphics->getBitmapData(bitmap, &width, &height, NULL, NULL, NULL);
+    LCDBitmap *copy = playdate->graphics->newBitmap(width, height, kColorClear);
+    playdate->graphics->pushContext(copy);
+    playdate->graphics->drawBitmap(bitmap, 0, 0, kBitmapUnflipped);
+    playdate->graphics->popContext();
+    LCDBitmapShadeImage(copy, brightness);
+    return copy;
+}
+
+void LCDBitmapShadeImage(LCDBitmap * _Nonnull bitmap, float brightness) {
+    int width, height, rowBytes;
+    uint8_t *data, *mask;
+    playdate->graphics->getBitmapData(bitmap, &width, &height, &rowBytes, &mask, &data);
+
+    const uint8_t value = (uint8_t)(100.0f * (1.0f - MELFloatBound(0.0f, brightness, 1.0f)));
+    // Donne une valeur entre 0 et 64. La matrix de Bayer a pour valeur maximum 63 donc un seuil de 0 ne fait rien.
+    const uint8_t threshold = (value * 64) / 100;
+    if (threshold == 0) {
+        return;
+    }
+    const unsigned int size = width * height;
+    for (unsigned int index = 0; index < size; index++) {
+        const int x = index % width;
+        const int y = index / width;
+
+        // Appliquer la matrice de Bayer à l'emplacement courant
+        const uint8_t bayerValue = bayerMatrix[y % 8][x % 8];
+
+        // Comparer la valeur du pixel avec le seuil pour la conversion
+        if (bayerValue < threshold) {
+            const int32_t bitsInAByte = 8;
+            const int32_t byteIndex = x / bitsInAByte + y * rowBytes;
+            const int bitIndex = (1 << (bitsInAByte - 1)) >> (x % bitsInAByte);
+
+            data[byteIndex] = data[byteIndex] & ~bitIndex;
         }
     }
 }
@@ -156,4 +201,25 @@ int LCDBitmapGetWidth(LCDBitmap * _Nonnull bitmap) {
     int width;
     playdate->graphics->getBitmapData(bitmap, &width, NULL, NULL, NULL, NULL);
     return width;
+}
+
+int LCDBitmapGetHeight(LCDBitmap * _Nonnull bitmap) {
+    int height;
+    playdate->graphics->getBitmapData(bitmap, NULL, &height, NULL, NULL, NULL);
+    return height;
+}
+
+MELIntSize LCDBitmapGetSize(LCDBitmap * _Nonnull bitmap) {
+    int width, height;
+    playdate->graphics->getBitmapData(bitmap, &width, &height, NULL, NULL, NULL);
+    return (MELIntSize) { width, height };
+}
+
+static void freeBitmapRef(LCDBitmapRef * _Nonnull bitmapRef) {
+    playdate->graphics->freeBitmap(*bitmapRef);
+    *bitmapRef = NULL;
+}
+
+void LCDBitmapRefListDeinitAndFreeBitmaps(LCDBitmapRefList * _Nonnull self) {
+    LCDBitmapRefListDeinitWithDeinitFunction(self, freeBitmapRef);
 }

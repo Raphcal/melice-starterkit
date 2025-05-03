@@ -24,3 +24,10 @@ MELAnimation * _Nullable MELSpriteDefinitionGetAnimation(MELSpriteDefinition sel
         return MELNoAnimationAlloc(NULL);
     }
 }
+
+void MELSpriteDefinitionFreePalette(MELSpriteDefinition * _Nonnull self) {
+    if (self->palette) {
+        playdate->graphics->freeBitmapTable(self->palette);
+        self->palette = NULL;
+    }
+}

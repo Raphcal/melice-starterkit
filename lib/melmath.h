@@ -219,6 +219,13 @@ float MELFloatSquare(float value);
 int MELIntSquare(int value);
 
 /**
+ * @brief Pointer to an easing function.
+ *
+ * @see MELProgress, MELEaseIn, MELEaseInOut, etc.
+ */
+typedef float (* _Nullable MELEasingFunction)(float from, float to, float value);
+
+/**
  * @brief Maps a value from one range to another.
  *
  * @param from The starting value of the range.
@@ -237,6 +244,7 @@ float MELProgress(float from, float to, float value);
  * @return The interpolated value.
  */
 float MELEaseInOut(float from, float to, float value);
+float MELEaseInOutInverse(float x);
 
 /**
  * @brief Computes the ease-in interpolation between two values.
@@ -257,6 +265,8 @@ float MELEaseIn(float from, float to, float value);
  * @return The interpolated value.
  */
 float MELEaseInBack(float from, float to, float value);
+
+GLfloat MELEaseInElastic(GLfloat from, GLfloat to, GLfloat value);
 
 /**
  * @brief Computes the ease-out interpolation between two values.
@@ -297,6 +307,8 @@ float MELEaseOutBack(float from, float to, float value);
  * @return The interpolated value.
  */
 float MELEaseOutElastic(float from, float to, float value);
+
+float MELEaseOutBounce(float from, float to, float value);
 
 float MELEaseOutCirc(float from, float to, float value);
 

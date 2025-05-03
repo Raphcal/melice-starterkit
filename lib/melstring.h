@@ -21,6 +21,8 @@ MELListDefine(MELChar16);
 typedef uint32_t MELCodePoint;
 MELListDefine(MELCodePoint);
 
+extern const char kEmptyString[];
+
 MELBoolean MELStringEquals(const char * _Nonnull lhs, const char * _Nonnull rhs);
 MELBoolean MELStringStartsWith(const char * _Nonnull lhs, const char * _Nonnull rhs);
 MELBoolean MELStringEndsWith(const char * _Nonnull lhs, const char * _Nonnull rhs);
@@ -30,14 +32,18 @@ uint64_t MELStringHash(const char * _Nonnull key);
 char * _Nullable MELStringCopy(const char * restrict _Nullable source);
 char * _Nonnull MELStringConcat(const char * _Nullable lhs, const char * _Nullable rhs);
 
-MELCodePointList MELCodePointListMakeWithUTF8String(char * _Nullable source);
-MELCodePointList MELCodePointListMakeWithUTF16String(uint16_t * _Nullable source);
+MELCodePointList MELCodePointListMakeWithUTF8String(const char * _Nullable source);
+void MELCodePointListMakeWithUTF8StringAndBuffer(const char * _Nullable source, MELCodePointList * _Nonnull codePoints);
+MELCodePointList MELCodePointListMakeWithUTF16String(const uint16_t * _Nullable source);
 
 char * _Nullable MELUTF8StringMakeWithCodePoints(MELCodePointList codePoints);
-char * _Nullable MELUTF8StringMakeWithUTF16String(uint16_t * _Nullable source);
+char * _Nullable MELUTF8StringMakeWithUTF16String(const uint16_t * _Nullable source);
+uint32_t MELUTF8StringCodePointCount(const MELChar * _Nullable source, int length);
+
+int MELUTF8StringCharacterSize(const char * _Nullable source, int index);
 
 uint16_t * _Nullable MELUTF16StringMakeWithCodePoints(MELCodePointList codePoints);
-uint16_t * _Nullable MELUTF16StringMakeWithUTF8String(char * _Nullable source);
+uint16_t * _Nullable MELUTF16StringMakeWithUTF8String(const char * _Nullable source);
 
 /**
  * Calcul le nombre de chiffres dans la valeur donnée.
@@ -57,9 +63,10 @@ char * _Nonnull MELUInt32ToStringWithBuffer(uint32_t value, char * _Nullable buf
 void MELUInt32ToStringWithFixedSizeBuffer(uint32_t value, char * _Nonnull buffer, const int bufferCapacity);
 
 #define MELStringIndexOfCharacter(haystack, needle) strchr(haystack, needle)
-#define MELStringIndexOfString(haystack, needle) strstr(haystack, needle)
 #define MELStringLastIndexOfCharacter(haystack, needle) strrchr(haystack, needle)
 #define MELStringParseInt(source) atoi(source)
 #define MELStringParseFloat(source) strtof(source, NULL)
+
+int MELStringIndexOfString(const char * _Nonnull haystack, const char * _Nonnull needle);
 
 #endif /* melstring_h */

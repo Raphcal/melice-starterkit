@@ -14,7 +14,6 @@
 #include "size.h"
 #include "rectangle.h"
 #include "hash.h"
-#include "uuid.h"
 
 #define MELOutputStreamWriteByte MELOutputStreamWriteUInt8
 
@@ -114,7 +113,7 @@ void MELOutputStreamWriteDouble(MELOutputStream * _Nonnull self, double value);
  * @param value Byte array to write.
  * @param count Number of elements to write.
  */
-void MELOutputStreamWriteByteArray(MELOutputStream * _Nonnull self, uint8_t * _Nonnull value, int32_t count);
+void MELOutputStreamWriteByteArray(MELOutputStream * _Nonnull self, const uint8_t * _Nonnull value, int32_t count);
 
 /**
  * Writes a byte array to the given ouput stream.
@@ -124,9 +123,10 @@ void MELOutputStreamWriteByteArray(MELOutputStream * _Nonnull self, uint8_t * _N
  * @param count Number of elements to write. Will be set to 0 if the array is NULL.
  *
  */
-void MELOutputStreamWriteNullableByteArray(MELOutputStream * _Nonnull self, uint8_t * _Nullable value, int32_t count);
+void MELOutputStreamWriteNullableByteArray(MELOutputStream * _Nonnull self, const uint8_t * _Nullable value, int32_t count);
 
-void MELOutputStreamWriteInt8Array(MELOutputStream * _Nonnull self, int8_t * _Nonnull value, int32_t count);
+void MELOutputStreamWriteInt8Array(MELOutputStream * _Nonnull self, const int8_t * _Nonnull value, int32_t count);
+void MELOutputStreamWriteUInt8Array(MELOutputStream * _Nonnull self, const uint8_t * _Nonnull value, uint32_t count);
 
 /**
  * Writes a 32 bits signed integer array to the given ouput stream.
@@ -135,7 +135,9 @@ void MELOutputStreamWriteInt8Array(MELOutputStream * _Nonnull self, int8_t * _No
  * @param value 32 bits signed integer array.
  * @param count Number of elements to write.
  */
-void MELOutputStreamWriteIntArray(MELOutputStream * _Nonnull self, int32_t * _Nonnull value, int32_t count);
+void MELOutputStreamWriteIntArray(MELOutputStream * _Nonnull self, const int32_t * _Nonnull value, int32_t count);
+
+void MELOutputStreamWriteUInt32Array(MELOutputStream * _Nonnull self, const uint32_t * _Nonnull value, uint32_t count);
 
 /**
  * Writes the given UTF-8 string as an UTF-16 string to the given ouput stream.
@@ -143,7 +145,7 @@ void MELOutputStreamWriteIntArray(MELOutputStream * _Nonnull self, int32_t * _No
  * @param self Output stream to write to.
  * @param value UTF-8 string.
  */
-void MELOutputStreamWriteString(MELOutputStream * _Nonnull self, char * _Nonnull value);
+void MELOutputStreamWriteString(MELOutputStream * _Nonnull self, const char * _Nonnull value);
 
 /**
  * Writes the given UTF-8 string as an UTF-16 string to the given ouput stream.
@@ -151,7 +153,7 @@ void MELOutputStreamWriteString(MELOutputStream * _Nonnull self, char * _Nonnull
  * @param self Output stream to write to.
  * @param value UTF-8 string or NULL.
  */
-void MELOutputStreamWriteNullableString(MELOutputStream * _Nonnull self, char * _Nullable value);
+void MELOutputStreamWriteNullableString(MELOutputStream * _Nonnull self, const char * _Nullable value);
 
 /**
  * Writes the given UTF-8 string to the given ouput stream.
@@ -159,7 +161,7 @@ void MELOutputStreamWriteNullableString(MELOutputStream * _Nonnull self, char * 
  * @param self Output stream to write to.
  * @param value UTF-8 string.
  */
-void MELOutputStreamWriteUTF8String(MELOutputStream * _Nonnull self, char * _Nonnull value);
+void MELOutputStreamWriteUTF8String(MELOutputStream * _Nonnull self, const char * _Nonnull value);
 
 /**
  * Writes a point to the given ouput stream.
@@ -175,7 +177,8 @@ void MELOutputStreamWriteIntPoint(MELOutputStream * _Nonnull self, MELIntPoint v
 void MELOutputStreamWriteIntSize(MELOutputStream * _Nonnull self, MELIntSize value);
 void MELOutputStreamWriteIntRectangle(MELOutputStream * _Nonnull self, MELIntRectangle value);
 
-void MELOutputStreamWriteUUID(MELOutputStream * _Nonnull self, MELUUID uuid);
+void MELOutputStreamWritePDScore(MELOutputStream * _Nonnull self, PDScore score);
+void MELOutputStreamWritePDScoreArray(MELOutputStream * _Nonnull self, const PDScore * _Nonnull scores, uint32_t count);
 
 void MELOutputStreamStartHash(MELOutputStream * _Nonnull self, const char * _Nonnull salt, const unsigned int saltLength);
 

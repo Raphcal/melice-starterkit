@@ -149,27 +149,41 @@ void MELOutputStreamWriteDouble(MELOutputStream * _Nonnull self, double value) {
     MELOutputStreamWriteNumeric(self, d.u, sizeof(double));
 }
 
-void MELOutputStreamWriteByteArray(MELOutputStream * _Nonnull self, uint8_t * _Nonnull value, int32_t count) {
+void MELOutputStreamWriteByteArray(MELOutputStream * _Nonnull self, const uint8_t * _Nonnull value, int32_t count) {
     MELOutputStreamWriteInt(self, count);
     MELOutputStreamWrite(self, value, sizeof(uint8_t) * count);
 }
 
-void MELOutputStreamWriteInt8Array(MELOutputStream * _Nonnull self, int8_t * _Nonnull value, int32_t count) {
+void MELOutputStreamWriteInt8Array(MELOutputStream * _Nonnull self, const int8_t * _Nonnull value, int32_t count) {
     MELOutputStreamWriteInt(self, count);
     MELOutputStreamWrite(self, value, sizeof(int8_t) * count);
 }
 
-void MELOutputStreamWriteNullableByteArray(MELOutputStream * _Nonnull self, uint8_t * _Nullable value, int32_t count) {
+void MELOutputStreamWriteNullableByteArray(MELOutputStream * _Nonnull self, const uint8_t * _Nullable value, int32_t count) {
     MELOutputStreamWriteBoolean(self, value != NULL);
     if (value != NULL) {
         MELOutputStreamWriteByteArray(self, value, count);
     }
 }
 
-void MELOutputStreamWriteIntArray(MELOutputStream * _Nonnull self, int32_t * _Nonnull value, int32_t count) {
+void MELOutputStreamWriteUInt8Array(MELOutputStream * _Nonnull self, const uint8_t * _Nonnull value, uint32_t count) {
+    MELOutputStreamWriteUInt32(self, count);
+    for (int32_t index = 0; index < count; index++) {
+        MELOutputStreamWriteUInt8(self, value[index]);
+    }
+}
+
+void MELOutputStreamWriteIntArray(MELOutputStream * _Nonnull self, const int32_t * _Nonnull value, int32_t count) {
     MELOutputStreamWriteInt(self, count);
     for (int32_t index = 0; index < count; index++) {
         MELOutputStreamWriteInt(self, value[index]);
+    }
+}
+
+void MELOutputStreamWriteUInt32Array(MELOutputStream * _Nonnull self, const uint32_t * _Nonnull value, uint32_t count) {
+    MELOutputStreamWriteUInt32(self, count);
+    for (int32_t index = 0; index < count; index++) {
+        MELOutputStreamWriteUInt32(self, value[index]);
     }
 }
 
@@ -179,7 +193,7 @@ unsigned int str16len(uint16_t * _Nonnull array) {
     return (unsigned int) (current - array);
 }
 
-void MELOutputStreamWriteString(MELOutputStream * _Nonnull self, char * _Nonnull value) {
+void MELOutputStreamWriteString(MELOutputStream * _Nonnull self, const char * _Nonnull value) {
     uint16_t *utf16String = MELUTF16StringMakeWithUTF8String(value);
     unsigned int count = str16len(utf16String);
 
@@ -190,14 +204,14 @@ void MELOutputStreamWriteString(MELOutputStream * _Nonnull self, char * _Nonnull
     playdate->system->realloc(utf16String, 0);
 }
 
-void MELOutputStreamWriteNullableString(MELOutputStream * _Nonnull self, char * _Nullable value) {
+void MELOutputStreamWriteNullableString(MELOutputStream * _Nonnull self, const char * _Nullable value) {
     MELOutputStreamWriteBoolean(self, value != NULL);
     if (value != NULL) {
         MELOutputStreamWriteString(self, value);
     }
 }
 
-void MELOutputStreamWriteUTF8String(MELOutputStream * _Nonnull self, char * _Nonnull value) {
+void MELOutputStreamWriteUTF8String(MELOutputStream * _Nonnull self, const char * _Nonnull value) {
     unsigned int count = (unsigned int) strlen(value);
 
     MELOutputStreamWriteInt(self, (int32_t) count);
@@ -234,8 +248,17 @@ void MELOutputStreamWriteIntRectangle(MELOutputStream * _Nonnull self, MELIntRec
     MELOutputStreamWriteIntSize(self, value.size);
 }
 
-void MELOutputStreamWriteUUID(MELOutputStream * _Nonnull self, MELUUID uuid) {
-    MELOutputStreamWrite(self, uuid.data, sizeof(uint8_t) * kUUIDByteCount);
+void MELOutputStreamWritePDScore(MELOutputStream * _Nonnull self, PDScore score) {
+    MELOutputStreamWriteNullableString(self, score.player);
+    MELOutputStreamWriteUInt32(self, score.value);
+    MELOutputStreamWriteUInt32(self, score.rank);
+}
+
+void MELOutputStreamWritePDScoreArray(MELOutputStream * _Nonnull self, const PDScore * _Nonnull scores, uint32_t count) {
+    MELOutputStreamWriteUInt32(self, count);
+    for (int32_t index = 0; index < count; index++) {
+        MELOutputStreamWritePDScore(self, scores[index]);
+    }
 }
 
 #pragma mark - SHA256

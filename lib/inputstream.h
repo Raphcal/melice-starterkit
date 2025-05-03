@@ -179,6 +179,8 @@ uint8_t * _Nullable MELInputStreamReadNullableByteArray(MELInputStream * _Nonnul
 
 int8_t * _Nonnull MELInputStreamReadInt8Array(MELInputStream * _Nonnull self, int32_t * _Nullable count);
 
+uint8_t * _Nonnull MELInputStreamReadUInt8Array(MELInputStream * _Nonnull self, uint32_t * _Nonnull count);
+
 /**
  * Reads and returns a 32 bits signed integer array from the given input stream.
  *
@@ -187,6 +189,8 @@ int8_t * _Nonnull MELInputStreamReadInt8Array(MELInputStream * _Nonnull self, in
  * @return A 32 bits signed integer array. You are responsible for freeing the returned array.
  */
 int32_t * _Nonnull MELInputStreamReadIntArray(MELInputStream * _Nonnull self, int32_t * _Nonnull count);
+
+uint32_t * _Nonnull MELInputStreamReadUInt32Array(MELInputStream * _Nonnull self, uint32_t * _Nonnull count);
 
 /**
  * Reads and returns an UTF-16 string from the given input stream and convert it to UTF-8.
@@ -232,6 +236,9 @@ MELRectangle MELInputStreamReadRectangle(MELInputStream * _Nonnull self);
 MELIntPoint MELInputStreamReadIntPoint(MELInputStream * _Nonnull self);
 MELIntSize MELInputStreamReadIntSize(MELInputStream * _Nonnull self);
 MELIntRectangle MELInputStreamReadIntRectangle(MELInputStream * _Nonnull self);
+
+PDScore MELInputStreamReadPDScore(MELInputStream * _Nonnull self);
+PDScore * _Nonnull MELInputStreamReadPDScoreArray(MELInputStream * _Nonnull self, uint32_t * _Nullable count);
 
 MELUUID MELInputStreamReadUUID(MELInputStream * _Nonnull self);
 

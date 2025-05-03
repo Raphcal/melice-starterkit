@@ -12,7 +12,9 @@
 #define RANDOM_FUNCTION rand
 
 void MELRandomInit(void) {
-    srand(playdate->system->getCurrentTimeMilliseconds());
+    unsigned int milliseconds;
+    unsigned int seconds = playdate->system->getSecondsSinceEpoch(&milliseconds);
+    srand(milliseconds + seconds);
 }
 
 int MELRandomInt(int range) {

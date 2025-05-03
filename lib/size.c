@@ -53,6 +53,10 @@ MELSize MELSizeMultiply(MELSize lhs, MELSize rhs) {
     return (MELSize) {lhs.width * rhs.width, lhs.height * rhs.height};
 }
 
+MELSize MELSizeMultiplyByValue(MELSize lhs, float value) {
+    return (MELSize) {lhs.width * value, lhs.height * value};
+}
+
 MELIntSize MELIntSizeMultiply(MELIntSize lhs, MELIntSize rhs) {
     return (MELIntSize) {lhs.width * rhs.width, lhs.height * rhs.height};
 }

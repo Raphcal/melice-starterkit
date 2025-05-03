@@ -96,6 +96,8 @@ typedef struct melkeyboard {
 
     int8_t keyRepeatDelay;
 
+    uint8_t maximumLength;
+
     unsigned int lastKeyEnteredTime;
 
     // Animation Variables
@@ -119,6 +121,7 @@ void MELKeyboardFree(MELKeyboard * _Nonnull self);
 void MELKeyboardShow(MELKeyboard * _Nonnull self, const char * _Nullable newText, const unsigned int newTextLength);
 void MELKeyboardHide(MELKeyboard * _Nonnull self);
 void MELKeyboardGetText(MELKeyboard * _Nonnull self, char * _Nonnull * _Nullable text, unsigned int * _Nullable count);
+void MELKeyboardFillBufferWithText(MELKeyboard * _Nonnull self, char * _Nonnull buffer, int length);
 float MELKeyboardGetAnimationProgress(MELKeyboard * _Nonnull self);
 
 void MELKeyboardSetTextChangedCallback(MELKeyboard * _Nonnull self, MELKeyboardCallback * _Nullable callback, void * _Nullable userdata);

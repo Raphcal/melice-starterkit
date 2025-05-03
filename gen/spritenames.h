@@ -14,6 +14,7 @@ typedef struct melspritedefinition MELSpriteDefinition;
 
 typedef enum {
     SpriteNamePlayer,
+    SpriteNameExplosion,
 } SpriteName;
 
 MELSpriteDefinition * _Nullable SpriteNameGetDefinition(SpriteName self);

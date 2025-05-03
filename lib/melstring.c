@@ -14,6 +14,8 @@ MELListImplement(MELChar);
 MELListImplement(MELChar16);
 MELListImplement(MELCodePoint);
 
+const char kEmptyString[] = "";
+
 MELBoolean MELStringEquals(const char * _Nonnull lhs, const char * _Nonnull rhs) {
     return !strcmp(lhs, rhs);
 }
@@ -60,11 +62,11 @@ char * _Nonnull MELStringConcat(const char * _Nullable lhs, const char * _Nullab
     return result;
 }
 
-MELBoolean isUTF8Wagon(char * _Nonnull source, unsigned int index) {
+static MELBoolean isUTF8Wagon(const char * _Nonnull source, unsigned int index) {
     return ((source[index] & 0xFF) >> 6) == 2;
 }
 
-MELBoolean isTrailedByCountUTF8Wagon(char * _Nonnull source, unsigned int from, unsigned int count) {
+static MELBoolean isTrailedByCountUTF8Wagon(const char * _Nonnull source, unsigned int from, unsigned int count) {
     for (unsigned int index = 0; index < count; index++) {
         if (!isUTF8Wagon(source, from + index + 1)) {
             return false;
@@ -73,11 +75,17 @@ MELBoolean isTrailedByCountUTF8Wagon(char * _Nonnull source, unsigned int from, 
     return true;
 }
 
-MELCodePointList MELCodePointListMakeWithUTF8String(char * _Nullable source) {
-    if (source == NULL) {
-        return MELCodePointListEmpty;
-    }
+MELCodePointList MELCodePointListMakeWithUTF8String(const char * _Nullable source) {
     MELCodePointList codePoints = MELCodePointListEmpty;
+    MELCodePointListMakeWithUTF8StringAndBuffer(source, &codePoints);
+    return codePoints;
+}
+
+void MELCodePointListMakeWithUTF8StringAndBuffer(const char * _Nullable source, MELCodePointList * _Nonnull codePoints) {
+    codePoints->count = 0;
+    if (source == NULL) {
+        return;
+    }
     MELCodePoint codePoint;
     uint32_t entry;
     for (unsigned int index = 0; source[index] != 0; index++) {
@@ -110,12 +118,11 @@ MELCodePointList MELCodePointListMakeWithUTF8String(char * _Nullable source) {
             // Encoding error
             codePoint = 0xFFFD;
         }
-        MELCodePointListPush(&codePoints, codePoint);
+        MELCodePointListPush(codePoints, codePoint);
     }
-    return codePoints;
 }
 
-MELCodePointList MELCodePointListMakeWithUTF16String(uint16_t * _Nullable source) {
+MELCodePointList MELCodePointListMakeWithUTF16String(const uint16_t * _Nullable source) {
     if (source == NULL) {
         return MELCodePointListEmpty;
     }
@@ -172,7 +179,7 @@ char * _Nullable MELUTF8StringMakeWithCodePoints(MELCodePointList codePoints) {
     return playdate->system->realloc(characters.memory, characters.count * sizeof(char));
 }
 
-char * _Nullable MELUTF8StringMakeWithUTF16String(uint16_t * _Nullable source) {
+char * _Nullable MELUTF8StringMakeWithUTF16String(const uint16_t * _Nullable source) {
     if (source == NULL) {
         return NULL;
     }
@@ -180,6 +187,57 @@ char * _Nullable MELUTF8StringMakeWithUTF16String(uint16_t * _Nullable source) {
     char *utf8String = MELUTF8StringMakeWithCodePoints(codePoints);
     MELCodePointListDeinit(&codePoints);
     return utf8String;
+}
+
+uint32_t MELUTF8StringCodePointCount(const MELChar * _Nullable source, int length) {
+    if (source == NULL) {
+        return 0;
+    }
+    uint32_t count = 0;
+    for (uint32_t index = 0; index < length && source[index] != '\0'; index++) {
+        const uint32_t entry = source[index] & 0xFF;
+        if (entry <= 127) {
+            // ASCII
+            count++;
+        } else if (entry >> 5 == 6 && isUTF8Wagon(source, index + 1)) {
+            // 2 bytes
+            count++;
+            index++;
+        } else if (entry >> 4 == 14 && isTrailedByCountUTF8Wagon(source, index, 2)) {
+            // 3 bytes
+            count++;
+            index += 2;
+        } else if (entry >> 3 == 30 && isTrailedByCountUTF8Wagon(source, index, 3)) {
+            // 4 bytes
+            count++;
+            index += 3;
+        } else {
+            // Encoding error
+            playdate->system->logToConsole("Unable to count UTF-8 characters: encoding error, invalid UTF-8 value.");
+        }
+    }
+    return count;
+}
+
+int MELUTF8StringCharacterSize(const char * _Nullable source, int index) {
+    const uint32_t entry = source[index] & 0xFF;
+    if (entry <= 127) {
+        // ASCII
+        return 1;
+    } else if (entry >> 5 == 6 && isUTF8Wagon(source, index + 1)) {
+        // 2 bytes
+        return 2;
+    } else if (entry >> 4 == 14 && isTrailedByCountUTF8Wagon(source, index, 2)) {
+        // 3 bytes
+        return 3;
+    } else if (entry >> 3 == 30 && isTrailedByCountUTF8Wagon(source, index, 3)) {
+        // 4 bytes
+        return 4;
+    } else {
+        // Encoding error
+        playdate->system->logToConsole("Unable to count UTF-8 characters: encoding error, invalid UTF-8 value.");
+        return 1;
+    }
 }
 
 uint16_t * _Nullable MELUTF16StringMakeWithCodePoints(MELCodePointList codePoints) {
@@ -205,7 +263,7 @@ uint16_t * _Nullable MELUTF16StringMakeWithCodePoints(MELCodePointList codePoint
     return playdate->system->realloc(characters.memory, characters.count * sizeof(uint16_t));
 }
 
-uint16_t * _Nullable MELUTF16StringMakeWithUTF8String(char * _Nullable source) {
+uint16_t * _Nullable MELUTF16StringMakeWithUTF8String(const char * _Nullable source) {
     if (source == NULL) {
         return NULL;
     }
@@ -253,5 +311,14 @@ void MELUInt32ToStringWithFixedSizeBuffer(uint32_t value, char * _Nonnull buffer
     for (int index = digitCount - 1; index >= 0; index--) {
         buffer[index] = '0' + (value % 10);
         value /= 10;
+    }
+}
+
+int MELStringIndexOfString(const char * _Nonnull haystack, const char * _Nonnull needle) {
+    const char *position = strstr(haystack, needle);
+    if (position == NULL) {
+        return -1;
+    } else {
+        return (int) (position - haystack);
     }
 }

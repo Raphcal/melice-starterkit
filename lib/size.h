@@ -75,6 +75,8 @@ MELIntSize MELIntSizeSubstract(MELIntSize lhs, MELIntSize rhs);
 MELSize MELSizeMultiply(MELSize lhs, MELSize rhs);
 MELIntSize MELIntSizeMultiply(MELIntSize lhs, MELIntSize rhs);
 
+MELSize MELSizeMultiplyByValue(MELSize lhs, float value);
+
 MELSize MELSizeDivide(MELSize lhs, MELSize rhs);
 MELIntSize MELIntSizeDivide(MELIntSize lhs, MELIntSize rhs);
 

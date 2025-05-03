@@ -29,5 +29,6 @@ typedef struct {
 
 MELAnimation * _Nonnull MELPlayOnceAnimationAlloc(MELAnimationDefinition * _Nonnull definition, MELPlayOnceAnimationOnEnd onEnd);
 MELAnimation * _Nonnull MELPlayOnceAnimationLoad(MELInputStream * _Nonnull inputStream, MELAnimationDefinition * _Nonnull definition);
+void MELPlayOnceAnimationSkip(MELAnimation * _Nullable animation);
 
 #endif /* playonceanimation_h */

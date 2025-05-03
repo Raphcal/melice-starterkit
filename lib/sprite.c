@@ -14,30 +14,23 @@
 #include "camera.h"
 #include "../src/gamescene.h"
 #include "../src/classes.h"
-#include "../src/player.h"
-
-#if MEL_ORIENTATION_VERTICAL
-    #define MELSpriteMoveTo(sprite, x, y) playdate->sprite->moveTo(sprite, y, LCD_ROWS - 1 - (x))
-#else
-    #define MELSpriteMoveTo(sprite, x, y) playdate->sprite->moveTo(sprite, x, y);
-#endif
 
 LCDSprite * _Nonnull MELSpriteInit(MELSprite * _Nonnull self, MELSpriteDefinition * _Nonnull definition, MELSpriteInstance * _Nonnull instance) {
-    LCDSprite *sprite = playdate->sprite->newSprite();
+    const struct playdate_sprite *spriteAPI = playdate->sprite;
+    LCDSprite *sprite = spriteAPI->newSprite();
     MELPoint origin = instance->center;
-    MELSpriteMoveTo(sprite, origin.x, origin.y);
-    playdate->sprite->setZIndex(sprite, instance->zIndex);
+    spriteAPI->moveTo(sprite, origin.x, origin.y);
+    spriteAPI->setZIndex(sprite, instance->zIndex);
 
     *self = (MELSprite) {
         .class = &MELSpriteClassDefault,
         .definition = *definition,
         .instance = instance,
         .frame = (MELRectangle) {
-            .origin = instance->center,
+            .origin = origin,
             .size = definition->size
         },
         .direction = instance->direction,
-        .hitTimer = 0.0f,
     };
     MELSpriteSetAnimation(self, AnimationNameStand);
 
@@ -47,16 +40,17 @@ LCDSprite * _Nonnull MELSpriteInit(MELSprite * _Nonnull self, MELSpriteDefinitio
         self->hitbox = MELSimpleSpriteHitboxAlloc(self);
     }
 
-    playdate->sprite->setUserdata(sprite, self);
-    playdate->sprite->addSprite(sprite);
+    spriteAPI->setUserdata(sprite, self);
+    spriteAPI->addSprite(sprite);
 
     instance->sprite = sprite;
     return sprite;
 }
 
 LCDSprite * _Nonnull MELSpriteInitWithCenter(MELSprite * _Nonnull self, MELSpriteDefinition * _Nonnull definition, MELPoint center) {
-    LCDSprite *sprite = playdate->sprite->newSprite();
-    MELSpriteMoveTo(sprite, center.x, center.y);
+    const struct playdate_sprite *spriteAPI = playdate->sprite;
+    LCDSprite *sprite = spriteAPI->newSprite();
+    spriteAPI->moveTo(sprite, center.x, center.y);
 
     *self = (MELSprite) {
         .class = &MELSpriteClassDefault,
@@ -66,7 +60,6 @@ LCDSprite * _Nonnull MELSpriteInitWithCenter(MELSprite * _Nonnull self, MELSprit
             .size = definition->size
         },
         .direction = MELDirectionRight,
-        .hitTimer = 0.0f,
     };
     MELSpriteSetAnimation(self, AnimationNameStand);
 
@@ -76,8 +69,22 @@ LCDSprite * _Nonnull MELSpriteInitWithCenter(MELSprite * _Nonnull self, MELSprit
         self->hitbox = MELSimpleSpriteHitboxAlloc(self);
     }
 
-    playdate->sprite->setUserdata(sprite, self);
-    playdate->sprite->addSprite(sprite);
+    spriteAPI->setUserdata(sprite, self);
+    spriteAPI->addSprite(sprite);
+    return sprite;
+}
+
+LCDSprite * _Nonnull MELSpriteInitHiddenWithUpdate(MELSprite * _Nonnull self, void (* _Nullable update)(LCDSprite * _Nonnull)) {
+    *self = (MELSprite) {
+        .class = &MELSpriteClassDefault,
+    };
+
+    const struct playdate_sprite *spriteAPI = playdate->sprite;
+    LCDSprite *sprite = spriteAPI->newSprite();
+    spriteAPI->setUserdata(sprite, self);
+    spriteAPI->setUpdateFunction(sprite, update);
+    spriteAPI->setVisible(sprite, false);
+    spriteAPI->addSprite(sprite);
     return sprite;
 }
 
@@ -102,6 +109,11 @@ void MELSpriteDealloc(LCDSprite * _Nonnull sprite) {
     if (self->instance != NULL) {
         self->instance->sprite = NULL;
     }
+    if (self->userdata && self->autoReleaseUserdata) {
+        playdate->system->realloc(self->userdata, 0);
+        self->userdata = NULL;
+        self->autoReleaseUserdata = false;
+    }
     playdate->system->realloc(self, 0);
     playdate->sprite->removeSprite(sprite);
     playdate->sprite->freeSprite(sprite);
@@ -121,8 +133,11 @@ void MELSpriteUpdate(LCDSprite * _Nonnull sprite) {
     MELAnimation *animation = self->animation;
     MELAnimationUpdate(animation, DELTA);
 
-    MELPoint origin = self->frame.origin;
-    MELSpriteMoveTo(sprite, origin.x - camera.frame.origin.x, origin.y - camera.frame.origin.y);
+    const MELSpritePositionFixed fixed = self->fixed;
+    const MELPoint origin = self->frame.origin;
+    const float x = (fixed & MELSpritePositionFixedX) ? origin.x : origin.x - camera.frame.origin.x;
+    const float y = (fixed & MELSpritePositionFixedY) ? origin.y : origin.y - camera.frame.origin.y;
+    playdate->sprite->moveTo(sprite, x, y);
     playdate->sprite->setImage(sprite, playdate->graphics->getTableBitmap(self->definition.palette, animation->frame.atlasIndex), MELDirectionFlip[self->direction]);
 }
 
@@ -132,32 +147,22 @@ void MELSpriteDraw(MELSprite * _Nonnull self, LCDSprite * _Nonnull sprite) {
     MELAnimationUpdate(animation, DELTA);
 
     const MELPoint origin = self->frame.origin;
-    MELSpriteMoveTo(sprite, origin.x, origin.y);
+    playdate->sprite->moveTo(sprite, origin.x, origin.y);
     playdate->sprite->setImage(sprite, playdate->graphics->getTableBitmap(self->definition.palette, animation->frame.atlasIndex), kBitmapUnflipped);
-
-    MELSpriteChangeDrawModeWhenHit(self, sprite);
 }
 
-void MELSpriteChangeDrawModeWhenHit(MELSprite * _Nonnull self, LCDSprite * _Nonnull sprite) {
-    const float hitTimer = MELFloatMax(self->hitTimer - DELTA, 0.0f);
-    const LCDBitmapDrawMode drawMode = (int)(hitTimer * 20.0f) % 2 ? kDrawModeFillBlack : kDrawModeCopy;
-    self->hitTimer = hitTimer;
-    if (drawMode != self->drawMode) {
-        self->drawMode = drawMode;
-        playdate->sprite->setDrawMode(sprite, drawMode);
+void MELSpriteSetAnimationAndDirection(MELSprite * _Nonnull self, AnimationName animationName, MELAnimationDirection direction) {
+    MELAnimation *currentAnimation = self->animation;
+    if (animationName != self->animationName || !currentAnimation || self->animationDirection != direction) {
+        self->animationName = animationName;
+        self->animationDirection = direction;
+        MELAnimationDealloc(currentAnimation);
+        self->animation = MELSpriteDefinitionGetAnimation(self->definition, animationName, direction);
     }
 }
 
 void MELSpriteSetAnimation(MELSprite * _Nonnull self, AnimationName animationName) {
-    MELAnimation *currentAnimation = self->animation;
-    if (animationName != self->animationName || !currentAnimation) {
-        self->animationName = animationName;
-        MELAnimationDealloc(currentAnimation);
-        MELAnimation *anAnimation;
-        anAnimation = MELSpriteDefinitionGetAnimation(self->definition, animationName, self->direction == MELDirectionRight ? MELAnimationDirectionRight : MELAnimationDirectionLeft);
-        anAnimation->class->start(anAnimation);
-        self->animation = anAnimation;
-    }
+    MELSpriteSetAnimationAndDirection(self, animationName, self->direction == MELDirectionRight ? MELAnimationDirectionRight : MELAnimationDirectionLeft);
 }
 
 void MELSpriteSetLeft(MELSprite * _Nonnull self, float left) {
@@ -171,6 +176,13 @@ void MELSpriteSetRight(MELSprite * _Nonnull self, float right) {
     frame.origin.x = right - frame.size.width / 2.0f;
     self->frame = frame;
 }
+void MELSpriteMoveBy(MELSprite * _Nonnull self, MELPoint translation) {
+    self->frame.origin = MELPointAdd(self->frame.origin, translation);
+}
+
+void MELSpriteSetPositionFixed(MELSprite * _Nonnull self, MELSpritePositionFixed fixed) {
+    self->fixed = fixed;
+}
 
 void MELSpriteUpdateDisappearing(LCDSprite * _Nonnull sprite) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
@@ -183,7 +195,7 @@ void MELSpriteUpdateDisappearing(LCDSprite * _Nonnull sprite) {
     self->animation->class->update(self->animation, delta);
 
     MELPoint origin = self->frame.origin;
-    MELSpriteMoveTo(sprite, origin.x, origin.y);
+    playdate->sprite->moveTo(sprite, origin.x, origin.y);
 
     MELAnimationFrame frame = self->animation->frame;
     playdate->sprite->setImage(sprite, playdate->graphics->getTableBitmap(self->definition.palette, frame.atlasIndex), MELDirectionFlip[self->direction]);
@@ -241,15 +253,6 @@ static void save(MELSprite * _Nonnull sprite, MELOutputStream * _Nonnull outputS
     if (self.hitbox) {
         self.hitbox->class->save(self.hitbox, outputStream);
     }
-
-    MELOutputStreamWriteInt(outputStream, self.hitPoints);
-    // TODO: Stocker le score ailleurs, quelque part dans la définition ?
-    MELOutputStreamWriteInt(outputStream, self.score);
-
-    // TODO: Stocker l'instance
-
-    MELOutputStreamWriteFloat(outputStream, self.hitTimer);
-    MELOutputStreamWriteByte(outputStream, self.drawMode);
 }
 
 static MELSprite * _Nullable load(MELInputStream * _Nonnull inputStream, LCDSprite * _Nonnull sprite) {
@@ -303,14 +306,6 @@ static MELSprite * _Nullable load(MELInputStream * _Nonnull inputStream, LCDSpri
         self->hitbox = NULL;
     }
 
-    self->hitPoints = MELInputStreamReadInt(inputStream);
-    self->score = MELInputStreamReadInt(inputStream);
-
-    // TODO: Sauvegarder l'instance
-
-    self->hitTimer = MELInputStreamReadFloat(inputStream);
-    self->drawMode = MELInputStreamReadByte(inputStream);
-
     return self;
 }
 
@@ -358,7 +353,26 @@ LCDSprite * _Nullable MELSpriteLoad(MELInputStream * _Nonnull inputStream) {
     return sprite;
 }
 
+MELRectangle LCDSpriteGetFrame(LCDSprite * _Nonnull sprite) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    return self->frame;
+}
+void LCDSpriteMoveBy(LCDSprite * _Nonnull sprite, MELPoint translation) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    MELSpriteMoveBy(self, translation);
+}
+void LCDSpriteSetClass(LCDSprite * _Nonnull sprite, const MELSpriteClass * _Nonnull class) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    self->class = class;
+}
+
+void LCDSpriteSetPositionFixed(LCDSprite * _Nonnull sprite, MELSpritePositionFixed fixed) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    MELSpriteSetPositionFixed(self, fixed);
+}
+
 const MELSpriteClass MELSpriteClassDefault = (MELSpriteClass) {
     .name = SpriteClassNameDefault,
     .destroy = MELSpriteDealloc,
+    .update = MELSpriteUpdate,
 };

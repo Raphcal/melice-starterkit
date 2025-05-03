@@ -267,11 +267,29 @@ int8_t * _Nonnull MELInputStreamReadInt8Array(MELInputStream * _Nonnull self, in
     return array;
 }
 
+uint8_t * _Nonnull MELInputStreamReadUInt8Array(MELInputStream * _Nonnull self, uint32_t * _Nonnull count) {
+    *count = MELInputStreamReadUInt32(self);
+    unsigned int size = sizeof(uint8_t) * *count;
+    
+    uint8_t *array = playdate->system->realloc(NULL, size);
+    MELInputStreamRead(self, array, size);
+    return array;
+}
+
 int32_t * _Nonnull MELInputStreamReadIntArray(MELInputStream * _Nonnull self, int32_t * _Nonnull count) {
     *count = MELInputStreamReadInt(self);
     unsigned int size = sizeof(int32_t) * *count;
     
     int32_t *array = playdate->system->realloc(NULL, size);
+    MELInputStreamRead(self, array, size);
+    return array;
+}
+
+uint32_t * _Nonnull MELInputStreamReadUInt32Array(MELInputStream * _Nonnull self, uint32_t * _Nonnull count) {
+    *count = MELInputStreamReadUInt32(self);
+    unsigned int size = sizeof(uint32_t) * *count;
+    
+    uint32_t *array = playdate->system->realloc(NULL, size);
     MELInputStreamRead(self, array, size);
     return array;
 }
@@ -316,28 +334,82 @@ LCDColor MELInputStreamReadColor(MELInputStream * _Nonnull self) {
 }
 
 MELPoint MELInputStreamReadPoint(MELInputStream * _Nonnull self) {
-    return MELPointMake(MELInputStreamReadFloat(self), MELInputStreamReadFloat(self));
+    const float x = MELInputStreamReadFloat(self);
+    const float y = MELInputStreamReadFloat(self);
+    return (MELPoint) {
+        .x = x,
+        .y = y
+    };
 }
 
 MELSize MELInputStreamReadSize(MELInputStream * _Nonnull self) {
-    return MELSizeMake(MELInputStreamReadFloat(self), MELInputStreamReadFloat(self));
+    const float width = MELInputStreamReadFloat(self);
+    const float height = MELInputStreamReadFloat(self);
+    return (MELSize) {
+        .width = width,
+        .height = height
+    };
 }
 
 MELRectangle MELInputStreamReadRectangle(MELInputStream * _Nonnull self) {
-    return MELRectangleMakeWithOriginAndSize(MELInputStreamReadPoint(self), MELInputStreamReadSize(self));
+    const MELPoint origin = MELInputStreamReadPoint(self);
+    const MELSize size = MELInputStreamReadSize(self);
+    return (MELRectangle) {
+        .origin = origin,
+        .size = size
+    };
 }
 
 MELIntPoint MELInputStreamReadIntPoint(MELInputStream * _Nonnull self) {
-    return MELIntPointMake(MELInputStreamReadInt(self), MELInputStreamReadInt(self));
+    const int32_t x = MELInputStreamReadInt(self);
+    const int32_t y = MELInputStreamReadInt(self);
+    return (MELIntPoint) {
+        .x = x,
+        .y = y
+    };
 }
 
 MELIntSize MELInputStreamReadIntSize(MELInputStream * _Nonnull self) {
-    return MELIntSizeMake(MELInputStreamReadInt(self), MELInputStreamReadInt(self));
+    const int32_t width = MELInputStreamReadInt(self);
+    const int32_t height = MELInputStreamReadInt(self);
+    return (MELIntSize) {
+        .width = width,
+        .height = height
+    };
 }
 
 MELIntRectangle MELInputStreamReadIntRectangle(MELInputStream * _Nonnull self) {
-    return MELIntRectangleMakeWithOriginAndSize(MELInputStreamReadIntPoint(self), MELInputStreamReadIntSize(self));
+    const MELIntPoint origin = MELInputStreamReadIntPoint(self);
+    const MELIntSize size = MELInputStreamReadIntSize(self);
+    return (MELIntRectangle) {
+        .origin = origin,
+        .size = size
+    };
 }
+
+PDScore MELInputStreamReadPDScore(MELInputStream * _Nonnull self) {
+    PDScore score = (PDScore) {};
+    score.player = MELInputStreamReadNullableString(self);
+    score.value = MELInputStreamReadUInt32(self);
+    score.rank = MELInputStreamReadUInt32(self);
+    return score;
+}
+
+PDScore * _Nonnull MELInputStreamReadPDScoreArray(MELInputStream * _Nonnull self, uint32_t * _Nullable count) {
+    PDScore *scores = NULL;
+    uint32_t scoreCount = MELInputStreamReadUInt32(self);
+    if (count != NULL) {
+        *count = scoreCount;
+    }
+    if (scoreCount) {
+        scores = playdate->system->realloc(NULL, sizeof(PDScore) * scoreCount);
+        for (int32_t index = 0; index < scoreCount; index++) {
+            scores[index] = MELInputStreamReadPDScore(self);
+        }
+    }
+    return scores;
+}
+
 
 MELUUID MELInputStreamReadUUID(MELInputStream * _Nonnull self) {
     MELUUID uuid = (MELUUID) {};

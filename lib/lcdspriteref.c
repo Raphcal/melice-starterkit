@@ -22,7 +22,7 @@ void LCDSpriteRefListDeallocReverse(LCDSpriteRefList * _Nonnull self) {
         LCDSprite *sprite = sprites.memory[index];
         MELSprite *melSprite = playdate->sprite->getUserdata(sprite);
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
-        playdate->system->logToConsole("Destroy %x, name: %d, type: %d", sprite, melSprite->definition.type, melSprite->definition.name);
+        playdate->system->logToConsole("Destroy %x, name: %d, type: %d", sprite, melSprite != NULL ? melSprite->definition.type : 0, melSprite != NULL ? melSprite->definition.name : 0);
 #endif
         melSprite->class->destroy(sprite);
     }

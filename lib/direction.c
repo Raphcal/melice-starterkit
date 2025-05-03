@@ -12,6 +12,8 @@
 const GLfloat MELDirectionValues[DIRECTION_COUNT] = {-1.0f, 1.0f, -1.0f, 1.0f};
 const GLfloat MELDirectionAngles[DIRECTION_COUNT] = {MEL_PI, 0.0f, MEL_PI * 1.5f, MEL_PI / 2.0f};
 const MELDirection MELDirectionReverses[DIRECTION_COUNT] = {MELDirectionRight, MELDirectionLeft, MELDirectionDown, MELDirectionUp};
+const MELDirection MELDirectionCircle[DIRECTION_COUNT] = {MELDirectionUp, MELDirectionRight, MELDirectionDown, MELDirectionLeft};
+const uint8_t MELDirectionCircleIndex[DIRECTION_COUNT] = {3, 1, 0, 2};
 const LCDBitmapFlip MELDirectionFlip[DIRECTION_COUNT] = {kBitmapFlippedX, kBitmapUnflipped, kBitmapFlippedY, kBitmapUnflipped};
 const MELAxe MELDirectionAxe[DIRECTION_COUNT] = {MELAxeHorizontal, MELAxeHorizontal, MELAxeVertical, MELAxeVertical};
 const MELIntPoint MELDirectionIntPoint[DIRECTION_COUNT] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};

@@ -20,30 +20,30 @@ MELMap * _Nullable MELMapOpen(const char * _Nonnull path) {
         return NULL;
     }
 
+    const int tileSize = MELInputStreamReadInt(&inputStream);
+
     MELMap *self = playdate->system->realloc(NULL, sizeof(MELMap));
     MELMap map = {
-        .tileSize = MELIntSizeMake(32, 32),
+        .tileSize = MELIntSizeMake(tileSize, tileSize),
         .grounds = MELLayerRefListEmpty,
         .instances = MELSpriteInstanceListEmpty
     };
-    map.size = MELIntSizeMake(MELInputStreamReadInt(&inputStream), MELInputStreamReadInt(&inputStream));
+    map.size = MELInputStreamReadIntSize(&inputStream);
     map.paletteName = MELInputStreamReadShort(&inputStream);
-    map.water = MELIntRectangleMake(MELInputStreamReadInt(&inputStream), MELInputStreamReadInt(&inputStream), MELInputStreamReadInt(&inputStream), MELInputStreamReadInt(&inputStream));
+    map.water = MELInputStreamReadIntRectangle(&inputStream);
     map.layerCount = MELInputStreamReadInt(&inputStream);
     map.layers = playdate->system->realloc(NULL, sizeof(MELLayer) * map.layerCount);
     for (int layerIndex = 0; layerIndex < map.layerCount; layerIndex++) {
-        MELLayer layer;
+        MELLayer layer = (MELLayer) {};
         layer.parent = self;
-        layer.frame = MELIntRectangleMake(MELInputStreamReadInt(&inputStream),
-                                          MELInputStreamReadInt(&inputStream),
-                                          MELInputStreamReadInt(&inputStream),
-                                          MELInputStreamReadInt(&inputStream));
-        layer.scrollRate = MELPointMake(MELInputStreamReadFloat(&inputStream),
-                                        MELInputStreamReadFloat(&inputStream));
+        layer.frame = MELInputStreamReadIntRectangle(&inputStream);
+        layer.scrollRate = MELInputStreamReadPoint(&inputStream);
         layer.isGround = MELInputStreamReadBoolean(&inputStream);
         layer.tileCount = layer.frame.size.width * layer.frame.size.height;
-        layer.tiles = playdate->system->realloc(NULL, sizeof(uint16_t) * layer.tileCount);
-        MELInputStreamRead(&inputStream, layer.tiles, sizeof(uint16_t) * layer.tileCount);
+        if (layer.tileCount > 0) {
+            layer.tiles = playdate->system->realloc(NULL, sizeof(uint16_t) * layer.tileCount);
+            MELInputStreamRead(&inputStream, layer.tiles, sizeof(uint16_t) * layer.tileCount);
+        }
         map.layers[layerIndex] = layer;
 
         if (layer.isGround) {
@@ -83,14 +83,15 @@ void MELMapDealloc(MELMap * _Nonnull self) {
 }
 
 void MELMapReadHeader(MELMap * _Nonnull self, MELInputStream * _Nonnull inputStream) {
+    const int tileSize = MELInputStreamReadInt(inputStream);
     MELMap map = {
-        .tileSize = MELIntSizeMake(32, 32),
+        .tileSize = MELIntSizeMake(tileSize, tileSize),
         .grounds = MELLayerRefListEmpty,
         .instances = MELSpriteInstanceListEmpty
     };
-    map.size = MELIntSizeMake(MELInputStreamReadInt(inputStream), MELInputStreamReadInt(inputStream));
+    map.size = MELInputStreamReadIntSize(inputStream);
     map.paletteName = MELInputStreamReadShort(inputStream);
-    map.water = MELIntRectangleMake(MELInputStreamReadInt(inputStream), MELInputStreamReadInt(inputStream), MELInputStreamReadInt(inputStream), MELInputStreamReadInt(inputStream));
+    map.water = MELInputStreamReadIntRectangle(inputStream);
     map.layerCount = MELInputStreamReadInt(inputStream);
     map.layers = playdate->system->realloc(NULL, sizeof(MELLayer) * map.layerCount);
     *self = map;
@@ -99,12 +100,8 @@ void MELMapReadHeader(MELMap * _Nonnull self, MELInputStream * _Nonnull inputStr
 void MELMapReadLayer(MELMap * _Nonnull self, MELInputStream * _Nonnull inputStream, int layerIndex) {
     MELLayer layer;
     layer.parent = self;
-    layer.frame = MELIntRectangleMake(MELInputStreamReadInt(inputStream),
-                                      MELInputStreamReadInt(inputStream),
-                                      MELInputStreamReadInt(inputStream),
-                                      MELInputStreamReadInt(inputStream));
-    layer.scrollRate = MELPointMake(MELInputStreamReadFloat(inputStream),
-                                    MELInputStreamReadFloat(inputStream));
+    layer.frame = MELInputStreamReadIntRectangle(inputStream);
+    layer.scrollRate = MELInputStreamReadPoint(inputStream);
     layer.isGround = MELInputStreamReadBoolean(inputStream);
     layer.tileCount = layer.frame.size.width * layer.frame.size.height;
     layer.tiles = playdate->system->realloc(NULL, sizeof(uint16_t) * layer.tileCount);

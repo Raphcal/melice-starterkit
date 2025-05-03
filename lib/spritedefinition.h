@@ -40,4 +40,6 @@ MELAnimationDefinition * _Nullable MELSpriteDefinitionGetAnimationDefinition(MEL
 
 MELAnimation * _Nullable MELSpriteDefinitionGetAnimation(MELSpriteDefinition self, unsigned int animationName, MELAnimationDirection direction);
 
+void MELSpriteDefinitionFreePalette(MELSpriteDefinition * _Nonnull self);
+
 #endif /* constspritedefinition_h */

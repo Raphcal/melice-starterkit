@@ -11,16 +11,20 @@
 /**
  * Start time shared by every instance of MELSynchronizedLoopingAnimation.
  */
-unsigned int MELSynchronizedLoopingAnimationReferenceDate = 0;
+static unsigned int referenceDate = 0;
+
+void MELSynchronizedLoopingAnimationReset(void) {
+    referenceDate = 0;
+}
 
 static void MELSynchronizedLoopingAnimationStart(MELAnimation * _Nonnull self) {
-    if (MELSynchronizedLoopingAnimationReferenceDate == 0) {
-        MELSynchronizedLoopingAnimationReferenceDate = playdate->system->getCurrentTimeMilliseconds();
+    if (referenceDate == 0) {
+        referenceDate = playdate->system->getCurrentTimeMilliseconds();
     }
 }
 
 static void MELSynchronizedLoopingAnimationUpdate(MELAnimation * _Nonnull self, MELTimeInterval timeSinceLastUpdate) {
-    const MELTimeInterval timeSinceStart = (playdate->system->getCurrentTimeMilliseconds() - MELSynchronizedLoopingAnimationReferenceDate) / 1000.0f;
+    const MELTimeInterval timeSinceStart = (playdate->system->getCurrentTimeMilliseconds() - referenceDate) / 1000.0f;
     const MELTimeInterval framesPerSecond = MELAnimationFramesPerSecond((MELAnimation *)self);
     MELAnimationSetFrameIndex(self, (int)(timeSinceStart * framesPerSecond) % self->definition->frameCount);
 }

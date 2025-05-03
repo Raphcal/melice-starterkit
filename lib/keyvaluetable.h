@@ -39,11 +39,9 @@ MELListDefine(K##V##TableBucket);\
 \
 extern const K##V##Table K##V##TableEmpty;\
 void K##V##TableDeinit(K##V##Table * _Nonnull self);\
-void K##V##TableClear(K##V##Table * _Nonnull self);\
 void K##V##TablePut(K##V##Table * _Nonnull self, K key, V value);\
 MELBoolean K##V##TablePutAndGetOldValue(K##V##Table * _Nonnull self, K key, V value, V * _Nullable oldValue);\
 MELBoolean K##V##TableGet(K##V##Table self, K key, V * _Nonnull value);\
-MELBoolean K##V##TableContains(K##V##Table self, K key);\
 void K##V##TableRemove(K##V##Table * _Nonnull self, K key);\
 MELBoolean K##V##TableRemoveAndGetOldValue(K##V##Table * _Nonnull self, K key, V * _Nullable oldValue);\
 K##V##TableEntryList K##V##TableEntries(K##V##Table * _Nonnull self);
@@ -63,14 +61,6 @@ void K##V##TableDeinit(K##V##Table * _Nonnull self) {\
         }\
     }\
     K##V##TableBucketListDeinit(&self->buckets);\
-    self->count = 0;\
-}\
-\
-void K##V##TableClear(K##V##Table * _Nonnull self) {\
-    MELList(K##V##TableBucket) buckets = self->buckets;\
-    for (unsigned int bucketIndex = 0; bucketIndex < buckets.capacity; bucketIndex++) {\
-        buckets.memory[bucketIndex].entries.count = 0;\
-    }\
     self->count = 0;\
 }\
 \
@@ -147,21 +137,6 @@ MELBoolean K##V##TableGet(K##V##Table self, K key, V * _Nonnull value) {\
         K##V##TableEntry entry = bucket.entries.memory[entryIndex];\
         if (entry.key == key) {\
             *value = entry.value;\
-            return true;\
-        }\
-    }\
-    return false;\
-}\
-\
-MELBoolean K##V##TableContains(K##V##Table self, K key) {\
-    if (self.buckets.memory == 0 || self.buckets.memory == NULL) {\
-        return false;\
-    }\
-    unsigned int bucketIndex = key % self.buckets.capacity;\
-    K##V##TableBucket bucket = self.buckets.memory[bucketIndex];\
-    for (unsigned int entryIndex = 0; entryIndex < bucket.entries.count; entryIndex++) {\
-        K##V##TableEntry entry = bucket.entries.memory[entryIndex];\
-        if (entry.key == key) {\
             return true;\
         }\
     }\

@@ -7,9 +7,9 @@
 #include "maps.h"
 #include "../lib/bitmap.h"
 
-const int kMapNameCount = 2;
+const int kMapNameCount = 1;
 
-const char * _Nonnull kMapNameFileNames[2] = {
+const char * _Nonnull kMapNameFileNames[1] = {
     "maps/map-title.data",
 };
 LCDBitmap * _Nullable loadMapLayer(MapName mapName, unsigned int layer) {

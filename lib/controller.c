@@ -19,18 +19,6 @@ MELController MELControllerMake(void) {
         .pressingA = current & kButtonA,
         .pressingB = current & kButtonB,
     };
-#if MEL_ORIENTATION_VERTICAL && !TARGET_SIMULATOR
-    if (current & kButtonLeft) {
-        self.axe.y = -1.0f;
-    } else if (current & kButtonRight) {
-        self.axe.y = 1.0f;
-    }
-    if (current & kButtonUp) {
-        self.axe.x = 1.0f;
-    } else if (current & kButtonDown) {
-        self.axe.x = -1.0f;
-    }
-#else    
     if (current & kButtonLeft) {
         self.axe.x = -1.0f;
     } else if (current & kButtonRight) {
@@ -41,6 +29,5 @@ MELController MELControllerMake(void) {
     } else if (current & kButtonDown) {
         self.axe.y = 1.0f;
     }
-#endif
     return self;
 }

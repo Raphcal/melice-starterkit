@@ -107,6 +107,10 @@ GLfloat MELEaseInOut(GLfloat from, GLfloat to, GLfloat value) {
     return MELFloatSquare(sinf(MEL_PI / 2 * MELProgress(from, to, value)));
 }
 
+float MELEaseInOutInverse(float x) {
+    return (2.0f / MEL_PI) * asinf(sqrtf(x));
+}
+
 GLfloat MELEaseIn(GLfloat from, GLfloat to, GLfloat value) {
     return MELFloatSquare(MELProgress(from, to, value));
 }
@@ -116,6 +120,16 @@ GLfloat MELEaseInBack(GLfloat from, GLfloat to, GLfloat value) {
     const float c1 = 1.70158f;
     const float c3 = c1 + 1.0f;
     return c3 * x * x * x - c1 * x * x;
+}
+
+GLfloat MELEaseInElastic(GLfloat from, GLfloat to, GLfloat value) {
+    const float x = MELProgress(from, to, value);
+    const float c4 = (2.0f * MEL_PI) / 3.0f;
+    return x == 0.0f
+      ? 0.0f
+      : x == 1.0f
+      ? 1.0f
+      : -powf(2.0f, 10.0f * x - 10.0f) * sinf((x * 10.0f - 0.75f) * c4);
 }
 
 GLfloat MELEaseOut(GLfloat from, GLfloat to, GLfloat value) {
@@ -141,6 +155,25 @@ GLfloat MELEaseOutElastic(GLfloat from, GLfloat to, GLfloat value) {
       : x == 1.0f
       ? 1.0f
       : powf(2.0f, -10.0f * x) * sinf((x * 10.0f - 0.75f) * c4) + 1.0f;
+}
+
+float MELEaseOutBounce(float from, float to, float value) {
+    float x = MELProgress(from, to, value);
+    const float n1 = 7.5625f;
+    const float d1 = 2.75f;
+
+    if (x < 1.0f / d1) {
+        return n1 * x * x;
+    } else if (x < 2.0f / d1) {
+        x -= 1.5f / d1;
+        return n1 * x * x + 0.75f;
+    } else if (x < 2.5f / d1) {
+        x -= 2.25f / d1;
+        return n1 * x * x + 0.9375f;
+    } else {
+        x -= 2.625f / d1;
+        return n1 * x * x + 0.984375f;
+    }
 }
 
 float MELEaseOutCirc(float from, float to, float value) {

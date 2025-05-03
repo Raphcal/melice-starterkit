@@ -181,4 +181,7 @@ MELBoolean MELIntRectangleIntersectsWithRectangle(const MELIntRectangle self, co
 
 MELBoolean MELIntRectangleOriginIsTopLeftGetIntersection(const MELIntRectangle self, const MELIntRectangle other, MELIntRectangle * _Nonnull intersection);
 
+MELBoolean MELRectangleOriginIsTopLeftContainsRectangle(MELRectangle self, MELRectangle other);
+MELBoolean MELIntRectangleOriginIsTopLeftContainsRectangle(MELIntRectangle self, MELIntRectangle other);
+
 #endif /* rectangle_h */

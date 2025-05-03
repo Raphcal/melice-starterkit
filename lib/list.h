@@ -63,16 +63,6 @@ int type##ListRemoveSwapEntry(type##List * _Nonnull self, type entry);
 void type##RefListSave(type##RefList self, MELOutputStream * _Nonnull outputStream);\
 type##RefList type##RefListLoad(MELInputStream * _Nonnull inputStream);
 
-#define MELListDefineCircular(type) /** List of type */ typedef struct mellist_##type##_circular { \
-    type##List super;\
-    unsigned int start;\
-} type##ListCircular;\
-\
-type##ListCircular type##ListCircularMake(unsigned int capacity);\
-void type##ListCircularInit(type##ListCircular * _Nonnull self, unsigned int capacity);\
-type type##ListCircularGet(type##ListCircular self, unsigned int index);\
-void type##ListCircularPush(type##ListCircular * _Nonnull self, type element);
-
 #pragma mark - Implementation
 
 #define MELListImplement(type) const type##List type##ListEmpty = { NULL, 0, 0 };\
@@ -268,30 +258,6 @@ type##RefList type##RefListLoad(MELInputStream * _Nonnull inputStream) {\
         self.memory[index] = type##Load(inputStream);\
     }\
     return self;\
-}
-
-#define MELListImplementCircular(type) \
-type##ListCircular type##ListCircularMake(unsigned int capacity) {\
-    type##ListCircular self = {\
-        .super = type##ListMakeWithInitialCapacity(capacity),\
-    };\
-    return self;\
-}\
-void type##ListCircularInit(type##ListCircular * _Nonnull self, unsigned int capacity) {\
-    type##ListEnsureCapacity(&self->super, capacity);\
-    self->start = 0;\
-}\
-type type##ListCircularGet(type##ListCircular self, unsigned int index) {\
-    return self.super.memory[(self.start + index) % self.super.capacity];\
-}\
-void type##ListCircularPush(type##ListCircular * _Nonnull self, type element) {\
-    const int index = (self->start + self->super.count) % self->super.capacity;\
-    self->super.memory[index] = element;\
-    if (self->super.count < self->super.capacity) {\
-        self->super.count++;\
-    } else {\
-        self->start = (self->start + 1) % self->super.capacity;\
-    }\
 }
 
 #endif /* list_h */

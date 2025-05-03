@@ -25,6 +25,8 @@ typedef enum meldirection {
 extern const GLfloat MELDirectionValues[DIRECTION_COUNT];
 extern const GLfloat MELDirectionAngles[DIRECTION_COUNT];
 extern const MELDirection MELDirectionReverses[DIRECTION_COUNT];
+extern const MELDirection MELDirectionCircle[DIRECTION_COUNT];
+extern const uint8_t MELDirectionCircleIndex[DIRECTION_COUNT];
 extern const LCDBitmapFlip MELDirectionFlip[DIRECTION_COUNT];
 extern const MELAxe MELDirectionAxe[DIRECTION_COUNT];
 extern const MELIntPoint MELDirectionIntPoint[DIRECTION_COUNT];

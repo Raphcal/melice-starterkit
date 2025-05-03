@@ -10,6 +10,7 @@
 
 #include "map.h"
 #include "../gen/spritevariables.h"
+#include "sprite.h"
 
 MELListImplement(MELSpriteInstance);
 
@@ -41,6 +42,11 @@ void MELSpriteInstanceDeinit(MELSpriteInstance * _Nonnull self) {
     if (self->variables) {
         playdate->system->realloc(self->variables, 0);
         self->variables = NULL;
+    }
+    if (self->sprite) {
+        MELSprite *sprite = playdate->sprite->getUserdata(self->sprite);
+        sprite->instance = NULL;
+        self->sprite = NULL;
     }
     self->variableCount = 0;
 }

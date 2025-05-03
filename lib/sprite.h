@@ -28,15 +28,20 @@ typedef struct mellayer MELLayer;
 typedef struct melspriteclass {
     SpriteClassName name;
     void (* _Nonnull destroy)(LCDSprite * _Nonnull self);
+    void (* _Nullable update)(LCDSprite * _Nonnull self);
     void (* _Nullable collidesWithPlayer)(LCDSprite * _Nonnull self, LCDSprite * _Nonnull player);
-    /// Demande au sprite de se retirer pour laisser place à la prochaine vague.
-    void (* _Nullable withdraw)(LCDSprite * _Nonnull self);
 
     void (* _Nullable save)(MELSprite * _Nonnull self, MELOutputStream * _Nonnull outputStream);
     MELSprite * _Nullable (* _Nullable load)(MELSpriteDefinition * _Nonnull definition, LCDSprite * _Nonnull sprite, MELInputStream * _Nonnull inputStream);
 } MELSpriteClass;
 
 extern const MELSpriteClass MELSpriteClassDefault;
+
+typedef enum {
+    MELSpritePositionFixedX = 1,
+    MELSpritePositionFixedY = 2,
+    MELSpritePositionFixedBoth = 3,
+} MELSpritePositionFixed;
 
 typedef struct melsprite {
     const MELSpriteClass * _Nonnull class;
@@ -49,14 +54,13 @@ typedef struct melsprite {
     MELDirection direction;
     MELHitbox * _Nullable hitbox;
 
-    int hitPoints;
-    int score;
-
     // Lien avec le SpriteLoader
     MELSpriteInstance * _Nullable instance;
+    void * _Nullable userdata;
+    MELBoolean autoReleaseUserdata;
 
-    MELTimeInterval hitTimer;
-    LCDBitmapDrawMode drawMode;
+    // Permet de fixer la position x ou y par rapport à la caméra.
+    MELSpritePositionFixed fixed;
 } MELSprite;
 
 /**
@@ -64,7 +68,7 @@ typedef struct melsprite {
  *
  * Toutes les valeurs de `self` seront écrasées. Pour définir une classe, il faudra modifier `self->class` après l'appel à cette méthode.
  *
- * Aucune méthode de mise à jour n'est définie, vous devez en définir une vous-même sur l'objet `LCDSprite` retourné.
+ * @note Aucune méthode de mise à jour n'est définie, vous devez en définir une vous-même sur l'objet `LCDSprite` retourné.
  *
  * @param self Instance de `MELSprite` ou d'un descendant à initialiser.
  * @param definition Pointeur sur la définition du sprite.
@@ -88,6 +92,8 @@ LCDSprite * _Nonnull MELSpriteInit(MELSprite * _Nonnull self, MELSpriteDefinitio
  */
 LCDSprite * _Nonnull MELSpriteInitWithCenter(MELSprite * _Nonnull self, MELSpriteDefinition * _Nonnull definition, MELPoint center);
 
+LCDSprite * _Nonnull MELSpriteInitHiddenWithUpdate(MELSprite * _Nonnull self, void (* _Nullable update)(LCDSprite * _Nonnull));
+
 /**
  * Désalloue l'instance de `MELSprite` positionnée en `userdata` du `LCDSprite` donné et supprime le `LCDSprite`.
  *
@@ -102,20 +108,26 @@ void MELSpriteUpdate(LCDSprite * _Nonnull sprite);
 void MELSpriteUpdateDisappearing(LCDSprite * _Nonnull sprite);
 
 void MELSpriteDraw(MELSprite * _Nonnull self, LCDSprite * _Nonnull sprite);
-void MELSpriteChangeDrawModeWhenHit(MELSprite * _Nonnull self, LCDSprite * _Nonnull sprite);
 
 void MELSpriteSave(LCDSprite * _Nonnull sprite, MELOutputStream * _Nonnull outputStream);
 LCDSprite * _Nullable MELSpriteLoad(MELInputStream * _Nonnull inputStream);
 
 void MELSpriteSetAnimation(MELSprite * _Nonnull self, AnimationName animationName);
+void MELSpriteSetAnimationAndDirection(MELSprite * _Nonnull self, AnimationName animationName, MELAnimationDirection direction);
 
 void MELSpriteSetLeft(MELSprite * _Nonnull self, float left);
 void MELSpriteSetRight(MELSprite * _Nonnull self, float right);
+void MELSpriteMoveBy(MELSprite * _Nonnull self, MELPoint translation);
+
+void MELSpriteSetPositionFixed(MELSprite * _Nonnull self, MELSpritePositionFixed fixed);
 
 void MELSpriteMakeDisappear(LCDSprite * _Nonnull sprite);
 
 MELBoolean MELSpriteIsLookingToward(MELSprite * _Nonnull self, MELPoint point);
 
-void MELSpriteMoveTo(LCDSprite * _Nonnull sprite, float x, float y);
+MELRectangle LCDSpriteGetFrame(LCDSprite * _Nonnull sprite);
+void LCDSpriteMoveBy(LCDSprite * _Nonnull sprite, MELPoint translation);
+void LCDSpriteSetClass(LCDSprite * _Nonnull sprite, const MELSpriteClass * _Nonnull class);
+void LCDSpriteSetPositionFixed(LCDSprite * _Nonnull sprite, MELSpritePositionFixed fixed);
 
 #endif /* sprite_h */

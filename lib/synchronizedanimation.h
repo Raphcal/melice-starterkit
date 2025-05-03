@@ -20,5 +20,6 @@
 extern const MELAnimationClass MELSynchronizedLoopingAnimationClass;
 
 MELAnimation * _Nonnull MELSynchronizedLoopingAnimationAlloc(MELAnimationDefinition * _Nonnull definition);
+void MELSynchronizedLoopingAnimationReset(void);
 
 #endif /* synchronizedanimation_h */

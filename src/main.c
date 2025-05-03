@@ -6,7 +6,7 @@
 //
 
 #include "common.h"
-
+#include "../lib/melice.h"
 
 PlaydateAPI * _Nullable playdate;
 LCDFont * _Nullable roobertFont;

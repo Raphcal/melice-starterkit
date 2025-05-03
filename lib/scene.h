@@ -20,10 +20,11 @@ typedef struct melscene MELScene;
 
 typedef enum {
     SceneTypeTitle,
-    SceneTypeCharacterSelect,
-    SceneTypeStory,
     SceneTypeGame,
-    SceneTypeScoreEntry,
+    SceneTypeScore,
+    SceneTypeOnlineMenu,
+    SceneTypeFade,
+    SceneTypeDialog,
 } SceneType;
 
 typedef struct melscene {
@@ -34,6 +35,12 @@ typedef struct melscene {
     void (* _Nullable save)(MELScene * _Nonnull self, MELOutputStream * _Nonnull outputStream);
     LCDSpriteRefList sprites;
 } MELScene;
+
+typedef struct melfade {
+    MELScene super;
+    MELScene * _Nullable oldScene;
+    MELScene * _Nullable nextScene;
+} MELFade;
 
 extern MELScene * _Nullable currentScene;
 
@@ -46,7 +53,8 @@ void MELSceneMakeCurrent(MELScene * _Nonnull self);
 void MELSceneAddOrRemoveBackToTitleMenuItem(void);
 LCDSprite * _Nullable MELSceneFindSpriteByName(SpriteName spriteName);
 LCDSprite * _Nullable MELSceneFindSpriteByClassName(SpriteClassName className);
+LCDSprite * _Nullable MELSceneFindSpriteByTag(const uint8_t tag);
 
-unsigned int MELSceneFindSpritesByName(SpriteName spriteName, LCDSprite * _Nonnull * _Nonnull result, int max);
+void MELSceneFadeTo(MELScene * _Nonnull nextScene, MELScene * _Nonnull (* _Nonnull fadeConstructor)(MELScene * _Nonnull oldScene, MELScene * _Nonnull nextScene));
 
 #endif /* scene_h */

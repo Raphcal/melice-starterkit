@@ -10,6 +10,15 @@
 
 #include "../src/common.h"
 
+void MELPlayOnceAnimationSkip(MELAnimation * _Nullable animation) {
+    if (animation == NULL || animation->class != &MELPlayOnceAnimationClass) {
+        playdate->system->logToConsole("Unable to skip given animation because it is either null or not an instance of MELPlayOneAnimation");
+        return;
+    }
+    MELPlayOnceAnimation *self = (MELPlayOnceAnimation *)animation;
+    self->startDate = 0;
+}
+
 static void MELPlayOnceAnimationStart(MELPlayOnceAnimation * _Nonnull self) {
     MELAnimationSetFrameIndex(&self->super, 0);
     self->startDate = playdate->system->getCurrentTimeMilliseconds();

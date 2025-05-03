@@ -12,7 +12,6 @@
 #include "../lib/melstd.h"
 
 #define MEL_ORIENTATION_VERTICAL false
-#include "../lib/melice.h"
 
 #define VERSION_NUMBER "1.0.0"
 

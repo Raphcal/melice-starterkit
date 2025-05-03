@@ -259,7 +259,7 @@ static void drawKeyboard(MELKeyboard * _Nonnull self) {
     }
 
 
-    gfx.setDrawMode(kDrawModeNXOR);    
+    gfx.setDrawMode(kDrawModeNXOR);
 
 
     // menu column
@@ -280,7 +280,7 @@ static void drawKeyboard(MELKeyboard * _Nonnull self) {
         gfx.setDrawMode(kDrawModeCopy);
         gfx.fillRect(x, 0, w, LCD_ROWS, kColorBlack);
         gfx.setDrawMode(kDrawModeNXOR);
-        
+
         if (selectedColumn == kColumnMenu) {
             selectedRect.origin.x = x;
             fillRoundRect(selectedRect, kColorWhite);
@@ -296,7 +296,6 @@ static void drawKeyboard(MELKeyboard * _Nonnull self) {
     }
     
     // letter/symbol columns
-    const int fontHeight = playdate->graphics->getFontHeight(keyboardFont);
 
     playdate->graphics->setFont(keyboardFont);
     for (unsigned int index = 0; index < kColumnMenu; index++) {
@@ -336,7 +335,7 @@ static void drawKeyboard(MELKeyboard * _Nonnull self) {
 
         // letters above
         int j = 0;
-        while (y2 + rowHeight + yOffset > fontHeight) {
+        while (y2 + rowHeight + yOffset > 0) {
             j += 1;
             y2 -= rowHeight;
             cy = y2 + 4 + yOffset;
@@ -354,7 +353,6 @@ static void drawKeyboard(MELKeyboard * _Nonnull self) {
             
             glyph = charColumn[(selectedIndex + j) % (columnCounts[index])];
             playdate->graphics->drawText(&glyph, 1, kASCIIEncoding, cx, cy);
-            
         }
     }
 }
@@ -395,8 +393,13 @@ static void cancelAction(MELKeyboard * _Nonnull self) {
 
 
 static void addLetter(MELKeyboard * _Nonnull self, char newLetter) {
-    const char lastLetter = self->text.count > 0
-        ? self->text.memory[self->text.count - 1]
+    const unsigned int count = self->text.count;
+    if (self->maximumLength && count == self->maximumLength) {
+        // Plus de place.
+        return;
+    }
+    const char lastLetter = count > 0
+        ? self->text.memory[count - 1]
         : '_';
     MELCharListPush(&self->text, newLetter);
     if (self->textChangedCallback) {
@@ -494,7 +497,7 @@ static void updateAnimation(MELKeyboard * _Nonnull self) {
                 // reset main update function
                 playdate->system->setUpdateCallback(currentScene->update, currentScene);
                 if (self->didHideCallback) {
-                    self->didHideCallback(self->didShowCallbackUserdata);
+                    self->didHideCallback(self->didHideCallbackUserdata);
                 }
                 self->text.count = 0;
                 break;
@@ -948,6 +951,12 @@ void MELKeyboardGetText(MELKeyboard * _Nonnull self, char * _Nonnull * _Nullable
     if (count != NULL) {
         *count = charCount;
     }
+}
+
+void MELKeyboardFillBufferWithText(MELKeyboard * _Nonnull self, char * _Nonnull buffer, int length) {
+    const unsigned int charCount = MELUInt32Min(self->text.count, length - 1);
+    memcpy((void *)buffer, self->text.memory, charCount * sizeof(char));
+    buffer[charCount] = '\0';
 }
 
 float MELKeyboardGetAnimationProgress(MELKeyboard * _Nonnull self) {

@@ -193,3 +193,27 @@ MELBoolean MELIntRectangleIntersectsWithRectangle(const MELIntRectangle self, co
     const MELBoolean y = abs(self.origin.y - other.origin.y) <= (self.size.height + other.size.height) / 2;
     return x && y;
 }
+
+MELBoolean MELRectangleOriginIsTopLeftContainsRectangle(MELRectangle self, MELRectangle other) {
+    return
+    // Gauche
+    other.origin.x >= self.origin.x
+    // Droite
+    && (other.origin.x + other.size.width <= self.origin.x + self.size.width)
+    // Haut
+    && other.origin.y >= self.origin.y
+    // Droite
+    && (other.origin.y + other.size.height <= self.origin.y + self.size.height);
+}
+
+MELBoolean MELIntRectangleOriginIsTopLeftContainsRectangle(MELIntRectangle self, MELIntRectangle other) {
+    return
+    // Gauche
+    other.origin.x >= self.origin.x
+    // Droite
+    && (other.origin.x + other.size.width <= self.origin.x + self.size.width)
+    // Haut
+    && other.origin.y >= self.origin.y
+    // Droite
+    && (other.origin.y + other.size.height <= self.origin.y + self.size.height);
+}
