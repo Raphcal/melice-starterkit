@@ -1,0 +1,7 @@
+name=melice-starterkit
+author=Raphael Calabro
+description=Starter Kit
+bundleID=fr.rca.melice.staterkit
+imagePath=/
+version=1.0.0
+buildNumber=1

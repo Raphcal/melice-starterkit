@@ -1,0 +1,10 @@
+.DS_Store
+xcuserdata/
+.vscode/
+nbproject/
+*.pdx/
+build/
+*.bin
+*.dylib
+Source/pdex.*
+*.pdx.zip
