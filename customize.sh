@@ -7,4 +7,7 @@ for file in Makefile; do
     sed -i "s/RenameMe/$1/g" $DIR/$file
 done
 
+rm -rf $DIR/.git
 rm $DIR/customize.sh
+git init
+

@@ -11,6 +11,7 @@
 #include "pd_api.h"
 #include "../lib/melstd.h"
 
+// FIXME: Restaurer le fonctionnement
 #define MEL_ORIENTATION_VERTICAL false
 
 #define VERSION_NUMBER "1.0.0"

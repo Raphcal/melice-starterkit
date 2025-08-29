@@ -8,6 +8,8 @@
 #include "common.h"
 #include "../lib/melice.h"
 
+#include "titlescene.h"
+
 PlaydateAPI * _Nullable playdate;
 LCDFont * _Nullable roobertFont;
 
@@ -21,11 +23,13 @@ void setRefreshRate(const int refreshRate) {
 
 static void init(void) {
     playdate->graphics->setBackgroundColor(kColorWhite);
-    // TODO: MELSceneMakeCurrent de la scène de titre
+
+    TitleScene *titleScene = TitleSceneAlloc();
+    MELSceneMakeCurrent(&titleScene->super);
 }
 
 static void loadFonts(void) {
-    roobertFont = LCDFontLoadOrError("fonts/font-roobert");
+    roobertFont = LCDFontLoadOrError("fonts/Roobert-10-Bold");
 }
 
 #ifdef _WINDLL
