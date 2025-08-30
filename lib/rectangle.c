@@ -217,3 +217,42 @@ MELBoolean MELIntRectangleOriginIsTopLeftContainsRectangle(MELIntRectangle self,
     // Droite
     && (other.origin.y + other.size.height <= self.origin.y + self.size.height);
 }
+
+static float locationBetweenPoints(float a1, float a2, float b1, float b2, float value) {
+    return a1 + (a2 - a1) * (value - b1) / (b2 - b1);
+}
+
+MELBoolean MELRectangleIntersectsWithSegment(const MELRectangle self, const MELSegment segment) {
+    MELPoint segmentLeft, segmentRight, segmentTop, segmentBottom;
+    if (segment.from.x < segment.to.x) {
+        segmentLeft = segment.from;
+        segmentRight = segment.to;
+    } else {
+        segmentLeft = segment.to;
+        segmentRight = segment.from;
+    }
+    if (segment.from.y < segment.to.y) {
+        segmentTop = segment.from;
+        segmentBottom = segment.to;
+    } else {
+        segmentTop = segment.to;
+        segmentBottom = segment.from;
+    }
+    const float top = MELRectangleOriginIsCenterGetTop(self);
+    const float bottom = MELRectangleOriginIsCenterGetBottom(self);
+    const float left = MELRectangleOriginIsCenterGetLeft(self);
+    const float right = MELRectangleOriginIsCenterGetRight(self);
+
+    const float xOnRectangleTop = locationBetweenPoints(segmentLeft.x, segmentRight.x, segmentLeft.y, segmentRight.y, top);
+    const float xOnRectangleBottom = locationBetweenPoints(segmentLeft.x, segmentRight.x, segmentLeft.y, segmentRight.y, bottom);
+    
+    const float yOnRectangleLeft = locationBetweenPoints(segmentTop.y, segmentBottom.y, segmentTop.x, segmentBottom.x, left);
+    const float yOnRectangleRight = locationBetweenPoints(segmentTop.y, segmentBottom.y, segmentTop.x, segmentBottom.x, right);
+
+    // NOTE: Pour les dessins, simplement dessiner le triangle en transparent :)
+
+    return (xOnRectangleTop >= left && xOnRectangleTop <= right)
+    || (xOnRectangleBottom >= left && xOnRectangleBottom <= right)
+    || (yOnRectangleLeft >= top && yOnRectangleLeft <= bottom)
+    || (yOnRectangleRight >= top && yOnRectangleRight <= bottom);
+}

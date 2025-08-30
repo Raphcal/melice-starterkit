@@ -13,6 +13,7 @@
 
 #include "point.h"
 #include "size.h"
+#include "segment.h"
 
 typedef struct melquadrilateral MELQuadrilateral;
 
@@ -183,5 +184,7 @@ MELBoolean MELIntRectangleOriginIsTopLeftGetIntersection(const MELIntRectangle s
 
 MELBoolean MELRectangleOriginIsTopLeftContainsRectangle(MELRectangle self, MELRectangle other);
 MELBoolean MELIntRectangleOriginIsTopLeftContainsRectangle(MELIntRectangle self, MELIntRectangle other);
+
+MELBoolean MELRectangleIntersectsWithSegment(const MELRectangle self, const MELSegment segment);
 
 #endif /* rectangle_h */

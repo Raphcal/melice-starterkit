@@ -12,6 +12,8 @@
 #include "quadrilateral.h"
 #include "rectangle.h"
 #include "size.h"
+#include "polar.h"
+#include "segment.h"
 #include "controller.h"
 #include "base64.h"
 #include "crank.h"

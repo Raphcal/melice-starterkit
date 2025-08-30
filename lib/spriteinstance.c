@@ -31,7 +31,9 @@ MELSpriteInstance MELSpriteInstanceMakeWithInputStream(MELInputStream * _Nonnull
     MELSpriteInstance instance = {};
     instance.name = (SpriteName) MELInputStreamReadUInt16(inputStream);
     instance.direction = (MELDirection) MELInputStreamReadByte(inputStream);
-    instance.center = MELPointMake(MELInputStreamReadInt(inputStream), MELInputStreamReadInt(inputStream));
+    const int x = MELInputStreamReadInt(inputStream);
+    const int y = MELInputStreamReadInt(inputStream);
+    instance.center = MELPointMake(x, y);
     instance.zIndex = MELInputStreamReadByte(inputStream) & 0xFF;
     instance.isUnique = MELInputStreamReadBoolean(inputStream);
     instance.variables = MELInputStreamReadIntArray(inputStream, &instance.variableCount);

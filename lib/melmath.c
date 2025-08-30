@@ -115,6 +115,11 @@ GLfloat MELEaseIn(GLfloat from, GLfloat to, GLfloat value) {
     return MELFloatSquare(MELProgress(from, to, value));
 }
 
+GLfloat MELEaseInCubic(GLfloat from, GLfloat to, GLfloat value) {
+    const float x = MELProgress(from, to, value);
+    return x * x * x;
+}
+
 GLfloat MELEaseInBack(GLfloat from, GLfloat to, GLfloat value) {
     const float x = MELProgress(from, to, value);
     const float c1 = 1.70158f;
@@ -179,4 +184,8 @@ float MELEaseOutBounce(float from, float to, float value) {
 float MELEaseOutCirc(float from, float to, float value) {
     const float x = MELProgress(from, to, value);
     return sqrtf(1 - (x - 1) * (x - 1));
+}
+
+MELBoolean MELFloatEquals(float lhs, float rhs) {
+    return fabsf(lhs - rhs) < 0.1f;
 }

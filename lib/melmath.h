@@ -256,6 +256,8 @@ float MELEaseInOutInverse(float x);
  */
 float MELEaseIn(float from, float to, float value);
 
+float MELEaseInCubic(float from, float to, float value);
+
 /**
  * @brief Computes the ease-in interpolation with overshooting effect.
  *
@@ -311,5 +313,7 @@ float MELEaseOutElastic(float from, float to, float value);
 float MELEaseOutBounce(float from, float to, float value);
 
 float MELEaseOutCirc(float from, float to, float value);
+
+MELBoolean MELFloatEquals(float lhs, float rhs);
 
 #endif /* melmath_h */

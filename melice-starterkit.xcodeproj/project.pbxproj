@@ -108,10 +108,111 @@
 		649E14502E624E4A00584F64 /* titlescene.c in Sources */ = {isa = PBXBuildFile; fileRef = 649E144E2E624E4A00584F64 /* titlescene.c */; };
 		649E146D2E624F4D00584F64 /* classes.c in Sources */ = {isa = PBXBuildFile; fileRef = 649E146C2E624F4D00584F64 /* classes.c */; };
 		649E146E2E624F4D00584F64 /* classes.h in Headers */ = {isa = PBXBuildFile; fileRef = 649E146B2E624F4D00584F64 /* classes.h */; };
+		64A70DE22E637FC000961CFF /* animation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC542DC65DA5004DCD0B /* animation.h */; };
+		64A70DE32E637FC000961CFF /* animationdefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC562DC65DA5004DCD0B /* animationdefinition.h */; };
+		64A70DE42E637FC000961CFF /* animationdirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC582DC65DA5004DCD0B /* animationdirection.h */; };
+		64A70DE52E637FC000961CFF /* animationframe.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC5A2DC65DA5004DCD0B /* animationframe.h */; };
+		64A70DE62E637FC000961CFF /* animationtype.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC5C2DC65DA5004DCD0B /* animationtype.h */; };
+		64A70DE72E637FC000961CFF /* loopinganimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC7E2DC65DA5004DCD0B /* loopinganimation.h */; };
+		64A70DE82E637FC000961CFF /* halfloopinganimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC6C2DC65DA5004DCD0B /* halfloopinganimation.h */; };
+		64A70DE92E637FC000961CFF /* noanimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC882DC65DA5004DCD0B /* noanimation.h */; };
+		64A70DEA2E637FC000961CFF /* playonceanimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC902DC65DA5004DCD0B /* playonceanimation.h */; };
+		64A70DEB2E637FC000961CFF /* singleframeanimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489ECA02DC65DA5004DCD0B /* singleframeanimation.h */; };
+		64A70DEC2E637FC000961CFF /* synchronizedanimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489ECB12DC65DA5004DCD0B /* synchronizedanimation.h */; };
+		64A70DED2E637FC000961CFF /* hitbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC702DC65DA5004DCD0B /* hitbox.h */; };
+		64A70DEE2E637FC000961CFF /* hitboxtype.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC722DC65DA5004DCD0B /* hitboxtype.h */; };
+		64A70DEF2E637FC000961CFF /* simplespritehitbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC9E2DC65DA5004DCD0B /* simplespritehitbox.h */; };
+		64A70DF02E637FC000961CFF /* axe.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC5E2DC65DA5004DCD0B /* axe.h */; };
+		64A70DF12E637FC000961CFF /* rectangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC9A2DC65DA5004DCD0B /* rectangle.h */; };
+		64A70DF22E637FC000961CFF /* point.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC922DC65DA5004DCD0B /* point.h */; };
+		64A70DF32E637FC000961CFF /* quadrilateral.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC962DC65DA5004DCD0B /* quadrilateral.h */; };
+		64A70DF42E637FC000961CFF /* size.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489ECA22DC65DA5004DCD0B /* size.h */; };
+		64A70DF52E637FC000961CFF /* classes.h in Headers */ = {isa = PBXBuildFile; fileRef = 649E146B2E624F4D00584F64 /* classes.h */; };
+		64A70DF62E637FC000961CFF /* bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC5F2DC65DA5004DCD0B /* bitmap.h */; };
+		64A70DF72E637FC000961CFF /* inputstream.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC732DC65DA5004DCD0B /* inputstream.h */; };
+		64A70DF82E637FC000961CFF /* outputstream.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC8C2DC65DA5004DCD0B /* outputstream.h */; };
+		64A70DF92E637FC000961CFF /* controller.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC632DC65DA5004DCD0B /* controller.h */; };
+		64A70DFA2E637FC000961CFF /* crank.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC652DC65DA5004DCD0B /* crank.h */; };
+		64A70DFB2E637FC000961CFF /* titlescene.h in Headers */ = {isa = PBXBuildFile; fileRef = 649E144D2E624E4A00584F64 /* titlescene.h */; };
+		64A70DFC2E637FC000961CFF /* keyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC752DC65DA5004DCD0B /* keyboard.h */; };
+		64A70DFD2E637FC000961CFF /* layer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC782DC65DA5004DCD0B /* layer.h */; };
+		64A70DFE2E637FC000961CFF /* map.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC802DC65DA5004DCD0B /* map.h */; };
+		64A70DFF2E637FC000961CFF /* camera.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC612DC65DA5004DCD0B /* camera.h */; };
+		64A70E002E637FC000961CFF /* scene.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC9C2DC65DA5004DCD0B /* scene.h */; };
+		64A70E012E637FC000961CFF /* sprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489ECA42DC65DA5004DCD0B /* sprite.h */; };
+		64A70E022E637FC000961CFF /* spritedefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489ECA62DC65DA5004DCD0B /* spritedefinition.h */; };
+		64A70E032E637FC000961CFF /* spritehitbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489ECA82DC65DA5004DCD0B /* spritehitbox.h */; };
+		64A70E042E637FC000961CFF /* spriteinstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489ECAA2DC65DA5004DCD0B /* spriteinstance.h */; };
+		64A70E052E637FC000961CFF /* spritetype.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489ECAC2DC65DA5004DCD0B /* spritetype.h */; };
+		64A70E062E637FC000961CFF /* statichitbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489ECAD2DC65DA5004DCD0B /* statichitbox.h */; };
+		64A70E072E637FC000961CFF /* subsprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489ECAF2DC65DA5004DCD0B /* subsprite.h */; };
+		64A70E082E637FC000961CFF /* direction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC682DC65DA5004DCD0B /* direction.h */; };
+		64A70E092E637FC000961CFF /* lcdspriteref.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC7A2DC65DA5004DCD0B /* lcdspriteref.h */; };
+		64A70E0A2E637FC000961CFF /* platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC8E2DC65DA5004DCD0B /* platform.h */; };
+		64A70E0B2E637FC000961CFF /* dictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC672DC65DA5004DCD0B /* dictionary.h */; };
+		64A70E0C2E637FC000961CFF /* hash.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC6E2DC65DA5004DCD0B /* hash.h */; };
+		64A70E0D2E637FC000961CFF /* keyvaluetable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC772DC65DA5004DCD0B /* keyvaluetable.h */; };
+		64A70E0E2E637FC000961CFF /* libdivide.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC7C2DC65DA5004DCD0B /* libdivide.h */; };
+		64A70E0F2E637FC000961CFF /* list.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC7D2DC65DA5004DCD0B /* list.h */; };
+		64A70E102E637FC000961CFF /* melmath.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC832DC65DA5004DCD0B /* melmath.h */; };
+		64A70E112E637FC000961CFF /* operation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC8A2DC65DA5004DCD0B /* operation.h */; };
+		64A70E122E637FC000961CFF /* melstring.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC862DC65DA5004DCD0B /* melstring.h */; };
+		64A70E132E637FC000961CFF /* primitives.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC942DC65DA5004DCD0B /* primitives.h */; };
+		64A70E142E637FC000961CFF /* random.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC982DC65DA5004DCD0B /* random.h */; };
+		64A70E152E637FC000961CFF /* uuid.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489ECB32DC65DA5004DCD0B /* uuid.h */; };
+		64A70E162E637FC000961CFF /* melice.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC822DC65DA5004DCD0B /* melice.h */; };
+		64A70E172E637FC000961CFF /* melstd.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC852DC65DA5004DCD0B /* melstd.h */; };
+		64A70E182E637FC000961CFF /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC4F2DC65D7D004DCD0B /* common.h */; };
+		64A70E1A2E637FC000961CFF /* animation.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC552DC65DA5004DCD0B /* animation.c */; };
+		64A70E1B2E637FC000961CFF /* animationdefinition.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC572DC65DA5004DCD0B /* animationdefinition.c */; };
+		64A70E1C2E637FC000961CFF /* animationdirection.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC592DC65DA5004DCD0B /* animationdirection.c */; };
+		64A70E1D2E637FC000961CFF /* animationframe.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC5B2DC65DA5004DCD0B /* animationframe.c */; };
+		64A70E1E2E637FC000961CFF /* animationtype.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC5D2DC65DA5004DCD0B /* animationtype.c */; };
+		64A70E1F2E637FC000961CFF /* loopinganimation.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC7F2DC65DA5004DCD0B /* loopinganimation.c */; };
+		64A70E202E637FC000961CFF /* halfloopinganimation.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC6D2DC65DA5004DCD0B /* halfloopinganimation.c */; };
+		64A70E212E637FC000961CFF /* noanimation.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC892DC65DA5004DCD0B /* noanimation.c */; };
+		64A70E222E637FC000961CFF /* playonceanimation.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC912DC65DA5004DCD0B /* playonceanimation.c */; };
+		64A70E232E637FC000961CFF /* singleframeanimation.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489ECA12DC65DA5004DCD0B /* singleframeanimation.c */; };
+		64A70E242E637FC000961CFF /* synchronizedanimation.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489ECB22DC65DA5004DCD0B /* synchronizedanimation.c */; };
+		64A70E252E637FC000961CFF /* hitbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC712DC65DA5004DCD0B /* hitbox.c */; };
+		64A70E262E637FC000961CFF /* simplespritehitbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC9F2DC65DA5004DCD0B /* simplespritehitbox.c */; };
+		64A70E272E637FC000961CFF /* rectangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC9B2DC65DA5004DCD0B /* rectangle.c */; };
+		64A70E282E637FC000961CFF /* point.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC932DC65DA5004DCD0B /* point.c */; };
+		64A70E292E637FC000961CFF /* quadrilateral.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC972DC65DA5004DCD0B /* quadrilateral.c */; };
+		64A70E2A2E637FC000961CFF /* size.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489ECA32DC65DA5004DCD0B /* size.c */; };
+		64A70E2B2E637FC000961CFF /* bitmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC602DC65DA5004DCD0B /* bitmap.c */; };
+		64A70E2C2E637FC000961CFF /* inputstream.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC742DC65DA5004DCD0B /* inputstream.c */; };
+		64A70E2D2E637FC000961CFF /* outputstream.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC8D2DC65DA5004DCD0B /* outputstream.c */; };
+		64A70E2E2E637FC000961CFF /* controller.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC642DC65DA5004DCD0B /* controller.c */; };
+		64A70E2F2E637FC000961CFF /* crank.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC662DC65DA5004DCD0B /* crank.c */; };
+		64A70E302E637FC000961CFF /* keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC762DC65DA5004DCD0B /* keyboard.c */; };
+		64A70E312E637FC000961CFF /* layer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC792DC65DA5004DCD0B /* layer.c */; };
+		64A70E322E637FC000961CFF /* map.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC812DC65DA5004DCD0B /* map.c */; };
+		64A70E332E637FC000961CFF /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC622DC65DA5004DCD0B /* camera.c */; };
+		64A70E342E637FC000961CFF /* scene.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC9D2DC65DA5004DCD0B /* scene.c */; };
+		64A70E352E637FC000961CFF /* sprite.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489ECA52DC65DA5004DCD0B /* sprite.c */; };
+		64A70E362E637FC000961CFF /* spritedefinition.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489ECA72DC65DA5004DCD0B /* spritedefinition.c */; };
+		64A70E372E637FC000961CFF /* spritehitbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489ECA92DC65DA5004DCD0B /* spritehitbox.c */; };
+		64A70E382E637FC000961CFF /* spriteinstance.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489ECAB2DC65DA5004DCD0B /* spriteinstance.c */; };
+		64A70E392E637FC000961CFF /* statichitbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489ECAE2DC65DA5004DCD0B /* statichitbox.c */; };
+		64A70E3A2E637FC000961CFF /* subsprite.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489ECB02DC65DA5004DCD0B /* subsprite.c */; };
+		64A70E3B2E637FC000961CFF /* direction.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC692DC65DA5004DCD0B /* direction.c */; };
+		64A70E3C2E637FC000961CFF /* lcdspriteref.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC7B2DC65DA5004DCD0B /* lcdspriteref.c */; };
+		64A70E3D2E637FC000961CFF /* platform.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC8F2DC65DA5004DCD0B /* platform.c */; };
+		64A70E3E2E637FC000961CFF /* hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC6F2DC65DA5004DCD0B /* hash.c */; };
+		64A70E3F2E637FC000961CFF /* melmath.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC842DC65DA5004DCD0B /* melmath.c */; };
+		64A70E402E637FC000961CFF /* operation.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC8B2DC65DA5004DCD0B /* operation.c */; };
+		64A70E412E637FC000961CFF /* melstring.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC872DC65DA5004DCD0B /* melstring.c */; };
+		64A70E422E637FC000961CFF /* classes.c in Sources */ = {isa = PBXBuildFile; fileRef = 649E146C2E624F4D00584F64 /* classes.c */; };
+		64A70E432E637FC000961CFF /* primitives.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC952DC65DA5004DCD0B /* primitives.c */; };
+		64A70E442E637FC000961CFF /* titlescene.c in Sources */ = {isa = PBXBuildFile; fileRef = 649E144E2E624E4A00584F64 /* titlescene.c */; };
+		64A70E452E637FC000961CFF /* random.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC992DC65DA5004DCD0B /* random.c */; };
+		64A70E462E637FC000961CFF /* uuid.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489ECB42DC65DA5004DCD0B /* uuid.c */; };
+		64A70E472E637FC000961CFF /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC502DC65D7D004DCD0B /* main.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6489EC482DC65D36004DCD0B /* libmelice-starterkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libmelice-starterkit.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6489EC482DC65D36004DCD0B /* libmelice-starterkit Simulator.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libmelice-starterkit Simulator.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6489EC4F2DC65D7D004DCD0B /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		6489EC502DC65D7D004DCD0B /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		6489EC542DC65DA5004DCD0B /* animation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = animation.h; sourceTree = "<group>"; };
@@ -216,6 +317,7 @@
 		649E14512E624EF900584F64 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		649E146B2E624F4D00584F64 /* classes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = classes.h; sourceTree = "<group>"; };
 		649E146C2E624F4D00584F64 /* classes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = classes.c; sourceTree = "<group>"; };
+		64A70E4D2E637FC000961CFF /* libmelice-starterkit Playdate.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libmelice-starterkit Playdate.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -224,7 +326,7 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		649E145E2E624F0B00584F64 /* gen */ = {
+		64A70E5C2E6382C600961CFF /* gen */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = gen;
 			sourceTree = "<group>";
@@ -233,6 +335,13 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		6489EC462DC65D36004DCD0B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64A70E482E637FC000961CFF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -248,7 +357,7 @@
 				649E14512E624EF900584F64 /* Makefile */,
 				6489EC512DC65D7D004DCD0B /* src */,
 				6489ECB52DC65DA5004DCD0B /* lib */,
-				649E145E2E624F0B00584F64 /* gen */,
+				64A70E5C2E6382C600961CFF /* gen */,
 				6489ECBF2DC65DFD004DCD0B /* Source */,
 				6489EC492DC65D36004DCD0B /* Products */,
 			);
@@ -257,7 +366,8 @@
 		6489EC492DC65D36004DCD0B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6489EC482DC65D36004DCD0B /* libmelice-starterkit.dylib */,
+				6489EC482DC65D36004DCD0B /* libmelice-starterkit Simulator.dylib */,
+				64A70E4D2E637FC000961CFF /* libmelice-starterkit Playdate.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -516,12 +626,74 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		64A70DE12E637FC000961CFF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64A70DE22E637FC000961CFF /* animation.h in Headers */,
+				64A70DE32E637FC000961CFF /* animationdefinition.h in Headers */,
+				64A70DE42E637FC000961CFF /* animationdirection.h in Headers */,
+				64A70DE52E637FC000961CFF /* animationframe.h in Headers */,
+				64A70DE62E637FC000961CFF /* animationtype.h in Headers */,
+				64A70DE72E637FC000961CFF /* loopinganimation.h in Headers */,
+				64A70DE82E637FC000961CFF /* halfloopinganimation.h in Headers */,
+				64A70DE92E637FC000961CFF /* noanimation.h in Headers */,
+				64A70DEA2E637FC000961CFF /* playonceanimation.h in Headers */,
+				64A70DEB2E637FC000961CFF /* singleframeanimation.h in Headers */,
+				64A70DEC2E637FC000961CFF /* synchronizedanimation.h in Headers */,
+				64A70DED2E637FC000961CFF /* hitbox.h in Headers */,
+				64A70DEE2E637FC000961CFF /* hitboxtype.h in Headers */,
+				64A70DEF2E637FC000961CFF /* simplespritehitbox.h in Headers */,
+				64A70DF02E637FC000961CFF /* axe.h in Headers */,
+				64A70DF12E637FC000961CFF /* rectangle.h in Headers */,
+				64A70DF22E637FC000961CFF /* point.h in Headers */,
+				64A70DF32E637FC000961CFF /* quadrilateral.h in Headers */,
+				64A70DF42E637FC000961CFF /* size.h in Headers */,
+				64A70DF52E637FC000961CFF /* classes.h in Headers */,
+				64A70DF62E637FC000961CFF /* bitmap.h in Headers */,
+				64A70DF72E637FC000961CFF /* inputstream.h in Headers */,
+				64A70DF82E637FC000961CFF /* outputstream.h in Headers */,
+				64A70DF92E637FC000961CFF /* controller.h in Headers */,
+				64A70DFA2E637FC000961CFF /* crank.h in Headers */,
+				64A70DFB2E637FC000961CFF /* titlescene.h in Headers */,
+				64A70DFC2E637FC000961CFF /* keyboard.h in Headers */,
+				64A70DFD2E637FC000961CFF /* layer.h in Headers */,
+				64A70DFE2E637FC000961CFF /* map.h in Headers */,
+				64A70DFF2E637FC000961CFF /* camera.h in Headers */,
+				64A70E002E637FC000961CFF /* scene.h in Headers */,
+				64A70E012E637FC000961CFF /* sprite.h in Headers */,
+				64A70E022E637FC000961CFF /* spritedefinition.h in Headers */,
+				64A70E032E637FC000961CFF /* spritehitbox.h in Headers */,
+				64A70E042E637FC000961CFF /* spriteinstance.h in Headers */,
+				64A70E052E637FC000961CFF /* spritetype.h in Headers */,
+				64A70E062E637FC000961CFF /* statichitbox.h in Headers */,
+				64A70E072E637FC000961CFF /* subsprite.h in Headers */,
+				64A70E082E637FC000961CFF /* direction.h in Headers */,
+				64A70E092E637FC000961CFF /* lcdspriteref.h in Headers */,
+				64A70E0A2E637FC000961CFF /* platform.h in Headers */,
+				64A70E0B2E637FC000961CFF /* dictionary.h in Headers */,
+				64A70E0C2E637FC000961CFF /* hash.h in Headers */,
+				64A70E0D2E637FC000961CFF /* keyvaluetable.h in Headers */,
+				64A70E0E2E637FC000961CFF /* libdivide.h in Headers */,
+				64A70E0F2E637FC000961CFF /* list.h in Headers */,
+				64A70E102E637FC000961CFF /* melmath.h in Headers */,
+				64A70E112E637FC000961CFF /* operation.h in Headers */,
+				64A70E122E637FC000961CFF /* melstring.h in Headers */,
+				64A70E132E637FC000961CFF /* primitives.h in Headers */,
+				64A70E142E637FC000961CFF /* random.h in Headers */,
+				64A70E152E637FC000961CFF /* uuid.h in Headers */,
+				64A70E162E637FC000961CFF /* melice.h in Headers */,
+				64A70E172E637FC000961CFF /* melstd.h in Headers */,
+				64A70E182E637FC000961CFF /* common.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		6489EC472DC65D36004DCD0B /* melice-starterkit */ = {
+		6489EC472DC65D36004DCD0B /* melice-starterkit Simulator */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6489EC4C2DC65D36004DCD0B /* Build configuration list for PBXNativeTarget "melice-starterkit" */;
+			buildConfigurationList = 6489EC4C2DC65D36004DCD0B /* Build configuration list for PBXNativeTarget "melice-starterkit Simulator" */;
 			buildPhases = (
 				6489EC442DC65D36004DCD0B /* Headers */,
 				6489EC452DC65D36004DCD0B /* Sources */,
@@ -533,13 +705,36 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				649E145E2E624F0B00584F64 /* gen */,
+				64A70E5C2E6382C600961CFF /* gen */,
 			);
-			name = "melice-starterkit";
+			name = "melice-starterkit Simulator";
 			packageProductDependencies = (
 			);
 			productName = "melice-starterkit";
-			productReference = 6489EC482DC65D36004DCD0B /* libmelice-starterkit.dylib */;
+			productReference = 6489EC482DC65D36004DCD0B /* libmelice-starterkit Simulator.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		64A70DE02E637FC000961CFF /* melice-starterkit Playdate */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 64A70E4A2E637FC000961CFF /* Build configuration list for PBXNativeTarget "melice-starterkit Playdate" */;
+			buildPhases = (
+				64A70DE12E637FC000961CFF /* Headers */,
+				64A70E192E637FC000961CFF /* Sources */,
+				64A70E482E637FC000961CFF /* Frameworks */,
+				64A70E492E637FC000961CFF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				64A70E5C2E6382C600961CFF /* gen */,
+			);
+			name = "melice-starterkit Playdate";
+			packageProductDependencies = (
+			);
+			productName = "melice-starterkit";
+			productReference = 64A70E4D2E637FC000961CFF /* libmelice-starterkit Playdate.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -570,7 +765,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				6489EC472DC65D36004DCD0B /* melice-starterkit */,
+				6489EC472DC65D36004DCD0B /* melice-starterkit Simulator */,
+				64A70DE02E637FC000961CFF /* melice-starterkit Playdate */,
 			);
 		};
 /* End PBXProject section */
@@ -593,6 +789,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ -f build/pdex.dylib ]; then\n    rm build/pdex.dylib\nfi\nif [ -d build/pdex.dylib.dSYM ]; then\n    rm -r build/pdex.dylib.dSYM\nfi\nmake \"CLANGFLAGS=-g -DDEBUG=1\" pdc\n#make \"CLANGFLAGS=-g -fsanitize=address -DDEBUG=1\" pdc\n";
+		};
+		64A70E492E637FC000961CFF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f build/pdex.dylib ]; then\n    rm build/pdex.dylib\nfi\nif [ -d build/pdex.dylib.dSYM ]; then\n    rm -r build/pdex.dylib.dSYM\nfi\nmake \"CLANGFLAGS=-O2\" \"GCCFLAGS=-O2\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -647,6 +861,59 @@
 				649E143E2E624DA500584F64 /* random.c in Sources */,
 				649E143F2E624DA500584F64 /* uuid.c in Sources */,
 				6489EC522DC65D7D004DCD0B /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64A70E192E637FC000961CFF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64A70E1A2E637FC000961CFF /* animation.c in Sources */,
+				64A70E1B2E637FC000961CFF /* animationdefinition.c in Sources */,
+				64A70E1C2E637FC000961CFF /* animationdirection.c in Sources */,
+				64A70E1D2E637FC000961CFF /* animationframe.c in Sources */,
+				64A70E1E2E637FC000961CFF /* animationtype.c in Sources */,
+				64A70E1F2E637FC000961CFF /* loopinganimation.c in Sources */,
+				64A70E202E637FC000961CFF /* halfloopinganimation.c in Sources */,
+				64A70E212E637FC000961CFF /* noanimation.c in Sources */,
+				64A70E222E637FC000961CFF /* playonceanimation.c in Sources */,
+				64A70E232E637FC000961CFF /* singleframeanimation.c in Sources */,
+				64A70E242E637FC000961CFF /* synchronizedanimation.c in Sources */,
+				64A70E252E637FC000961CFF /* hitbox.c in Sources */,
+				64A70E262E637FC000961CFF /* simplespritehitbox.c in Sources */,
+				64A70E272E637FC000961CFF /* rectangle.c in Sources */,
+				64A70E282E637FC000961CFF /* point.c in Sources */,
+				64A70E292E637FC000961CFF /* quadrilateral.c in Sources */,
+				64A70E2A2E637FC000961CFF /* size.c in Sources */,
+				64A70E2B2E637FC000961CFF /* bitmap.c in Sources */,
+				64A70E2C2E637FC000961CFF /* inputstream.c in Sources */,
+				64A70E2D2E637FC000961CFF /* outputstream.c in Sources */,
+				64A70E2E2E637FC000961CFF /* controller.c in Sources */,
+				64A70E2F2E637FC000961CFF /* crank.c in Sources */,
+				64A70E302E637FC000961CFF /* keyboard.c in Sources */,
+				64A70E312E637FC000961CFF /* layer.c in Sources */,
+				64A70E322E637FC000961CFF /* map.c in Sources */,
+				64A70E332E637FC000961CFF /* camera.c in Sources */,
+				64A70E342E637FC000961CFF /* scene.c in Sources */,
+				64A70E352E637FC000961CFF /* sprite.c in Sources */,
+				64A70E362E637FC000961CFF /* spritedefinition.c in Sources */,
+				64A70E372E637FC000961CFF /* spritehitbox.c in Sources */,
+				64A70E382E637FC000961CFF /* spriteinstance.c in Sources */,
+				64A70E392E637FC000961CFF /* statichitbox.c in Sources */,
+				64A70E3A2E637FC000961CFF /* subsprite.c in Sources */,
+				64A70E3B2E637FC000961CFF /* direction.c in Sources */,
+				64A70E3C2E637FC000961CFF /* lcdspriteref.c in Sources */,
+				64A70E3D2E637FC000961CFF /* platform.c in Sources */,
+				64A70E3E2E637FC000961CFF /* hash.c in Sources */,
+				64A70E3F2E637FC000961CFF /* melmath.c in Sources */,
+				64A70E402E637FC000961CFF /* operation.c in Sources */,
+				64A70E412E637FC000961CFF /* melstring.c in Sources */,
+				64A70E422E637FC000961CFF /* classes.c in Sources */,
+				64A70E432E637FC000961CFF /* primitives.c in Sources */,
+				64A70E442E637FC000961CFF /* titlescene.c in Sources */,
+				64A70E452E637FC000961CFF /* random.c in Sources */,
+				64A70E462E637FC000961CFF /* uuid.c in Sources */,
+				64A70E472E637FC000961CFF /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -808,6 +1075,34 @@
 			};
 			name = Release;
 		};
+		64A70E4B2E637FC000961CFF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = E6H8T594R7;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		64A70E4C2E637FC000961CFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = E6H8T594R7;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -820,11 +1115,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6489EC4C2DC65D36004DCD0B /* Build configuration list for PBXNativeTarget "melice-starterkit" */ = {
+		6489EC4C2DC65D36004DCD0B /* Build configuration list for PBXNativeTarget "melice-starterkit Simulator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6489EC4D2DC65D36004DCD0B /* Debug */,
 				6489EC4E2DC65D36004DCD0B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		64A70E4A2E637FC000961CFF /* Build configuration list for PBXNativeTarget "melice-starterkit Playdate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64A70E4B2E637FC000961CFF /* Debug */,
+				64A70E4C2E637FC000961CFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

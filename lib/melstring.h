@@ -21,6 +21,9 @@ MELListDefine(MELChar16);
 typedef uint32_t MELCodePoint;
 MELListDefine(MELCodePoint);
 
+typedef const char * _Nonnull MELConstString;
+MELListDefine(MELConstString);
+
 extern const char kEmptyString[];
 
 MELBoolean MELStringEquals(const char * _Nonnull lhs, const char * _Nonnull rhs);

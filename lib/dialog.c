@@ -25,7 +25,9 @@ static const MELSpriteClass MELDialogClass = (MELSpriteClass) {
 #define bufferCount 50
 static char buffer[bufferCount];
 
+#ifndef ZINDEX_DIALOG
 #define ZINDEX_DIALOG 90
+#endif
 #define ZINDEX_DIALOG_BUTTON 91
 
 LCDSprite * _Nonnull MELDialogMake(MELDialogConfig config) {
