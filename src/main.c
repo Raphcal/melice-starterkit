@@ -12,6 +12,7 @@
 
 PlaydateAPI * _Nullable playdate;
 LCDFont * _Nullable roobertFont;
+LCDFont * _Nullable currentFont;
 
 int REFRESH_RATE = 50;
 float DELTA;
@@ -30,6 +31,7 @@ static void init(void) {
 
 static void loadFonts(void) {
     roobertFont = LCDFontLoadOrError("fonts/Roobert-10-Bold");
+    currentFont = roobertFont;
 }
 
 #ifdef _WINDLL

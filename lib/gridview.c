@@ -74,6 +74,29 @@ void MELGridViewSetSelection(LCDSprite * _Nonnull sprite, MELIntPoint selection)
     }
 }
 
+void MELGridViewSetSelectionAnimated(LCDSprite * _Nonnull sprite, MELIntPoint selection, PDButtons buttons) {
+    MELGridView *self = playdate->sprite->getUserdata(sprite);
+    const MELIntPoint oldSelection = self->selection;
+    if (MELIntPointEquals(oldSelection, selection)) {
+        return;
+    }
+    setSelection(self, sprite, selection);
+
+    self->time = 0.0f;
+    self->didScroll = buttons;
+    const MELIntSize cellSize = MELIntSizeAdd(self->cellSize, self->cellSpacing);
+    MELPoint cameraDistance = (MELPoint) {
+        .x = (selection.x - oldSelection.x) * cellSize.width,
+        .y = (selection.y - oldSelection.y) * cellSize.height,
+    };
+    self->cameraDistance = cameraDistance;
+    self->totalDistance = sqrtf(cameraDistance.x * cameraDistance.x + cameraDistance.y * cameraDistance.y);
+    if (self->enableScrolling && !isCellVisible(self, selection)) {
+        self->cameraFrom = self->camera;
+        playdate->sprite->setUpdateFunction(sprite, updateScrolling);
+    }
+}
+
 void MELGridViewRepaintCell(LCDSprite * _Nonnull sprite, MELIntPoint cell) {
     MELGridView *self = playdate->sprite->getUserdata(sprite);
     const unsigned int index = cell.y * self->gridSize.width + cell.x;
@@ -335,26 +358,8 @@ static void update(LCDSprite * _Nonnull sprite) {
         }
     }
 
-    const MELIntPoint oldSelection = self->selection;
     const MELIntPoint selection = nextSelection(self, pressed);
-
-    if (!MELIntPointEquals(oldSelection, selection)) {
-        setSelection(self, sprite, selection);
-
-        self->time = 0.0f;
-        self->didScroll = pressed;
-        const MELIntSize cellSize = MELIntSizeAdd(self->cellSize, self->cellSpacing);
-        MELPoint cameraDistance = (MELPoint) {
-            .x = (selection.x - oldSelection.x) * cellSize.width,
-            .y = (selection.y - oldSelection.y) * cellSize.height,
-        };
-        self->cameraDistance = cameraDistance;
-        self->totalDistance = sqrtf(cameraDistance.x * cameraDistance.x + cameraDistance.y * cameraDistance.y);
-        if (self->enableScrolling && !isCellVisible(self, selection)) {
-            self->cameraFrom = self->camera;
-            playdate->sprite->setUpdateFunction(sprite, updateScrolling);
-        }
-    }
+    MELGridViewSetSelectionAnimated(sprite, selection, pressed);
 }
 
 static void updateScrolling(LCDSprite * _Nonnull sprite) {

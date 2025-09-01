@@ -125,6 +125,10 @@ void MELSpriteMakeDisappear(LCDSprite * _Nonnull sprite);
 
 MELBoolean MELSpriteIsLookingToward(MELSprite * _Nonnull self, MELPoint point);
 
+MELRectangle MELSpriteGetFrame(LCDSprite * _Nonnull sprite);
+float MELSpriteGetWidth(LCDSprite * _Nonnull sprite);
+float MELSpriteGetHeight(LCDSprite * _Nonnull sprite);
+
 MELRectangle LCDSpriteGetFrame(LCDSprite * _Nonnull sprite);
 void LCDSpriteMoveBy(LCDSprite * _Nonnull sprite, MELPoint translation);
 void LCDSpriteSetClass(LCDSprite * _Nonnull sprite, const MELSpriteClass * _Nonnull class);

@@ -21,14 +21,14 @@
 
 #define MELDictionaryDefine(type) typedef struct {\
 uint64_t hash;\
-char * _Nonnull key;\
-type value;\
+    char * _Nullable key;\
+    type value;\
 } type##DictionaryEntry;\
 \
 MELListDefine(type##DictionaryEntry);\
 \
 typedef struct {\
-MELList(type##DictionaryEntry) entries;\
+    MELList(type##DictionaryEntry) entries;\
 } type##DictionaryBucket;\
 \
 MELListDefine(type##DictionaryBucket);\
@@ -41,6 +41,7 @@ MELListDefine(type##DictionaryBucket);\
 extern const type##Dictionary type##DictionaryEmpty;\
 void type##DictionaryDeinit(type##Dictionary * _Nonnull self);\
 type type##DictionaryPut(type##Dictionary * _Nonnull self, const char * _Nonnull key, type value);\
+MELBoolean type##DictionaryPutAndGetOldValue(type##Dictionary * _Nonnull self, const char * _Nonnull key, type value, type * _Nullable oldValue);\
 type type##DictionaryGet(type##Dictionary self, const char * _Nonnull key);\
 MELBoolean type##DictionaryGetIfPresent(type##Dictionary self, const char * _Nonnull key, type * _Nonnull value);\
 type type##DictionaryRemove(type##Dictionary * _Nonnull self, const char * _Nonnull key);\
@@ -96,6 +97,9 @@ void type##DictionaryGrowAndRehash(type##Dictionary * _Nonnull self) {\
 type type##DictionaryPut(type##Dictionary * _Nonnull self, const char * _Nonnull key, type value) {\
     if (self->buckets.capacity == 0 || self->buckets.memory == NULL) {\
         type##DictionaryGrowAndRehash(self);\
+        if (self->buckets.capacity == 0 || self->buckets.memory == NULL) {\
+            return nil;\
+        }\
     }\
     const uint64_t hash = MELStringHash(key);\
     const unsigned int bucketIndex = hash % self->buckets.capacity;\
@@ -122,6 +126,43 @@ type type##DictionaryPut(type##Dictionary * _Nonnull self, const char * _Nonnull
         type##DictionaryGrowAndRehash(self);\
     }\
     return nil;\
+}\
+\
+MELBoolean type##DictionaryPutAndGetOldValue(type##Dictionary * _Nonnull self, const char * _Nonnull key, type value, type * _Nullable oldValue) {\
+    if (self->buckets.capacity == 0 || self->buckets.memory == NULL) {\
+        type##DictionaryGrowAndRehash(self);\
+        if (!self->buckets.capacity) {\
+            /* Unable to put the value. */\
+            return false;\
+        }\
+    }\
+    const uint64_t hash = MELStringHash(key);\
+    const unsigned int bucketIndex = hash % self->buckets.capacity;\
+    type##DictionaryBucket bucket = self->buckets.memory[bucketIndex];\
+    if (bucket.entries.count > 0 && bucket.entries.memory != NULL) {\
+        for (unsigned int entryIndex = 0; entryIndex < bucket.entries.count; entryIndex++) {\
+            type##DictionaryEntry entry = bucket.entries.memory[entryIndex];\
+            if (entry.hash == hash && (entry.key == key || MELStringEquals(entry.key, key))) {\
+                if (oldValue) {\
+                    *oldValue = entry.value;\
+                }\
+                entry.value = value;\
+                return true;\
+            }\
+        }\
+    }\
+    if (bucket.entries.count == 0 || bucket.entries.memory == NULL) {\
+        self->buckets.count++;\
+    }\
+    self->count++;\
+    char *keyCopy = strdup(key);\
+    type##DictionaryEntryListPush(&self->buckets.memory[bucketIndex].entries, (type##DictionaryEntry) {hash, keyCopy, value});\
+\
+    const double loadFactor = self->count / (double) self->buckets.capacity;\
+    if (loadFactor >= LOAD_FACTOR) {\
+        type##DictionaryGrowAndRehash(self);\
+    }\
+    return true;\
 }\
 \
 type type##DictionaryGet(type##Dictionary self, const char * _Nonnull key) {\

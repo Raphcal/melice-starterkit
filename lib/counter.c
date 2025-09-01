@@ -7,30 +7,32 @@
 
 #include "counter.h"
 
-#include "gamescene.h"
+#include "sprite.h"
+#include "scene.h"
+#include "melstring.h"
 
 typedef struct {
     MELSprite super;
     LCDFont * _Nonnull font;
-    CounterAlignment alignment;
+    MELHorizontalAlignment alignment;
     MELPoint anchor;
     char * _Nullable buffer;
     int bufferCapacity;
     int value;
-} Counter;
+} MELCounter;
 
 static void dealloc(LCDSprite * _Nonnull sprite);
-static void drawAndMove(Counter * _Nonnull self, LCDSprite * _Nonnull sprite, const int value);
+static void drawAndMove(MELCounter * _Nonnull self, LCDSprite * _Nonnull sprite, const int value);
 
-static const MELSpriteClass CounterClass = (MELSpriteClass) {
+static const MELSpriteClass MELCounterClass = (MELSpriteClass) {
     .destroy = dealloc,
 };
 
-LCDSprite * _Nonnull CounterConstructor(const MELPoint origin, const CounterAlignment alignment, LCDFont * _Nonnull font, const int value) {
-    Counter *self = playdate->system->realloc(NULL, sizeof(Counter));
-    *self = (Counter) {
+LCDSprite * _Nonnull MELCounterConstructor(const MELPoint origin, const MELHorizontalAlignment alignment, LCDFont * _Nonnull font, const int value) {
+    MELCounter *self = playdate->system->realloc(NULL, sizeof(MELCounter));
+    *self = (MELCounter) {
         .super = {
-            .class = &CounterClass,
+            .class = &MELCounterClass,
         },
         .font = font,
         .alignment = alignment,
@@ -48,17 +50,17 @@ LCDSprite * _Nonnull CounterConstructor(const MELPoint origin, const CounterAlig
     drawAndMove(self, sprite, value);
 
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
-    playdate->system->logToConsole("Push CounterConstructor(%x, %x): %d", sprite, self, self->super.definition.name);
+    playdate->system->logToConsole("Push MELCounterConstructor(%x, %x): %d", sprite, self, self->super.definition.name);
 #endif
     LCDSpriteRefListPush(&currentScene->sprites, sprite);
     return sprite;
 }
 
-void CounterSetValue(LCDSprite * _Nullable sprite, const int value) {
+void MELCounterSetValue(LCDSprite * _Nullable sprite, const int value) {
     if (!sprite) {
         return;
     }
-    Counter *self = playdate->sprite->getUserdata(sprite);
+    MELCounter *self = playdate->sprite->getUserdata(sprite);
     if (value != self->value) {
         self->value = value;
 
@@ -69,19 +71,19 @@ void CounterSetValue(LCDSprite * _Nullable sprite, const int value) {
     }
 }
 
-void CountUpdateAnchorWithCurrentOrigin(LCDSprite * _Nonnull sprite) {
-    Counter *self = playdate->sprite->getUserdata(sprite);
+void MELCounterUpdateAnchorWithCurrentOrigin(LCDSprite * _Nonnull sprite) {
+    MELCounter *self = playdate->sprite->getUserdata(sprite);
     MELRectangle frame = self->super.frame;
     switch (self->alignment) {
-        case kCounterAlignmentLeft:
+        case MELHorizontalAlignmentLeft:
             frame.origin.x -= frame.size.width / 2.0f;
             break;
 
-        case kCounterAlignmentRight:
+        case MELHorizontalAlignmentRight:
             frame.origin.x += frame.size.width / 2.0f;
             break;
 
-        case kCounterAlignmentCenter:
+        case MELHorizontalAlignmentCenter:
             // Pas de modification.
         default:
             break;
@@ -90,7 +92,7 @@ void CountUpdateAnchorWithCurrentOrigin(LCDSprite * _Nonnull sprite) {
 }
 
 static void dealloc(LCDSprite * _Nonnull sprite) {
-    Counter *self = playdate->sprite->getUserdata(sprite);
+    MELCounter *self = playdate->sprite->getUserdata(sprite);
     if (self->buffer) {
         playdate->system->realloc(self->buffer, 0);
         self->buffer = NULL;
@@ -102,7 +104,7 @@ static void dealloc(LCDSprite * _Nonnull sprite) {
     MELSpriteDealloc(sprite);
 }
 
-static void drawAndMove(Counter * _Nonnull self, LCDSprite * _Nonnull sprite, const int value) {
+static void drawAndMove(MELCounter * _Nonnull self, LCDSprite * _Nonnull sprite, const int value) {
     self->buffer = MELUInt32ToStringWithBuffer(value, self->buffer, &self->bufferCapacity);
     LCDFont *font = self->font;
     playdate->graphics->setFont(font);
@@ -129,15 +131,15 @@ static void drawAndMove(Counter * _Nonnull self, LCDSprite * _Nonnull sprite, co
 
     frame.origin = self->anchor;
     switch (self->alignment) {
-        case kCounterAlignmentLeft:
+        case MELHorizontalAlignmentLeft:
             frame.origin.x += width / 2.0f;
             break;
 
-        case kCounterAlignmentRight:
+        case MELHorizontalAlignmentRight:
             frame.origin.x -= width / 2.0f;
             break;
 
-        case kCounterAlignmentCenter:
+        case MELHorizontalAlignmentCenter:
             // Pas de modification.
         default:
             break;

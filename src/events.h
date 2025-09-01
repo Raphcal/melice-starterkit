@@ -1,33 +1,16 @@
 //
-//  eventbus.h
+//  events.h
 //  PokerPokerMagic
 //
 //  Created by Raphaël Calabro on 17/12/2023.
 //
 
-#ifndef eventbus_h
-#define eventbus_h
-
-#include "common.h"
-#include "../lib/melice.h"
+#ifndef events_h
+#define events_h
 
 typedef enum {
-    EventLifeLost,
-    EventDisappeared,
-    EventTakeOff,
-    EventGhostStepAdded,
-    EventMapChanged,
-
     /** La langue du jeu a changé. */
     EventLanguageChanged,
-    /** Indique que le dialogue affiché actuellement a changé. */
-    EventDialogChanged,
-    /** Indique que le dialogue est en pause. */
-    EventDialogPaused,
-    /** Indique que le joueur a appuyé sur A pour continuer le dialogue. */
-    EventDialogResumed,
-    /** Indique que le dialogue est terminé. */
-    EventDialogHasEnded,
 
     /**
      * Called by pdportal web app after serial connection established. Example
@@ -81,26 +64,8 @@ typedef enum {
      * @see https://sdk.play.date/inside-playdate#M-json
      */
     EventPDPortalOnPeerConnData,
+    /** Nombre d'événements. */
     EventCount
 } Event;
 
-typedef void (* _Nullable EventListener)(void * _Nullable userdata, int value);
-
-typedef struct {
-    EventListener listener;
-    void * _Nullable userdata;
-} EventBusEntry;
-
-MELListDefine(EventBusEntry);
-MELListDefineIndexOf(EventBusEntry);
-
-typedef struct {
-    EventBusEntryList listeners[EventCount];
-} EventBus;
-
-void EventBusAddListener(Event event, EventListener listener, void * _Nullable userdata);
-void EventBusRemoveListener(Event event, void * _Nullable userdata);
-void EventBusRemoveListeners(void * _Nullable userdata);
-void EventBusFireEvent(Event event, int value);
-
-#endif /* eventbus_h */
+#endif /* events_h */

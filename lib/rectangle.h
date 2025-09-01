@@ -165,6 +165,8 @@ float MELRectangleOriginIsCenterGetBottom(MELRectangle self);
  */
 void MELRectangleOriginIsCenterSetBottom(MELRectangle * _Nonnull self, float bottom);
 
+MELPoint MELRectangleOriginIsCenterGetTopLeft(MELRectangle self);
+
 MELPoint MELRectangleOriginIsCenterGetPointAtAngle(MELRectangle self, GLfloat angle);
 
 MELBoolean MELRectangleEquals(MELRectangle lhs, MELRectangle rhs);

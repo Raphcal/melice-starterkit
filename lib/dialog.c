@@ -28,7 +28,10 @@ static char buffer[bufferCount];
 #ifndef ZINDEX_DIALOG
 #define ZINDEX_DIALOG 90
 #endif
+
+#ifndef ZINDEX_DIALOG_BUTTON
 #define ZINDEX_DIALOG_BUTTON 91
+#endif
 
 LCDSprite * _Nonnull MELDialogMake(MELDialogConfig config) {
     MELDialog *self = new(MELDialog);
@@ -65,10 +68,12 @@ LCDSprite * _Nonnull MELDialogMake(MELDialogConfig config) {
     } else {
         cellSize.width = config.frame.size.width - border.width;
     }
-    // TODO: Gérer les largeurs supérieurs à la taille de l'écran.
-    cellSize.height = graphics->getFontHeight(config.font) + config.padding.top + config.padding.bottom;
-    if (config.selectionBorder) {
-        cellSize.height += config.selectionBorder->minSize.height;
+    if (config.count) {
+        // TODO: Gérer les largeurs supérieurs à la taille de l'écran.
+        cellSize.height = graphics->getFontHeight(config.font) + config.padding.top + config.padding.bottom;
+        if (config.selectionBorder) {
+            cellSize.height += config.selectionBorder->minSize.height;
+        }
     }
     if (config.frame.size.height == 0) {
         config.frame.size.height = MELIntMin(cellSize.height * config.count + border.height, LCD_ROWS - 16);
@@ -104,27 +109,29 @@ LCDSprite * _Nonnull MELDialogMake(MELDialogConfig config) {
     playdate->sprite->moveTo(sprite, config.frame.origin.x - camera.frame.origin.x, config.frame.origin.y - camera.frame.origin.y);
     playdate->sprite->addSprite(sprite);
 
-    // GridView
-    // TODO: Supporter un mode horizontal pour les boutons.
-    LCDSprite *gridViewSprite = MELGridViewMake((MELRectangle) {
-        // TODO: Gérer le décalage dû aux bordures, il faudra sûrement ajouter à x : gauche - droite et pareil pour y.
-        .origin = config.frame.origin,
-        .size = {
-            .width = config.frame.size.width - border.width,
-            .height = config.frame.size.height - border.height,
+    if (config.count) {
+        // GridView
+        // TODO: Supporter un mode horizontal pour les boutons.
+        LCDSprite *gridViewSprite = MELGridViewMake((MELRectangle) {
+            // TODO: Gérer le décalage dû aux bordures, il faudra sûrement ajouter à x : gauche - droite et pareil pour y.
+            .origin = config.frame.origin,
+            .size = {
+                .width = config.frame.size.width - border.width,
+                .height = config.frame.size.height - border.height,
+            }
+        }, MELIntSizeMake(1, config.count), cellSize, drawCell, self);
+        playdate->sprite->setZIndex(gridViewSprite, ZINDEX_DIALOG_BUTTON);
+        
+        MELGridView *gridView = playdate->sprite->getUserdata(gridViewSprite);
+        if (config.initialSelection) {
+            MELGridViewSetSelection(gridViewSprite, (MELIntPoint) { .y = config.initialSelection });
         }
-    }, MELIntSizeMake(1, config.count), cellSize, drawCell, self);
-    playdate->sprite->setZIndex(gridViewSprite, ZINDEX_DIALOG_BUTTON);
-
-    MELGridView *gridView = playdate->sprite->getUserdata(gridViewSprite);
-    if (config.initialSelection) {
-        MELGridViewSetSelection(gridViewSprite, (MELIntPoint) { .y = config.initialSelection });
+        gridView->disableInputs = true;
+        playdate->sprite->setVisible(gridViewSprite, false);
+        
+        self->gridView = gridView;
+        self->gridViewSprite = gridViewSprite;
     }
-    gridView->disableInputs = true;
-    playdate->sprite->setVisible(gridViewSprite, false);
-
-    self->gridView = gridView;
-    self->gridViewSprite = gridViewSprite;
 
     return sprite;
 }
@@ -139,14 +146,20 @@ void MELDialogClose(LCDSprite * _Nonnull sprite) {
     MELDialog *self = playdate->sprite->getUserdata(sprite);
     self->state = MELDialogStateClosing;
     self->time = 0.0f;
-    self->gridView->disableInputs = true;
-    playdate->sprite->setVisible(self->gridViewSprite, false);
+    if (self->gridView) {
+        self->gridView->disableInputs = true;
+        playdate->sprite->setVisible(self->gridViewSprite, false);
+    }
     playdate->sprite->setUpdateFunction(sprite, updateAnimating);
 }
 
 static void dealloc(LCDSprite * _Nonnull sprite) {
     MELDialog *self = playdate->sprite->getUserdata(sprite);
-    playdate->sprite->setUpdateFunction(self->gridViewSprite, self->gridView->super.class->destroy);
+    if (self->gridView) {
+        playdate->sprite->setUpdateFunction(self->gridViewSprite, self->gridView->super.class->destroy);
+        self->gridViewSprite = NULL;
+        self->gridView = NULL;
+    }
     LCDBitmap *image = playdate->sprite->getImage(sprite);
     playdate->graphics->freeBitmap(image);
     MELSpriteDealloc(sprite);
@@ -219,9 +232,11 @@ static void updateAnimating(LCDSprite * _Nonnull sprite) {
     self->state++;
     if (self->state == MELDialogStateOpened) {
         draw(self, sprite, toHeight);
-        self->gridView->disableInputs = false;
-        playdate->sprite->setVisible(self->gridViewSprite, true);
         playdate->sprite->setUpdateFunction(sprite, update);
+        if (self->gridView) {
+            self->gridView->disableInputs = false;
+            playdate->sprite->setVisible(self->gridViewSprite, true);
+        }
     } else if (self->state == MELDialogStateClosed) {
         playdate->sprite->setVisible(sprite, false);
         playdate->sprite->setUpdateFunction(sprite, MELSpriteNoopUpdate);
@@ -235,7 +250,9 @@ static void update(LCDSprite * _Nonnull sprite) {
         self->time += DELTA;
         return;
     }
-    self->gridView->disableInputs = false;
+    if (self->gridView) {
+        self->gridView->disableInputs = false;
+    }
 }
 
 static void drawCell(MELGridView * _Nonnull gridView, LCDBitmap * _Nullable image, int x, int y, MELBoolean isSelected) {

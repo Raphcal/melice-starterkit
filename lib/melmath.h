@@ -134,6 +134,16 @@ int MELIntMax(int lhs, int rhs);
 int32_t MELInt32Max(int32_t lhs, int32_t rhs);
 
 /**
+ * @brief Returns the maximum value between three int32_t numbers.
+ *
+ * @param a First value.
+ * @param b Second value.
+ * @param c Third value.
+ * @return The maximum value among a, b, and c.
+ */
+int32_t MELInt32Max3(int32_t a, int32_t b, int32_t c);
+
+/**
  * @brief Returns the maximum value between two uint32_t numbers.
  *
  * @param lhs The left operand.
@@ -313,6 +323,8 @@ float MELEaseOutElastic(float from, float to, float value);
 float MELEaseOutBounce(float from, float to, float value);
 
 float MELEaseOutCirc(float from, float to, float value);
+
+float MELEaseExpo(float from, float to, float value);
 
 MELBoolean MELFloatEquals(float lhs, float rhs);
 

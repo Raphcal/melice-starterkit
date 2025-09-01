@@ -7,19 +7,22 @@
 
 #include "timer.h"
 
+#include "sprite.h"
+#include "scene.h"
+
 typedef struct {
     MELSprite super;
     float delay;
     float time;
-    TimerCallback callback;
-} Timer;
+    MELTimerCallback callback;
+} MELTimer;
 
 static void update(LCDSprite * _Nonnull sprite);
 
-LCDSprite * _Nonnull TimerConstructor(float delay, TimerCallback callback, void * _Nullable userdata) {
-    Timer *self = new(Timer);
+LCDSprite * _Nonnull MELTimerConstructor(float delay, MELTimerCallback callback, void * _Nullable userdata) {
+    MELTimer *self = new(MELTimer);
 
-    *self = (Timer) {
+    *self = (MELTimer) {
         .super = {
             .class = &MELSpriteClassDefault,
             .userdata = userdata,
@@ -39,7 +42,7 @@ LCDSprite * _Nonnull TimerConstructor(float delay, TimerCallback callback, void 
 }
 
 static void update(LCDSprite * _Nonnull sprite) {
-    Timer *self = playdate->sprite->getUserdata(sprite);
+    MELTimer *self = playdate->sprite->getUserdata(sprite);
     const float duration = self->delay;
     if (self->time < duration) {
         self->time += DELTA;

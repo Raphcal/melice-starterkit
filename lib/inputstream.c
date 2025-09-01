@@ -12,12 +12,23 @@
 
 #include "melstring.h"
 #include "primitives.h"
+#include "files.h"
 
 #define MELInputStreamBufferSize 4096
 
 MELBoolean MELFileExists(const char * _Nonnull path) {
     FileStat stat;
     return playdate->file->stat(path, &stat) == 0;
+}
+
+MELBoolean MELFileExistsWithMode(const char * _Nonnull path, FileOptions mode) {
+    SDFile *file = playdate->file->open(path, mode);
+    if (file) {
+        playdate->file->close(file);
+        return true;
+    } else {
+        return false;
+    }
 }
 
 MELInputStream MELInputStreamOpen(const char * _Nonnull path, FileOptions mode) {
@@ -117,13 +128,9 @@ void MELInputStreamFillBuffer(MELInputStream * _Nonnull self) {
         return;
     }
     const int size = self->size;
-    int read = playdate->file->read(self->file, self->buffer + size, sizeof(uint8_t) * (MELInputStreamBufferSize - size));
+    const int expected = sizeof(uint8_t) * (MELInputStreamBufferSize - size);
+    const int read = playdate->file->read(self->file, self->buffer + size, expected);
     if (read < 1) {
-        if (self->exceptionHandler) {
-            playdate->system->logToConsole("Unable to fill buffer: EOF reached");
-            longjmp(*self->exceptionHandler, 1);
-        }
-        playdate->system->error("Unable to fill buffer: EOF reached");
         return;
     }
     self->size = size + read;
@@ -163,19 +170,41 @@ void MELInputStreamRead(MELInputStream * _Nonnull self, void * _Nonnull destinat
 int MELInputStreamReadUInt8(MELInputStream * _Nonnull self) {
     if (self->cursor == self->size) {
         if (self->file == NULL) {
-            return -1;
+            return EOF;
         }
         self->size = 0;
         self->cursor = 0;
         MELInputStreamFillBuffer(self);
+
+        if (MELInputStreamRemaining(self) == 0) {
+            return EOF;
+        }
     }
     return self->buffer[self->cursor++];
 }
 
-int8_t MELInputStreamReadInt8(MELInputStream * _Nonnull self) {
-    int8_t value;
-    MELInputStreamRead(self, &value, sizeof(int8_t));
-    return value;
+int MELInputStreamReadInt8(MELInputStream * _Nonnull self) {
+    if (self->cursor == self->size) {
+        if (self->file == NULL) {
+            return EOF;
+        }
+        self->size = 0;
+        self->cursor = 0;
+        MELInputStreamFillBuffer(self);
+
+        if (MELInputStreamRemaining(self) == 0) {
+            return EOF;
+        }
+    }
+    return (int8_t) self->buffer[self->cursor++];
+}
+
+void MELInputStreamUnreadUInt8(MELInputStream * _Nonnull self) {
+    if (self->cursor > 0) {
+        self->cursor--;
+    } else {
+        playdate->system->error("Unable to unread, cursor is: %d", self->cursor);
+    }
 }
 
 void MELInputStreamSkipBytes(MELInputStream * _Nonnull self, unsigned int size) {
@@ -188,7 +217,12 @@ void MELInputStreamSkipBytes(MELInputStream * _Nonnull self, unsigned int size) 
         self->size = 0;
         MELInputStreamFillBuffer(self);
         if (MELInputStreamRemaining(self) < size) {
-            playdate->system->error("Unable to skip %d bytes of given inputstream, only %d remaining.", size, MELInputStreamRemaining(self));
+            if (self->exceptionHandler) {
+                playdate->system->logToConsole("Caught: Unable to skip %d bytes of given inputstream, only %d remaining.", size, MELInputStreamRemaining(self));
+                longjmp(*self->exceptionHandler, 1);
+            } else {
+                playdate->system->error("Unable to skip %d bytes of given inputstream, only %d remaining.", size, MELInputStreamRemaining(self));
+            }
             return;
         }
     }
@@ -201,7 +235,7 @@ MELBoolean MELInputStreamReadBoolean(MELInputStream * _Nonnull self) {
     return (MELBoolean)value;
 }
 
-int32_t MELInputStreamReadInt(MELInputStream * _Nonnull self) {
+int32_t MELInputStreamReadInt32(MELInputStream * _Nonnull self) {
     int32_t value;
     MELInputStreamRead(self, &value, sizeof(int32_t));
     return value;
@@ -395,7 +429,7 @@ PDScore MELInputStreamReadPDScore(MELInputStream * _Nonnull self) {
     return score;
 }
 
-PDScore * _Nonnull MELInputStreamReadPDScoreArray(MELInputStream * _Nonnull self, uint32_t * _Nullable count) {
+PDScore * _Nullable MELInputStreamReadPDScoreArray(MELInputStream * _Nonnull self, uint32_t * _Nullable count) {
     PDScore *scores = NULL;
     uint32_t scoreCount = MELInputStreamReadUInt32(self);
     if (count != NULL) {

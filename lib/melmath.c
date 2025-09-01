@@ -51,6 +51,14 @@ int32_t MELInt32Max(int32_t lhs, int32_t rhs) {
     return lhs > rhs ? lhs : rhs;
 }
 
+int32_t MELInt32Max3(int32_t a, int32_t b, int32_t c) {
+    return (a > b && a > c)
+        ? a
+        : (b > c)
+            ? b
+            : c;
+}
+
 uint32_t MELUInt32Max(uint32_t lhs, uint32_t rhs) {
     return lhs > rhs ? lhs : rhs;
 }
@@ -184,6 +192,11 @@ float MELEaseOutBounce(float from, float to, float value) {
 float MELEaseOutCirc(float from, float to, float value) {
     const float x = MELProgress(from, to, value);
     return sqrtf(1 - (x - 1) * (x - 1));
+}
+
+float MELEaseExpo(float from, float to, float value) {
+    const float x = MELProgress(from, to, value);
+    return x == 1.0f ? 1.0f : 1.0f - powf(2.0f, -10.0f * x);
 }
 
 MELBoolean MELFloatEquals(float lhs, float rhs) {

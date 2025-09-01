@@ -16,6 +16,10 @@ MELListImplement(MELCodePoint);
 
 const char kEmptyString[] = "";
 
+MELBoolean MELNullableStringEquals(const char * _Nullable lhs, const char * _Nullable rhs) {
+    return (lhs == NULL && rhs == NULL) || (lhs != NULL && rhs != NULL && !strcmp(lhs, rhs));
+}
+
 MELBoolean MELStringEquals(const char * _Nonnull lhs, const char * _Nonnull rhs) {
     return !strcmp(lhs, rhs);
 }
@@ -36,10 +40,13 @@ MELBoolean MELStringEndsWith(const char * _Nonnull lhs, const char * _Nonnull rh
     return !strcmp(lhs + (lhsLength - rhsLength), rhs);
 }
 
-uint64_t MELStringHash(const char * _Nonnull key) {
-    uint64_t hash = 0;
-    for (uint64_t index = 0; key[index]; index++) {
-        hash = hash * index + key[index];
+uint32_t MELStringHash(const char * _Nullable key) {
+    if (key == NULL || *key == '\0') {
+        return 0;
+    }
+    uint32_t hash = 5381;
+    for (uint32_t index = 0; key[index]; index++) {
+        hash = ((hash << 5) + hash) ^ key[index];
     }
     return hash;
 }
@@ -312,6 +319,29 @@ void MELUInt32ToStringWithFixedSizeBuffer(uint32_t value, char * _Nonnull buffer
         buffer[index] = '0' + (value % 10);
         value /= 10;
     }
+}
+
+uint32_t MELStringToUInt32(const char * _Nonnull string) {
+    char *endPointer = NULL;
+    unsigned long value = strtoul(string, &endPointer, 10);
+    if (value > UINT32_MAX) {
+        return UINT32_MAX;
+    }
+    if (endPointer == string || *endPointer != '\0') {
+        playdate->system->error("Unable to parse given string to uint32_t: %s", string);
+        return 0;
+    }
+    return (uint32_t)value;
+}
+
+int MELStringIndexOfCharacter(const char * _Nonnull haystack, char needle) {
+    const char *pos = strchr(haystack, needle);
+    return pos == NULL ? -1 : (int) (pos - haystack);
+}
+
+int MELStringLastIndexOfCharacter(const char * _Nonnull haystack, char needle) {
+    const char *pos = strrchr(haystack, needle);
+    return pos == NULL ? -1 : (int) (pos - haystack);
 }
 
 int MELStringIndexOfString(const char * _Nonnull haystack, const char * _Nonnull needle) {

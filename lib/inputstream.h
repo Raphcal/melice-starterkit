@@ -19,7 +19,8 @@
 #include "hash.h"
 #include "uuid.h"
 
-#define MELInputStreamReadByte MELInputStreamReadUInt8
+#define MELInputStreamReadByte MELInputStreamReadInt8
+#define MELInputStreamReadInt MELInputStreamReadInt32
 
 typedef struct {
     SDFile * _Nullable file;
@@ -38,6 +39,7 @@ typedef enum {
 } MELInputStreamSeekFrom;
 
 MELBoolean MELFileExists(const char * _Nonnull path);
+MELBoolean MELFileExistsWithMode(const char * _Nonnull path, FileOptions mode);
 
 /**
  * Opens and returns an input stream on the given path with the given mode.
@@ -90,7 +92,12 @@ int MELInputStreamSeek(MELInputStream * _Nonnull self, int offset, MELInputStrea
  */
 int MELInputStreamReadUInt8(MELInputStream * _Nonnull self);
 
-int8_t MELInputStreamReadInt8(MELInputStream * _Nonnull self);
+int MELInputStreamReadInt8(MELInputStream * _Nonnull self);
+
+/**
+ * Rewind from 1 byte.
+ */
+void MELInputStreamUnreadUInt8(MELInputStream * _Nonnull self);
 
 /**
  * Reads size bytes from the given input stream into the given pointer.
@@ -123,7 +130,7 @@ MELBoolean MELInputStreamReadBoolean(MELInputStream * _Nonnull self);
  * @param self Input stream instance.
  * @return A 32 bits signed integer.
  */
-int32_t MELInputStreamReadInt(MELInputStream * _Nonnull self);
+int32_t MELInputStreamReadInt32(MELInputStream * _Nonnull self);
 
 uint32_t MELInputStreamReadUInt32(MELInputStream * _Nonnull self);
 
@@ -238,7 +245,7 @@ MELIntSize MELInputStreamReadIntSize(MELInputStream * _Nonnull self);
 MELIntRectangle MELInputStreamReadIntRectangle(MELInputStream * _Nonnull self);
 
 PDScore MELInputStreamReadPDScore(MELInputStream * _Nonnull self);
-PDScore * _Nonnull MELInputStreamReadPDScoreArray(MELInputStream * _Nonnull self, uint32_t * _Nullable count);
+PDScore * _Nullable MELInputStreamReadPDScoreArray(MELInputStream * _Nonnull self, uint32_t * _Nullable count);
 
 MELUUID MELInputStreamReadUUID(MELInputStream * _Nonnull self);
 

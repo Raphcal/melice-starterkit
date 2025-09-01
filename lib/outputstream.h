@@ -14,8 +14,10 @@
 #include "size.h"
 #include "rectangle.h"
 #include "hash.h"
+#include "uuid.h"
 
 #define MELOutputStreamWriteByte MELOutputStreamWriteUInt8
+#define MELOutputStreamWriteInt MELOutputStreamWriteInt32
 
 typedef struct {
     SDFile * _Nullable file;
@@ -77,7 +79,7 @@ void MELOutputStreamWriteBoolean(MELOutputStream * _Nonnull self, MELBoolean val
  * @param self Output stream to write to.
  * @param value 32 bits signed integer to write.
  */
-void MELOutputStreamWriteInt(MELOutputStream * _Nonnull self, int32_t value);
+void MELOutputStreamWriteInt32(MELOutputStream * _Nonnull self, int32_t value);
 
 /**
  * Writes a 16 bits signed integer to the given ouput stream.
@@ -176,6 +178,8 @@ void MELOutputStreamWriteRectangle(MELOutputStream * _Nonnull self, MELRectangle
 void MELOutputStreamWriteIntPoint(MELOutputStream * _Nonnull self, MELIntPoint value);
 void MELOutputStreamWriteIntSize(MELOutputStream * _Nonnull self, MELIntSize value);
 void MELOutputStreamWriteIntRectangle(MELOutputStream * _Nonnull self, MELIntRectangle value);
+
+void MELOutputStreamWriteUUID(MELOutputStream * _Nonnull self, MELUUID uuid);
 
 void MELOutputStreamWritePDScore(MELOutputStream * _Nonnull self, PDScore score);
 void MELOutputStreamWritePDScoreArray(MELOutputStream * _Nonnull self, const PDScore * _Nonnull scores, uint32_t count);

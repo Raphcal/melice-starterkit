@@ -117,7 +117,7 @@ void MELOutputStreamWriteBoolean(MELOutputStream * _Nonnull self, MELBoolean val
     MELOutputStreamWriteByte(self, value);
 }
 
-void MELOutputStreamWriteInt(MELOutputStream * _Nonnull self, int32_t value) {
+void MELOutputStreamWriteInt32(MELOutputStream * _Nonnull self, int32_t value) {
     MELOutputStreamWriteNumeric(self, value, sizeof(int32_t));
 }
 
@@ -212,7 +212,7 @@ void MELOutputStreamWriteNullableString(MELOutputStream * _Nonnull self, const c
 }
 
 void MELOutputStreamWriteUTF8String(MELOutputStream * _Nonnull self, const char * _Nonnull value) {
-    unsigned int count = (unsigned int) strlen(value);
+    const unsigned int count = (unsigned int) strlen(value);
 
     MELOutputStreamWriteInt(self, (int32_t) count);
     MELOutputStreamWrite(self, value, sizeof(char) * count);
@@ -246,6 +246,10 @@ void MELOutputStreamWriteIntSize(MELOutputStream * _Nonnull self, MELIntSize val
 void MELOutputStreamWriteIntRectangle(MELOutputStream * _Nonnull self, MELIntRectangle value) {
     MELOutputStreamWriteIntPoint(self, value.origin);
     MELOutputStreamWriteIntSize(self, value.size);
+}
+
+void MELOutputStreamWriteUUID(MELOutputStream * _Nonnull self, MELUUID uuid) {
+    MELOutputStreamWrite(self, uuid.data, sizeof(uint8_t) * kUUIDByteCount);
 }
 
 void MELOutputStreamWritePDScore(MELOutputStream * _Nonnull self, PDScore score) {

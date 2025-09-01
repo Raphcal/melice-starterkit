@@ -13,20 +13,20 @@ static const PDStringEncoding kDefaultEncoding = kUTF8Encoding;
 
 static LCDBitmap * _Nonnull drawText(LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, int leading, const char * _Nonnull text, int length);
 
-LCDSprite * _Nonnull TextConstructor(MELPoint origin, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, const char * _Nonnull text, int length) {
-    return ImageConstructor(origin, drawText(font, drawMode, 0, text, length));
+LCDSprite * _Nonnull MELTextConstructor(MELPoint origin, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, const char * _Nonnull text, int length) {
+    return MELImageConstructor(origin, drawText(font, drawMode, 0, text, length));
 }
 
-LCDSprite * _Nonnull TextConstructorDontPush(MELPoint origin, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, const char * _Nonnull text, int length) {
+LCDSprite * _Nonnull MELTextConstructorDontPush(MELPoint origin, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, const char * _Nonnull text, int length) {
     MELSprite *self = playdate->system->realloc(NULL, sizeof(MELSprite));
-    return ImageConstructorWithSelfDontPush(self, origin, drawText(font, drawMode, 0, text, length));
+    return MELImageConstructorWithSelfDontPush(self, origin, drawText(font, drawMode, 0, text, length));
 }
 
-void TextSet(LCDSprite * _Nullable sprite, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, const char * _Nonnull text, int length) {
-    TextSetWithLeading(sprite, font, drawMode, 0, text, length);
+void MELTextSet(LCDSprite * _Nullable sprite, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, const char * _Nonnull text, int length) {
+    MELTextSetWithLeading(sprite, font, drawMode, 0, text, length);
 }
 
-void TextSetWithLeading(LCDSprite * _Nullable sprite, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, int leading, const char * _Nonnull text, int length) {
+void MELTextSetWithLeading(LCDSprite * _Nullable sprite, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, int leading, const char * _Nonnull text, int length) {
     if (!sprite) {
         return;
     }

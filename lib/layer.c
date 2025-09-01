@@ -14,7 +14,10 @@ MELListImplement(MELLayerRef);
 const MELLayer MELLayerEmpty = {};
 
 void MELLayerDeinit(MELLayer * _Nonnull self) {
-    playdate->system->realloc(self->tiles, 0);
+    if (self->tiles) {
+        playdate->system->realloc(self->tiles, 0);
+        self->tiles = NULL;
+    }
     *self = MELLayerEmpty;
 }
 

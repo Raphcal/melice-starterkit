@@ -1,5 +1,7 @@
 #include "stride.h"
 
+#include "camera.h"
+
 typedef struct {
     void * _Nullable oldUserdata;
     float time;
@@ -10,27 +12,27 @@ typedef struct {
     MELEasingFunction easingFunction;
     MELBoolean destroyWhenStrideEnds;
     MELBoolean oldAutoReleaseUserdata;
-} Stride;
+} MELStride;
 
 static void updateAndFillBlack(LCDSprite * _Nonnull sprite);
 
-static void (* _Nonnull getUpdateFunction(Stride * _Nonnull self, const MELSpriteClass * _Nonnull class))(LCDSprite * _Nonnull);
+static void (* _Nonnull getUpdateFunction(MELStride * _Nonnull self, const MELSpriteClass * _Nonnull class))(LCDSprite * _Nonnull);
 
-void StrideSpriteFromAndTo(LCDSprite * _Nonnull sprite, MELPoint from, MELPoint to, float delay, float duration) {
+void MELStrideSpriteFromAndTo(LCDSprite * _Nonnull sprite, MELPoint from, MELPoint to, float delay, float duration) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     self->frame.origin = from;
-    StrideSpriteTo(sprite, to, delay, duration);
+    MELStrideSpriteTo(sprite, to, delay, duration);
 }
 
-void StrideSpriteTo(LCDSprite * _Nonnull sprite, MELPoint to, float delay, float duration) {
+void MELStrideSpriteTo(LCDSprite * _Nonnull sprite, MELPoint to, float delay, float duration) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     if (self->userdata && self->autoReleaseUserdata) {
         playdate->system->realloc(self->userdata, 0);
         self->userdata = NULL;
     }
-    Stride *stride = playdate->system->realloc(NULL, sizeof(Stride));
+    MELStride *stride = playdate->system->realloc(NULL, sizeof(MELStride));
     MELPoint from = self->frame.origin;
-    *stride = (Stride) {
+    *stride = (MELStride) {
         .origin = self->frame.origin,
         .distance = {
             .width = to.x - from.x,
@@ -44,26 +46,26 @@ void StrideSpriteTo(LCDSprite * _Nonnull sprite, MELPoint to, float delay, float
     };
     self->userdata = stride;
     self->autoReleaseUserdata = true;
-    playdate->sprite->setUpdateFunction(sprite, StrideUpdate);
+    playdate->sprite->setUpdateFunction(sprite, MELStrideUpdate);
 }
 
-void StrideSpriteBy(LCDSprite * _Nonnull sprite, MELPoint translation, float delay, float duration) {
+void MELStrideSpriteBy(LCDSprite * _Nonnull sprite, MELPoint translation, float delay, float duration) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
-    StrideSpriteTo(sprite, MELPointAdd(self->frame.origin, translation), delay, duration);
+    MELStrideSpriteTo(sprite, MELPointAdd(self->frame.origin, translation), delay, duration);
 }
 
-LCDSprite * _Nonnull StrideConstructor(MELSpriteDefinition * _Nonnull definition, MELPoint from, MELPoint to, float delay, float duration) {
+LCDSprite * _Nonnull MELStrideConstructor(MELSpriteDefinition * _Nonnull definition, MELPoint from, MELPoint to, float delay, float duration) {
     MELSprite *self = playdate->system->realloc(NULL, sizeof(MELSprite));
     LCDSprite *sprite = MELSpriteInitWithCenter(self, definition, from);
-    StrideSpriteTo(sprite, to, delay, duration);
+    MELStrideSpriteTo(sprite, to, delay, duration);
 
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
-    playdate->system->logToConsole("Push StrideConstructor(%x, %x): %d", sprite, self, self->definition.name);
+    playdate->system->logToConsole("Push MELStrideConstructor(%x, %x): %d", sprite, self, self->definition.name);
 #endif
     return sprite;
 }
 
-void StrideTogetherAlignedRight(LCDSprite * _Nullable sprite, LCDSprite * _Nullable spriteToFollow) {
+void MELStrideTogetherAlignedRight(LCDSprite * _Nullable sprite, LCDSprite * _Nullable spriteToFollow) {
     if (!sprite || !spriteToFollow) {
         return;
     }
@@ -71,11 +73,11 @@ void StrideTogetherAlignedRight(LCDSprite * _Nullable sprite, LCDSprite * _Nulla
     MELSprite *other = playdate->sprite->getUserdata(spriteToFollow);
 
     if (self->userdata == NULL) {
-        self->userdata = playdate->system->realloc(NULL, sizeof(Stride));
+        self->userdata = playdate->system->realloc(NULL, sizeof(MELStride));
         self->autoReleaseUserdata = true;
     }
-    Stride *selfStride = self->userdata;
-    Stride *otherStride = other->userdata;
+    MELStride *selfStride = self->userdata;
+    MELStride *otherStride = other->userdata;
 
     MELRectangle selfFrame = self->frame;
     MELRectangle otherFrame = other->frame;
@@ -86,15 +88,15 @@ void StrideTogetherAlignedRight(LCDSprite * _Nullable sprite, LCDSprite * _Nulla
         }
     };
     *selfStride = *otherStride;
-    playdate->sprite->setUpdateFunction(sprite, StrideUpdate);
+    playdate->sprite->setUpdateFunction(sprite, MELStrideUpdate);
 }
 
-void StrideSkip(LCDSprite * _Nullable sprite) {
-    if (StrideIsDone(sprite)) {
+void MELStrideSkip(LCDSprite * _Nullable sprite) {
+    if (MELStrideIsDone(sprite)) {
         return;
     }
     MELSprite *self = playdate->sprite->getUserdata(sprite);
-    Stride *stride = self->userdata;
+    MELStride *stride = self->userdata;
     MELRectangle frame = self->frame;
     frame.origin = (MELPoint) {
         .x = stride->origin.x + stride->distance.width,
@@ -114,11 +116,11 @@ void StrideSkip(LCDSprite * _Nullable sprite) {
     playdate->system->realloc(stride, 0);
 }
 
-void StrideResume(LCDSprite * _Nonnull sprite) {
-    playdate->sprite->setUpdateFunction(sprite, StrideUpdate);
+void MELStrideResume(LCDSprite * _Nonnull sprite) {
+    playdate->sprite->setUpdateFunction(sprite, MELStrideUpdate);
 }
 
-MELBoolean StrideIsDone(LCDSprite * _Nullable sprite) {
+MELBoolean MELStrideIsDone(LCDSprite * _Nullable sprite) {
     if (!sprite) {
         return true;
     }
@@ -126,31 +128,31 @@ MELBoolean StrideIsDone(LCDSprite * _Nullable sprite) {
     return self->userdata == NULL;
 }
 
-void StrideSetEasingFunction(LCDSprite * _Nonnull sprite, MELEasingFunction easingFunction) {
+void MELStrideSetEasingFunction(LCDSprite * _Nonnull sprite, MELEasingFunction easingFunction) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
-    Stride *stride = self->userdata;
+    MELStride *stride = self->userdata;
     stride->easingFunction = easingFunction;
 }
 
-void StrideSetProgress(LCDSprite * _Nonnull sprite, float progress) {
+void MELStrideSetProgress(LCDSprite * _Nonnull sprite, float progress) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
-    Stride *stride = self->userdata;
+    MELStride *stride = self->userdata;
     stride->time = stride->duration * progress;
 }
 
-void StrideSetFillBlack(LCDSprite * _Nonnull sprite) {
+void MELStrideSetFillBlack(LCDSprite * _Nonnull sprite) {
     playdate->sprite->setUpdateFunction(sprite, updateAndFillBlack);
 }
 
-void StrideSetDestroyWhenStrideEnds(LCDSprite * _Nonnull sprite, MELBoolean destroyWhenStrideEnds) {
+void MELStrideSetDestroyWhenStrideEnds(LCDSprite * _Nonnull sprite, MELBoolean destroyWhenStrideEnds) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     if (self->userdata) {
-        Stride *stride = self->userdata;
+        MELStride *stride = self->userdata;
         stride->destroyWhenStrideEnds = destroyWhenStrideEnds;
     }
 }
 
-void StrideUpdate(LCDSprite * _Nonnull sprite) {
+void MELStrideUpdate(LCDSprite * _Nonnull sprite) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
 
     MELAnimation *animation = self->animation;
@@ -159,7 +161,7 @@ void StrideUpdate(LCDSprite * _Nonnull sprite) {
         playdate->sprite->setImage(sprite, playdate->graphics->getTableBitmap(self->definition.palette, animation->frame.atlasIndex), MELDirectionFlip[self->direction]);
     }
 
-    Stride *stride = self->userdata;
+    MELStride *stride = self->userdata;
     if (!stride) {
         return;
     }
@@ -181,15 +183,15 @@ void StrideUpdate(LCDSprite * _Nonnull sprite) {
         playdate->sprite->moveTo(sprite, x, y);
         return;
     }
-    StrideSkip(sprite);
+    MELStrideSkip(sprite);
 }
 
 static void updateAndFillBlack(LCDSprite * _Nonnull sprite) {
-    StrideUpdate(sprite);
+    MELStrideUpdate(sprite);
     playdate->sprite->setDrawMode(sprite, kDrawModeFillBlack);
 }
 
-static void (* _Nonnull getUpdateFunction(Stride * _Nonnull self, const MELSpriteClass * _Nonnull class))(LCDSprite * _Nonnull) {
+static void (* _Nonnull getUpdateFunction(MELStride * _Nonnull self, const MELSpriteClass * _Nonnull class))(LCDSprite * _Nonnull) {
     if (self->destroyWhenStrideEnds) {
         return class->destroy;
     } else if (class->update) {

@@ -36,6 +36,7 @@ MELSpriteInstance MELSpriteInstanceMakeWithInputStream(MELInputStream * _Nonnull
     instance.center = MELPointMake(x, y);
     instance.zIndex = MELInputStreamReadByte(inputStream) & 0xFF;
     instance.isUnique = MELInputStreamReadBoolean(inputStream);
+    instance.animationName = MELInputStreamReadByte(inputStream);
     instance.variables = MELInputStreamReadIntArray(inputStream, &instance.variableCount);
     return instance;
 }

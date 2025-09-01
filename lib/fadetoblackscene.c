@@ -14,7 +14,7 @@
 typedef struct {
     MELFade super;
     LCDBitmap * _Nullable pattern;
-    LCDBitmap * _Nonnull fade;
+    LCDBitmap * _Nullable fade;
     float time;
     uint8_t opacity;
 } MELFadeToBlackScene;
@@ -148,7 +148,7 @@ static int updateFadeOut(void * _Nonnull userdata) {
 
     currentScene = self->super.nextScene;
     self->super.nextScene = NULL;
-    playdate->system->setUpdateCallback(self->super.nextScene->update, self->super.nextScene);
+    playdate->system->setUpdateCallback(currentScene->update, currentScene);
     self->super.super.dealloc(&self->super.super);
     return true;
 }

@@ -45,6 +45,7 @@
 
 extern PlaydateAPI * _Nullable playdate;
 extern LCDFont * _Nullable roobertFont;
+extern LCDFont * _Nullable currentFont;
 extern int REFRESH_RATE;
 extern float DELTA;
 

@@ -16,11 +16,11 @@ static void update(LCDSprite * _Nonnull sprite);
 static void updateRepeat(LCDSprite * _Nonnull sprite);
 static void dealloc(LCDSprite * _Nonnull sprite);
 
-const MELSpriteClass LayerSpriteClass = (MELSpriteClass) {
+const MELSpriteClass MELLayerSpriteClass = (MELSpriteClass) {
     .destroy = dealloc,
 };
 
-static LCDSprite * _Nonnull constructor(LayerSprite * _Nonnull self, MELLayer * _Nonnull layer, LCDBitmap * _Nonnull image, float leftPadding) {
+static LCDSprite * _Nonnull constructor(MELLayerSprite * _Nonnull self, MELLayer * _Nonnull layer, LCDBitmap * _Nonnull image, float leftPadding) {
     const int layerIndex = (int) (layer - layer->parent->layers);
     MELIntSize tileSize = layer->parent->tileSize;
     MELIntRectangle layerFrame = layer->frame;
@@ -29,9 +29,9 @@ static LCDSprite * _Nonnull constructor(LayerSprite * _Nonnull self, MELLayer * 
         .y = layerFrame.origin.y * tileSize.height
     };
 
-    *self = (LayerSprite) {
+    *self = (MELLayerSprite) {
         .super = {
-            .class = &LayerSpriteClass,
+            .class = &MELLayerSpriteClass,
             .frame = {
                 .size = {
                     .width = layerFrame.size.width * tileSize.width,
@@ -53,13 +53,13 @@ static LCDSprite * _Nonnull constructor(LayerSprite * _Nonnull self, MELLayer * 
     return sprite;
 }
 
-LCDSprite * _Nonnull LayerSpriteConstructor(MELLayer * _Nonnull layer, LCDBitmap * _Nonnull image, MELBoolean isRepeat) {
-    LayerSprite *self = playdate->system->realloc(NULL, sizeof(LayerSprite));
+LCDSprite * _Nonnull MELLayerSpriteConstructor(MELLayer * _Nonnull layer, LCDBitmap * _Nonnull image, MELBoolean isRepeat) {
+    MELLayerSprite *self = playdate->system->realloc(NULL, sizeof(MELLayerSprite));
 
     const int32_t mapWidth = layer->parent->size.width;
 #if CHECK_LAYERSPRITE_MAP_WIDTH
     if (isRepeat && mapWidth != kMapWidth) {
-        playdate->system->error("LayerSpriteConstructor: expected mapWidth of %d but was: %d", kMapWidth, mapWidth);
+        playdate->system->error("MELLayerSpriteConstructor: expected mapWidth of %d but was: %d", kMapWidth, mapWidth);
     }
 #endif
 
@@ -68,16 +68,16 @@ LCDSprite * _Nonnull LayerSpriteConstructor(MELLayer * _Nonnull layer, LCDBitmap
     return sprite;
 }
 
-LCDSprite * _Nonnull LayerSpriteConstructorWithLeftPadding(MELLayer * _Nonnull layer, LCDBitmap * _Nonnull image, float leftPadding) {
-    LayerSprite *self = playdate->system->realloc(NULL, sizeof(LayerSprite));
+LCDSprite * _Nonnull MELLayerSpriteConstructorWithLeftPadding(MELLayer * _Nonnull layer, LCDBitmap * _Nonnull image, float leftPadding) {
+    MELLayerSprite *self = playdate->system->realloc(NULL, sizeof(MELLayerSprite));
     LCDSprite *sprite = constructor(self, layer, image, leftPadding);
     playdate->sprite->setUpdateFunction(sprite, update);
     update(sprite);
     return sprite;
 }
 
-LCDSprite * _Nonnull LayerSpriteConstructorWithInstance(MELSpriteInstance instance, MELBoolean isRepeat) {
-    LayerSprite *self = new(LayerSprite);
+LCDSprite * _Nonnull MELLayerSpriteConstructorWithInstance(MELSpriteInstance instance, MELBoolean isRepeat) {
+    MELLayerSprite *self = new(MELLayerSprite);
 
     MELSpriteDefinition *definition = SpriteNameGetDefinition(instance.name);
     if (!definition->palette) {
@@ -85,9 +85,9 @@ LCDSprite * _Nonnull LayerSpriteConstructorWithInstance(MELSpriteInstance instan
     }
     const MELSize size = definition->size;
 
-    *self = (LayerSprite) {
+    *self = (MELLayerSprite) {
         .super = {
-            .class = &LayerSpriteClass,
+            .class = &MELLayerSpriteClass,
             .definition = *definition,
             .frame = {
                 .size = size,
@@ -113,7 +113,7 @@ LCDSprite * _Nonnull LayerSpriteConstructorWithInstance(MELSpriteInstance instan
 }
 
 static void dealloc(LCDSprite * _Nonnull sprite) {
-    LayerSprite *self = playdate->sprite->getUserdata(sprite);
+    MELLayerSprite *self = playdate->sprite->getUserdata(sprite);
     if (self->leftPadding == 0.0f) {
         LCDBitmap *bitmap = playdate->sprite->getImage(sprite);
         playdate->graphics->freeBitmap(bitmap);
@@ -127,7 +127,7 @@ static void dealloc(LCDSprite * _Nonnull sprite) {
  * @param sprite Couche d'une carte.
  */
 static void update(LCDSprite * _Nonnull sprite) {
-    LayerSprite *self = playdate->sprite->getUserdata(sprite);
+    MELLayerSprite *self = playdate->sprite->getUserdata(sprite);
 
     const MELRectangle frame = self->super.frame;
     const MELPoint scrollRate = self->scrollRate;
@@ -141,7 +141,7 @@ static void update(LCDSprite * _Nonnull sprite) {
  * @param sprite Couche d'une carte.
  */
 static void updateRepeat(LCDSprite * _Nonnull sprite) {
-    LayerSprite *self = playdate->sprite->getUserdata(sprite);
+    MELLayerSprite *self = playdate->sprite->getUserdata(sprite);
 
     const MELRectangle frame = self->super.frame;
     const MELPoint scrollRate = self->scrollRate;

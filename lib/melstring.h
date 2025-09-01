@@ -21,16 +21,15 @@ MELListDefine(MELChar16);
 typedef uint32_t MELCodePoint;
 MELListDefine(MELCodePoint);
 
-typedef const char * _Nonnull MELConstString;
-MELListDefine(MELConstString);
-
 extern const char kEmptyString[];
 
 MELBoolean MELStringEquals(const char * _Nonnull lhs, const char * _Nonnull rhs);
+MELBoolean MELNullableStringEquals(const char * _Nullable lhs, const char * _Nullable rhs);
+
 MELBoolean MELStringStartsWith(const char * _Nonnull lhs, const char * _Nonnull rhs);
 MELBoolean MELStringEndsWith(const char * _Nonnull lhs, const char * _Nonnull rhs);
 
-uint64_t MELStringHash(const char * _Nonnull key);
+uint32_t MELStringHash(const char * _Nullable key);
 
 char * _Nullable MELStringCopy(const char * restrict _Nullable source);
 char * _Nonnull MELStringConcat(const char * _Nullable lhs, const char * _Nullable rhs);
@@ -65,8 +64,11 @@ char * _Nonnull MELUInt32ToString(uint32_t value);
 char * _Nonnull MELUInt32ToStringWithBuffer(uint32_t value, char * _Nullable buffer, int * _Nonnull bufferCapacity);
 void MELUInt32ToStringWithFixedSizeBuffer(uint32_t value, char * _Nonnull buffer, const int bufferCapacity);
 
-#define MELStringIndexOfCharacter(haystack, needle) strchr(haystack, needle)
-#define MELStringLastIndexOfCharacter(haystack, needle) strrchr(haystack, needle)
+uint32_t MELStringToUInt32(const char * _Nonnull string);
+
+int MELStringIndexOfCharacter(const char * _Nonnull haystack, char needle);
+int MELStringLastIndexOfCharacter(const char * _Nonnull haystack, char needle);
+
 #define MELStringParseInt(source) atoi(source)
 #define MELStringParseFloat(source) strtof(source, NULL)
 

@@ -19,6 +19,7 @@
 
 #include "../gen/spritenames.h"
 #include "../gen/maps.h"
+#include "../gen/animationnames.h"
 
 typedef struct melmap MELMap;
 typedef struct mellayer MELLayer;
@@ -27,6 +28,7 @@ typedef struct melspriteinstance {
     SpriteName name;
     MELPoint center;
     MELDirection direction;
+    AnimationName animationName;
     int8_t zIndex;
     MELBoolean isUnique;
     /// Active sprites are not unloaded when they are far from the player.

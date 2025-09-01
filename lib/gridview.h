@@ -50,6 +50,7 @@ typedef struct melgridview {
 
 LCDSprite * _Nonnull MELGridViewMake(MELRectangle frame, MELIntSize gridSize, MELIntSize cellSize, MELGridViewDrawCell drawCell, void * _Nullable userdata);
 void MELGridViewSetSelection(LCDSprite * _Nonnull sprite, MELIntPoint selection);
+void MELGridViewSetSelectionAnimated(LCDSprite * _Nonnull sprite, MELIntPoint selection, PDButtons buttons);
 void MELGridViewRepaintCell(LCDSprite * _Nonnull sprite, MELIntPoint cell);
 void MELGridViewRepaint(LCDSprite * _Nonnull sprite);
 void MELGridViewMakeVisibleAndDraw(LCDSprite * _Nonnull sprite);

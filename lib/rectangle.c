@@ -126,6 +126,13 @@ void MELRectangleOriginIsCenterSetBottom(MELRectangle * _Nonnull self, float bot
     self->origin.y = bottom - self->size.height / 2.0f;
 }
 
+MELPoint MELRectangleOriginIsCenterGetTopLeft(MELRectangle self) {
+    return (MELPoint) {
+        .x = MELRectangleOriginIsCenterGetLeft(self),
+        .y = MELRectangleOriginIsCenterGetTop(self),
+    };
+}
+
 MELPoint MELRectangleOriginIsCenterGetPointAtAngle(MELRectangle self, GLfloat angle) {
     const GLfloat halfHeight = self.size.height / 2.0f;
     return MELPointMake(self.origin.x + halfHeight * cosf(angle), self.origin.y + halfHeight * sinf(angle));

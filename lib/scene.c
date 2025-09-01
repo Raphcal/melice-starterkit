@@ -13,6 +13,9 @@ MELScene * _Nullable currentScene;
 PDMenuItem * _Nullable backToTitleMenuItem;
 
 static void backToTitle(void * _Nullable userdata) {
+    if (currentScene && currentScene->beforeQuit) {
+        currentScene->beforeQuit(currentScene);
+    }
     TitleScene *titleScene = TitleSceneAlloc();
     MELSceneMakeCurrent(&titleScene->super);
 }
@@ -22,9 +25,13 @@ void MELSceneMakeCurrent(MELScene * _Nonnull self) {
         currentScene->dealloc(currentScene);
         if (playdate->sprite->getSpriteCount() > 0) {
             playdate->system->logToConsole("%d sprites remaining, calling update to dealloc properly", playdate->sprite->getSpriteCount());
+            MELScene emptyScene = (MELScene) {};
+            currentScene = &emptyScene;
             playdate->sprite->updateAndDrawSprites();
         }
-        playdate->sprite->removeAllSprites();
+        if (playdate->sprite->getSpriteCount() > 0) {
+            playdate->system->logToConsole("Still %d sprites remaining!", playdate->sprite->getSpriteCount());
+        }
     }
     currentScene = self;
     playdate->system->setUpdateCallback(self->update, self);
@@ -104,7 +111,7 @@ LCDSprite * _Nullable MELSceneFindSpriteByClassName(SpriteClassName className) {
         playdate->system->logToConsole("No sprite found in current scene for class name: %d", className);
     }
 #endif
-    return NULL;
+    return sprite;
 }
 
 static LCDSprite * _Nullable findSpriteByTag(MELScene * _Nonnull self, const uint8_t tag) {
@@ -136,7 +143,7 @@ LCDSprite * _Nullable MELSceneFindSpriteByTag(const uint8_t tag) {
         playdate->system->logToConsole("No sprite found in current scene for tag: %d", tag);
     }
 #endif
-    return NULL;
+    return sprite;
 }
 
 void MELSceneFadeTo(MELScene * _Nonnull nextScene, MELScene * _Nonnull (* _Nonnull fadeConstructor)(MELScene * _Nonnull oldScene, MELScene * _Nonnull nextScene)) {

@@ -32,7 +32,7 @@ LCDSprite * _Nonnull MELSpriteInit(MELSprite * _Nonnull self, MELSpriteDefinitio
         },
         .direction = instance->direction,
     };
-    MELSpriteSetAnimation(self, AnimationNameStand);
+    MELSpriteSetAnimation(self, instance->animationName);
 
     if (!MELRectangleEquals(self->animation->frame.hitbox, MELRectangleZero)) {
         self->hitbox = MELSpriteHitboxAlloc(self);
@@ -351,6 +351,21 @@ LCDSprite * _Nullable MELSpriteLoad(MELInputStream * _Nonnull inputStream) {
         MELAnimationDraw(self->animation, sprite);
     }
     return sprite;
+}
+
+MELRectangle MELSpriteGetFrame(LCDSprite * _Nonnull sprite) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    return self->frame;
+}
+
+float MELSpriteGetWidth(LCDSprite * _Nonnull sprite) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    return self->frame.size.width;
+}
+
+float MELSpriteGetHeight(LCDSprite * _Nonnull sprite) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    return self->frame.size.height;
 }
 
 MELRectangle LCDSpriteGetFrame(LCDSprite * _Nonnull sprite) {

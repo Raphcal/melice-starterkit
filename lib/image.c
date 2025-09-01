@@ -7,16 +7,18 @@
 
 #include "image.h"
 
-#include "../lib/camera.h"
+#include "bitmap.h"
+#include "camera.h"
+#include "scene.h"
 
 static void update(LCDSprite * _Nonnull sprite);
 
-static const MELSpriteClass ImageClass = (MELSpriteClass) {
-    .destroy = ImageDealloc,
+static const MELSpriteClass MELImageClass = (MELSpriteClass) {
+    .destroy = MELImageDealloc,
     .update = update,
 };
 
-void ImageDealloc(LCDSprite * _Nonnull sprite) {
+void MELImageDealloc(LCDSprite * _Nonnull sprite) {
     LCDBitmap *bitmap = playdate->sprite->getImage(sprite);
     playdate->graphics->freeBitmap(bitmap);
     MELSprite *self = playdate->sprite->getUserdata(sprite);
@@ -63,13 +65,13 @@ static void setOriginWithAlignment(MELSprite * _Nonnull self, LCDSprite * _Nonnu
     playdate->sprite->moveTo(sprite, origin.x, origin.y);
 }
 
-void ImageSetStatic(LCDSprite * _Nonnull sprite, MELPoint origin, MELHorizontalAlignment horizontalAlignment, MELVerticalAlignment verticalAlignment) {
+void MELImageSetStatic(LCDSprite * _Nonnull sprite, MELPoint origin, MELHorizontalAlignment horizontalAlignment, MELVerticalAlignment verticalAlignment) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     setOriginWithAlignment(self, sprite, origin, horizontalAlignment, verticalAlignment);
     playdate->sprite->setUpdateFunction(sprite, MELSpriteNoopUpdate);
 }
 
-void ImageSetSpritePaletteImageIndex(LCDSprite * _Nonnull sprite, int imageIndex) {
+void MELImageSetSpritePaletteImageIndex(LCDSprite * _Nonnull sprite, int imageIndex) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     if (!self->userdata) {
         return;
@@ -78,48 +80,48 @@ void ImageSetSpritePaletteImageIndex(LCDSprite * _Nonnull sprite, int imageIndex
     playdate->sprite->setImage(sprite, playdate->graphics->getTableBitmap(palette, imageIndex), kBitmapUnflipped);
 }
 
-LCDSprite * _Nonnull ImageConstructor(MELPoint origin, LCDBitmap * _Nonnull image) {
-    return ImageConstructorWithSelf(playdate->system->realloc(NULL, sizeof(MELSprite)), origin, image);
+LCDSprite * _Nonnull MELImageConstructor(MELPoint origin, LCDBitmap * _Nonnull image) {
+    return MELImageConstructorWithSelf(playdate->system->realloc(NULL, sizeof(MELSprite)), origin, image);
 }
-LCDSprite * _Nonnull ImageConstructorWithAlignment(LCDBitmap * _Nonnull image, MELPoint origin, MELHorizontalAlignment horizontalAlignment, MELVerticalAlignment verticalAlignment) {
+LCDSprite * _Nonnull MELImageConstructorWithAlignment(LCDBitmap * _Nonnull image, MELPoint origin, MELHorizontalAlignment horizontalAlignment, MELVerticalAlignment verticalAlignment) {
     MELSprite *self = new(MELSprite);
-    LCDSprite *sprite = ImageConstructorWithSelf(self, origin, image);
+    LCDSprite *sprite = MELImageConstructorWithSelf(self, origin, image);
     setOriginWithAlignment(self, sprite, origin, horizontalAlignment, verticalAlignment);
     return sprite;
 }
-LCDSprite * _Nonnull ImageConstructorWithSpritePalette(MELPoint origin, SpriteName spriteName, int imageIndex) {
+LCDSprite * _Nonnull MELImageConstructorWithSpritePalette(MELPoint origin, SpriteName spriteName, int imageIndex) {
     LCDBitmapTable *table = SpriteNameLoadBitmapTable(spriteName);
     LCDBitmap *image = playdate->graphics->getTableBitmap(table, imageIndex);
-    LCDSprite *sprite = ImageConstructorWithSelf(playdate->system->realloc(NULL, sizeof(MELSprite)), origin, image);
+    LCDSprite *sprite = MELImageConstructorWithSelf(playdate->system->realloc(NULL, sizeof(MELSprite)), origin, image);
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     self->userdata = table;
     return sprite;
 }
 
-LCDSprite * _Nonnull ImageConstructorWithPath(MELPoint origin, const char * _Nonnull path) {
-    return ImageConstructor(origin, LCDBitmapLoadOrError(path));
+LCDSprite * _Nonnull MELImageConstructorWithPath(MELPoint origin, const char * _Nonnull path) {
+    return MELImageConstructor(origin, LCDBitmapLoadOrError(path));
 }
 
-LCDSprite * _Nonnull ImageConstructorWithColor(MELRectangle frame, LCDColor color) {
+LCDSprite * _Nonnull MELImageConstructorWithColor(MELRectangle frame, LCDColor color) {
     LCDBitmap *image = playdate->graphics->newBitmap(frame.size.width, frame.size.height, color);
-    return ImageConstructor(frame.origin, image);
+    return MELImageConstructor(frame.origin, image);
 }
 
-LCDSprite * _Nonnull ImageConstructorWithSelf(MELSprite * _Nonnull self, MELPoint origin, LCDBitmap * _Nonnull image) {
-    LCDSprite *sprite = ImageConstructorWithSelfDontPush(self, origin, image);
+LCDSprite * _Nonnull MELImageConstructorWithSelf(MELSprite * _Nonnull self, MELPoint origin, LCDBitmap * _Nonnull image) {
+    LCDSprite *sprite = MELImageConstructorWithSelfDontPush(self, origin, image);
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
-    playdate->system->logToConsole("Push Image(%x, %x): %d", sprite, self, self->definition.name);
+    playdate->system->logToConsole("Push MELImage(%x, %x): %d", sprite, self, self->definition.name);
 #endif
     LCDSpriteRefListPush(&currentScene->sprites, sprite);
     return sprite;
 }
 
-LCDSprite * _Nonnull ImageConstructorWithSelfDontPush(MELSprite * _Nonnull self, MELPoint origin, LCDBitmap * _Nonnull image) {
+LCDSprite * _Nonnull MELImageConstructorWithSelfDontPush(MELSprite * _Nonnull self, MELPoint origin, LCDBitmap * _Nonnull image) {
     int width, height;
     playdate->graphics->getBitmapData(image, &width, &height, NULL, NULL, NULL);
 
     *self = (MELSprite) {
-        .class = &ImageClass,
+        .class = &MELImageClass,
         .frame = {
             .size = {
                 .width = width,
@@ -139,6 +141,6 @@ LCDSprite * _Nonnull ImageConstructorWithSelfDontPush(MELSprite * _Nonnull self,
     return sprite;
 }
 
-const MELSpriteClass * _Nonnull ImageGetClass(void) {
-    return &ImageClass;
+const MELSpriteClass * _Nonnull MELImageGetClass(void) {
+    return &MELImageClass;
 }

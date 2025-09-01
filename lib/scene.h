@@ -24,7 +24,6 @@ typedef enum {
     SceneTypeScore,
     SceneTypeOnlineMenu,
     SceneTypeFade,
-    SceneTypeDialog,
 } SceneType;
 
 typedef struct melscene {
@@ -32,7 +31,7 @@ typedef struct melscene {
     void (* _Nonnull init)(MELScene * _Nonnull self);
     void (* _Nonnull dealloc)(MELScene * _Nonnull self);
     int (* _Nonnull update)(void * _Nonnull self);
-    void (* _Nullable save)(MELScene * _Nonnull self, MELOutputStream * _Nonnull outputStream);
+    void (* _Nullable beforeQuit)(MELScene * _Nonnull self);
     LCDSpriteRefList sprites;
 } MELScene;
 

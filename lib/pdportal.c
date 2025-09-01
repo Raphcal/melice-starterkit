@@ -11,7 +11,7 @@
 #include "melstring.h"
 #include "melmath.h"
 
-#include "../src/eventbus.h"
+#include "eventbus.h"
 
 extern float DELTA;
 
@@ -193,7 +193,7 @@ static void callResponseCallback(MELPortalResponseCommand command, const char * 
 #endif
             currentPortal.isSerialConnected = true;
             MELPortalSendCommand(MELPortalCommandInitializePeer, NULL);
-            EventBusFireEvent(EventPDPortalOnConnect, 0);
+            MELEventBusFireEvent(EventPDPortalOnConnect, 0);
             break;
 
         case MELPortalResponseCommandOnPeerConnData:
@@ -204,7 +204,7 @@ static void callResponseCallback(MELPortalResponseCommand command, const char * 
 
             currentPortal.senderId = buffer;
             currentPortal.lastData = data;
-            EventBusFireEvent(EventPDPortalOnPeerConnData, 0);
+            MELEventBusFireEvent(EventPDPortalOnPeerConnData, 0);
             currentPortal.senderId = NULL;
             currentPortal.lastData = NULL;
             break;
@@ -214,7 +214,7 @@ static void callResponseCallback(MELPortalResponseCommand command, const char * 
             playdate->system->logToConsole("l" portalArgumentSeparator "Peer opened, peerId: %s" portalCommandSeparator, buffer);
 #endif
             currentPortal.peerId = MELStringCopy(buffer);
-            EventBusFireEvent(EventPDPortalOnPeerOpen, 0);
+            MELEventBusFireEvent(EventPDPortalOnPeerOpen, 0);
             break;
 
         case MELPortalResponseCommandOnPeerClose:
@@ -222,7 +222,7 @@ static void callResponseCallback(MELPortalResponseCommand command, const char * 
                 playdate->system->realloc(currentPortal.peerId, 0);
                 currentPortal.peerId = NULL;
             }
-            EventBusFireEvent(EventPDPortalOnPeerClose, 0);
+            MELEventBusFireEvent(EventPDPortalOnPeerClose, 0);
             break;
 
         case MELPortalResponseCommandOnPeerConnection:
@@ -238,7 +238,7 @@ static void callResponseCallback(MELPortalResponseCommand command, const char * 
             currentPortal.remotePeerId = MELStringCopy(buffer);
             currentPortal.isHost = true;
 
-            EventBusFireEvent(EventPDPortalOnPeerConnection, true);
+            MELEventBusFireEvent(EventPDPortalOnPeerConnection, true);
             break;
 
         case MELPortalResponseCommandOnPeerConnOpen:
@@ -247,7 +247,7 @@ static void callResponseCallback(MELPortalResponseCommand command, const char * 
 #endif
             currentPortal.remotePeerId = MELStringCopy(buffer);
             currentPortal.isHost = false;
-            EventBusFireEvent(EventPDPortalOnPeerConnOpen, false);
+            MELEventBusFireEvent(EventPDPortalOnPeerConnOpen, false);
             break;
 
         case MELPortalResponseCommandOnPeerConnClose:
@@ -259,7 +259,7 @@ static void callResponseCallback(MELPortalResponseCommand command, const char * 
                 playdate->system->realloc(currentPortal.remotePeerId, 0);
                 currentPortal.remotePeerId = NULL;
             }
-            EventBusFireEvent(EventPDPortalOnPeerConnClose, 0);
+            MELEventBusFireEvent(EventPDPortalOnPeerConnClose, 0);
             break;
 
         case MELPortalResponseCommandKeepAlive:
@@ -319,14 +319,14 @@ void MELPortalUpdate(void) {
         if (currentPortal.remotePeerId) {
             playdate->system->realloc(currentPortal.remotePeerId, 0);
             currentPortal.remotePeerId = NULL;
-            EventBusFireEvent(EventPDPortalOnPeerConnClose, 0);
+            MELEventBusFireEvent(EventPDPortalOnPeerConnClose, 0);
         }
         if (currentPortal.peerId) {
             playdate->system->realloc(currentPortal.peerId, 0);
             currentPortal.peerId = NULL;
-            EventBusFireEvent(EventPDPortalOnPeerClose, 0);
+            MELEventBusFireEvent(EventPDPortalOnPeerClose, 0);
         }
-        EventBusFireEvent(EventPDPortalOnDisconnect, 0);
+        MELEventBusFireEvent(EventPDPortalOnDisconnect, 0);
     } else if (time >= KEEP_ALIVE_INTERVAL) {
         currentPortal.isWaitingForKeepAlive = true;
         currentPortal.time = 0.0f;
