@@ -3,12 +3,13 @@
         "getDefinitionType": "pointer"
     },
     "instances": {
-        "order": "zIndex"
+        "order": "zIndex",
+        "writeAnimation": true
     },
     "maps": {
         "flattenLayers": true,
-        "writeTileSize": false
+        "writeTileSize": true
     },
-    "enableDithering": false,
+    "dithering": "bayer",
     "createDirectories": true
 }

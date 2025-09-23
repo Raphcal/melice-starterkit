@@ -17,6 +17,8 @@
 
 #include "achievementtoast.h"
 
+#define kBufferSize 255
+
 MELListImplement(MELAchievement);
 MELListImplement(MELAchievementStatus);
 
@@ -334,17 +336,16 @@ void parseFile(MELInputStream * _Nonnull self, const MELAchievementStatusRefDict
     }
 
     // Buffers
-    static const int size = 255;
-    char id[size];
-    char key[size];
-    memset(id, 0, size);
-    memset(key, 0, size);
+    char id[kBufferSize];
+    char key[kBufferSize];
+    memset(id, 0, kBufferSize);
+    memset(key, 0, kBufferSize);
 
     // Recherche de la clef "achievements".
     nextItemStart = skipToNextItemStart(self);
     while (nextItemStart != EOF && nextItemStart != '}') {
         if (nextItemStart == '"') {
-            readJsonString(self, key, size, NULL);
+            readJsonString(self, key, kBufferSize, NULL);
         } else {
             // Valeur incorrecte.
             playdate->system->logToConsole("Unable to parse achievements.json, expected: '\"', but was: %c", nextItemStart);
@@ -378,7 +379,7 @@ void parseFile(MELInputStream * _Nonnull self, const MELAchievementStatusRefDict
         MELAchievementStatus status = (MELAchievementStatus) {};
         while (nextItemStart != EOF && nextItemStart != '}') {
             if (nextItemStart == '"') {
-                readJsonString(self, key, size, NULL);
+                readJsonString(self, key, kBufferSize, NULL);
             } else {
                 // Valeur incorrecte.
                 playdate->system->logToConsole("Unable to parse achievements.json, expected '\"' but was: %c", nextItemStart);
@@ -387,7 +388,7 @@ void parseFile(MELInputStream * _Nonnull self, const MELAchievementStatusRefDict
             skipToSeparator(self);
             nextItemStart = skipToValueStart(self);
             if (strcmp(key, "id") == 0 && nextItemStart == '"') {
-                readJsonString(self, id, size, NULL);
+                readJsonString(self, id, kBufferSize, NULL);
             }
             else if (strcmp(key, "progress") == 0 && isNumberStart(nextItemStart)) {
                 status.progress = readJsonInt32Value(self);

@@ -23,6 +23,10 @@
  */
 LCDSprite * _Nonnull MELCounterConstructor(const MELPoint origin, const MELHorizontalAlignment alignment, LCDFont * _Nonnull font, const int value);
 
+LCDSprite * _Nonnull MELCounterConstructorWithUInt8Pointer(const MELPoint origin, const MELHorizontalAlignment alignment, LCDFont * _Nonnull font, uint8_t * _Nonnull value);
+LCDSprite * _Nonnull MELCounterConstructorWithUInt32Pointer(const MELPoint origin, const MELHorizontalAlignment alignment, LCDFont * _Nonnull font, uint32_t * _Nonnull value);
+LCDSprite * _Nonnull MELCounterConstructorWithFloatPointer(const MELPoint origin, const MELHorizontalAlignment alignment, LCDFont * _Nonnull font, float * _Nonnull value);
+
 /**
  * Modifie la valeur affichée.
  *
