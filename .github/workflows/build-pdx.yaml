@@ -1,0 +1,30 @@
+name: build-pdx
+run-name: Build PDX
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+          os: [windows-latest]
+          include:
+            - os: windows-latest
+              target: *.pdx/pdex.dll
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Playdate SDK
+        uses: pd-rs/get-playdate-sdk@0.3.3
+      - run: make "CLANGFLAGS=-O2" "GCCFLAGS=-O2"
+        if: matrix.os != 'windows-latest'
+      - run: |-
+          mkdir build
+          cd build
+          PLAYDATE_SDK_PATH='/C/Users/runneradmin/Documents/PlaydateSDK'
+          cmake .. -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release
+          mingw32-make
+        shell: bash
+        if: matrix.os == 'windows-latest'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 'pdx-${{ matrix.os }}'
+          path: '${{ matrix.target }}'

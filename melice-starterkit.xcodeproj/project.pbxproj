@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		647266B92EA51CE900C1EE97 /* fadetoblackscene.c in Sources */ = {isa = PBXBuildFile; fileRef = 647266B82EA51CE900C1EE97 /* fadetoblackscene.c */; };
+		647266BA2EA51CE900C1EE97 /* fadetoblackscene.h in Headers */ = {isa = PBXBuildFile; fileRef = 647266B72EA51CE900C1EE97 /* fadetoblackscene.h */; };
+		647266BB2EA51CE900C1EE97 /* fadetoblackscene.c in Sources */ = {isa = PBXBuildFile; fileRef = 647266B82EA51CE900C1EE97 /* fadetoblackscene.c */; };
+		647266BC2EA51CE900C1EE97 /* fadetoblackscene.h in Headers */ = {isa = PBXBuildFile; fileRef = 647266B72EA51CE900C1EE97 /* fadetoblackscene.h */; };
 		6489EC522DC65D7D004DCD0B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC502DC65D7D004DCD0B /* main.c */; };
 		6489EC532DC65D7D004DCD0B /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC4F2DC65D7D004DCD0B /* common.h */; };
 		649E13DF2E624D9B00584F64 /* animation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6489EC542DC65DA5004DCD0B /* animation.h */; };
@@ -307,9 +311,15 @@
 		64C2A45F2E663E4F00520678 /* eventbus.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C2A45D2E663E4F00520678 /* eventbus.c */; };
 		64C2A4602E663E4F00520678 /* eventbus.h in Headers */ = {isa = PBXBuildFile; fileRef = 64C2A45C2E663E4F00520678 /* eventbus.h */; };
 		64C2A4612E663E4F00520678 /* eventbus.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C2A45D2E663E4F00520678 /* eventbus.c */; };
+		64F6D7402E8296EC00640987 /* counter.h in Headers */ = {isa = PBXBuildFile; fileRef = 64F6D73E2E8296EC00640987 /* counter.h */; };
+		64F6D7412E8296EC00640987 /* counter.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F6D73F2E8296EC00640987 /* counter.c */; };
+		64F6D7422E8296EC00640987 /* counter.h in Headers */ = {isa = PBXBuildFile; fileRef = 64F6D73E2E8296EC00640987 /* counter.h */; };
+		64F6D7432E8296EC00640987 /* counter.c in Sources */ = {isa = PBXBuildFile; fileRef = 64F6D73F2E8296EC00640987 /* counter.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		647266B72EA51CE900C1EE97 /* fadetoblackscene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fadetoblackscene.h; sourceTree = "<group>"; };
+		647266B82EA51CE900C1EE97 /* fadetoblackscene.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fadetoblackscene.c; sourceTree = "<group>"; };
 		6489EC482DC65D36004DCD0B /* libmelice-starterkit Simulator.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libmelice-starterkit Simulator.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6489EC4F2DC65D7D004DCD0B /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		6489EC502DC65D7D004DCD0B /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
@@ -463,6 +473,9 @@
 		64C2A4572E663E3400520678 /* layersprite.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = layersprite.c; sourceTree = "<group>"; };
 		64C2A45C2E663E4F00520678 /* eventbus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = eventbus.h; sourceTree = "<group>"; };
 		64C2A45D2E663E4F00520678 /* eventbus.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = eventbus.c; sourceTree = "<group>"; };
+		64F6D73D2E8296D800640987 /* mmkconfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = mmkconfig.json; sourceTree = "<group>"; };
+		64F6D73E2E8296EC00640987 /* counter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = counter.h; sourceTree = "<group>"; };
+		64F6D73F2E8296EC00640987 /* counter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = counter.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -500,6 +513,7 @@
 			isa = PBXGroup;
 			children = (
 				649E14512E624EF900584F64 /* Makefile */,
+				64F6D73D2E8296D800640987 /* mmkconfig.json */,
 				6489EC512DC65D7D004DCD0B /* src */,
 				6489ECB52DC65DA5004DCD0B /* lib */,
 				64A70E5C2E6382C600961CFF /* gen */,
@@ -670,6 +684,8 @@
 				6489EC622DC65DA5004DCD0B /* camera.c */,
 				6489EC9C2DC65DA5004DCD0B /* scene.h */,
 				6489EC9D2DC65DA5004DCD0B /* scene.c */,
+				647266B72EA51CE900C1EE97 /* fadetoblackscene.h */,
+				647266B82EA51CE900C1EE97 /* fadetoblackscene.c */,
 			);
 			name = scene;
 			sourceTree = "<group>";
@@ -799,6 +815,8 @@
 				64C2A3D42E6638B900520678 /* achievementtoast.c */,
 				64C2A3D52E6638B900520678 /* alignment.h */,
 				64C2A3D62E6638B900520678 /* alignment.c */,
+				64F6D73E2E8296EC00640987 /* counter.h */,
+				64F6D73F2E8296EC00640987 /* counter.c */,
 				64C2A3CB2E6638A100520678 /* dialog.h */,
 				64C2A3CC2E6638A100520678 /* dialog.c */,
 				64C2A3C52E66389600520678 /* gridview.h */,
@@ -831,6 +849,7 @@
 				649E13E02E624D9B00584F64 /* animationdefinition.h in Headers */,
 				649E13E12E624D9B00584F64 /* animationdirection.h in Headers */,
 				64C2A3BB2E66387500520678 /* screen.h in Headers */,
+				64F6D7402E8296EC00640987 /* counter.h in Headers */,
 				649E13E22E624D9B00584F64 /* animationframe.h in Headers */,
 				649E13E32E624D9B00584F64 /* animationtype.h in Headers */,
 				64C2A41D2E663AD200520678 /* language.h in Headers */,
@@ -868,6 +887,7 @@
 				649E13F82E624D9B00584F64 /* layer.h in Headers */,
 				649E13F92E624D9B00584F64 /* map.h in Headers */,
 				649E13FA2E624D9B00584F64 /* camera.h in Headers */,
+				647266BC2EA51CE900C1EE97 /* fadetoblackscene.h in Headers */,
 				649E13FB2E624D9B00584F64 /* scene.h in Headers */,
 				649E13FC2E624D9B00584F64 /* sprite.h in Headers */,
 				649E13FD2E624D9B00584F64 /* spritedefinition.h in Headers */,
@@ -918,6 +938,7 @@
 				64A70DE32E637FC000961CFF /* animationdefinition.h in Headers */,
 				64A70DE42E637FC000961CFF /* animationdirection.h in Headers */,
 				64C2A3BD2E66387500520678 /* screen.h in Headers */,
+				64F6D7422E8296EC00640987 /* counter.h in Headers */,
 				64A70DE52E637FC000961CFF /* animationframe.h in Headers */,
 				64A70DE62E637FC000961CFF /* animationtype.h in Headers */,
 				64C2A41F2E663AD200520678 /* language.h in Headers */,
@@ -955,6 +976,7 @@
 				64A70DFD2E637FC000961CFF /* layer.h in Headers */,
 				64A70DFE2E637FC000961CFF /* map.h in Headers */,
 				64A70DFF2E637FC000961CFF /* camera.h in Headers */,
+				647266BA2EA51CE900C1EE97 /* fadetoblackscene.h in Headers */,
 				64A70E002E637FC000961CFF /* scene.h in Headers */,
 				64A70E012E637FC000961CFF /* sprite.h in Headers */,
 				64A70E022E637FC000961CFF /* spritedefinition.h in Headers */,
@@ -1126,8 +1148,10 @@
 				649E14162E624DA500584F64 /* animationdirection.c in Sources */,
 				649E14172E624DA500584F64 /* animationframe.c in Sources */,
 				649E14182E624DA500584F64 /* animationtype.c in Sources */,
+				64F6D7412E8296EC00640987 /* counter.c in Sources */,
 				649E14192E624DA500584F64 /* loopinganimation.c in Sources */,
 				649E141A2E624DA500584F64 /* halfloopinganimation.c in Sources */,
+				647266BB2EA51CE900C1EE97 /* fadetoblackscene.c in Sources */,
 				649E141B2E624DA500584F64 /* noanimation.c in Sources */,
 				649E141C2E624DA500584F64 /* playonceanimation.c in Sources */,
 				649E141D2E624DA500584F64 /* singleframeanimation.c in Sources */,
@@ -1203,8 +1227,10 @@
 				64A70E1C2E637FC000961CFF /* animationdirection.c in Sources */,
 				64A70E1D2E637FC000961CFF /* animationframe.c in Sources */,
 				64A70E1E2E637FC000961CFF /* animationtype.c in Sources */,
+				64F6D7432E8296EC00640987 /* counter.c in Sources */,
 				64A70E1F2E637FC000961CFF /* loopinganimation.c in Sources */,
 				64A70E202E637FC000961CFF /* halfloopinganimation.c in Sources */,
+				647266B92EA51CE900C1EE97 /* fadetoblackscene.c in Sources */,
 				64A70E212E637FC000961CFF /* noanimation.c in Sources */,
 				64A70E222E637FC000961CFF /* playonceanimation.c in Sources */,
 				64A70E232E637FC000961CFF /* singleframeanimation.c in Sources */,
