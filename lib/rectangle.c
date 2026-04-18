@@ -132,6 +132,12 @@ MELPoint MELRectangleOriginIsCenterGetTopLeft(MELRectangle self) {
         .y = MELRectangleOriginIsCenterGetTop(self),
     };
 }
+MELPoint MELRectangleOriginIsCenterGetTopRight(MELRectangle self) {
+    return (MELPoint) {
+        .x = MELRectangleOriginIsCenterGetRight(self),
+        .y = MELRectangleOriginIsCenterGetTop(self),
+    };
+}
 
 MELPoint MELRectangleOriginIsCenterGetPointAtAngle(MELRectangle self, GLfloat angle) {
     const GLfloat halfHeight = self.size.height / 2.0f;

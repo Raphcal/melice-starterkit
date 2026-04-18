@@ -20,12 +20,17 @@ typedef struct {
 static void update(LCDSprite * _Nonnull sprite);
 
 LCDSprite * _Nonnull MELTimerConstructor(float delay, MELTimerCallback callback, void * _Nullable userdata) {
+    return MELTimerConstructorWithAutoRelease(delay, callback, userdata, false);
+}
+
+LCDSprite * _Nonnull MELTimerConstructorWithAutoRelease(float delay, MELTimerCallback callback, void * _Nullable userdata, MELBoolean autoReleaseUserdata) {
     MELTimer *self = new(MELTimer);
 
     *self = (MELTimer) {
         .super = {
             .class = &MELSpriteClassDefault,
             .userdata = userdata,
+            .autoReleaseUserdata = autoReleaseUserdata,
         },
         .delay = delay,
         .callback = callback,
@@ -37,7 +42,7 @@ LCDSprite * _Nonnull MELTimerConstructor(float delay, MELTimerCallback callback,
     playdate->sprite->setVisible(sprite, false);
     playdate->sprite->addSprite(sprite);
 
-    LCDSpriteRefListPush(&currentScene->sprites, sprite);
+    MELSceneAddSprite(sprite);
     return sprite;
 }
 

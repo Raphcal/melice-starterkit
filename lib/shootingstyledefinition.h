@@ -38,8 +38,11 @@ typedef struct shootingstyledefinition {
     /// Point d'origine des tirs
     MELShotOrigin origin;
 
-    // Déplacement de l'origine du tir.
+    /// Déplacement de l'origine du tir.
     MELPoint translation;
+
+    /// Mouvement des tirs.
+    MELPoint speeds;
 
     /// Dommages provoqués par chaque tir
     int damage;

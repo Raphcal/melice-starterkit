@@ -194,7 +194,7 @@ float MELEaseOutCirc(float from, float to, float value) {
     return sqrtf(1 - (x - 1) * (x - 1));
 }
 
-float MELEaseExpo(float from, float to, float value) {
+float MELEaseOutExpo(float from, float to, float value) {
     const float x = MELProgress(from, to, value);
     return x == 1.0f ? 1.0f : 1.0f - powf(2.0f, -10.0f * x);
 }

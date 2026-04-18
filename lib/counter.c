@@ -37,6 +37,9 @@ LCDSprite * _Nonnull MELCounterConstructor(const MELPoint origin, const MELHoriz
     *self = (MELCounter) {
         .super = {
             .class = &MELCounterClass,
+            .frame = {
+                .origin = origin,
+            },
         },
         .font = font,
         .alignment = alignment,
@@ -56,7 +59,7 @@ LCDSprite * _Nonnull MELCounterConstructor(const MELPoint origin, const MELHoriz
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
     playdate->system->logToConsole("Push MELCounterConstructor(%x, %x): %d", sprite, self, self->super.definition.name);
 #endif
-    LCDSpriteRefListPush(&currentScene->sprites, sprite);
+    MELSceneAddSprite(sprite);
     return sprite;
 }
 

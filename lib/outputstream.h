@@ -18,6 +18,7 @@
 
 #define MELOutputStreamWriteByte MELOutputStreamWriteUInt8
 #define MELOutputStreamWriteInt MELOutputStreamWriteInt32
+#define MELOutputStreamWriteShort MELOutputStreamWriteInt16
 
 typedef struct {
     SDFile * _Nullable file;
@@ -87,7 +88,7 @@ void MELOutputStreamWriteInt32(MELOutputStream * _Nonnull self, int32_t value);
  * @param self Output stream to write to.
  * @param value 16 bits signed integer.
  */
-void MELOutputStreamWriteShort(MELOutputStream * _Nonnull self, int16_t value);
+void MELOutputStreamWriteInt16(MELOutputStream * _Nonnull self, int16_t value);
 
 void MELOutputStreamWriteUInt16(MELOutputStream * _Nonnull self, uint16_t value);
 void MELOutputStreamWriteUInt32(MELOutputStream * _Nonnull self, uint32_t value);

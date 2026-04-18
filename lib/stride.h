@@ -16,6 +16,7 @@
 LCDSprite * _Nonnull MELStrideConstructor(MELSpriteDefinition * _Nonnull definition, MELPoint from, MELPoint to, float delay, float duration);
 void MELStrideSpriteFromAndTo(LCDSprite * _Nonnull sprite, MELPoint from, MELPoint to, float delay, float duration);
 void MELStrideSpriteTo(LCDSprite * _Nonnull sprite, MELPoint to, float delay, float duration);
+void MELStrideSpriteFrom(LCDSprite * _Nonnull sprite, MELPoint from, float delay, float duration);
 void MELStrideSpriteBy(LCDSprite * _Nonnull sprite, MELPoint translation, float delay, float duration);
 void MELStrideTogetherAlignedRight(LCDSprite * _Nullable sprite, LCDSprite * _Nullable spriteToFollow);
 void MELStrideSkip(LCDSprite * _Nullable sprite);
@@ -24,7 +25,10 @@ void MELStrideSetEasingFunction(LCDSprite * _Nonnull sprite, MELEasingFunction e
 void MELStrideSetProgress(LCDSprite * _Nonnull sprite, float progress);
 void MELStrideSetFillBlack(LCDSprite * _Nonnull sprite);
 void MELStrideSetDestroyWhenStrideEnds(LCDSprite * _Nonnull sprite, MELBoolean destroyWhenStrideEnds);
+void MELStrideSetDelegate(LCDSprite * _Nonnull sprite, void (* _Nullable delegate)(LCDSprite * _Nonnull sprite));
 void MELStrideUpdate(LCDSprite * _Nonnull sprite);
 MELBoolean MELStrideIsDone(LCDSprite * _Nullable sprite);
+
+void MELStrideCameraTo(MELPoint to, float delay, float duration);
 
 #endif /* stride_h */

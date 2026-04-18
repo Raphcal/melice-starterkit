@@ -115,8 +115,10 @@ typedef struct melkeyboard {
 
 extern const float kKeyboardWidth;
 
-MELKeyboard * _Nonnull MELKeyboardNew(void);
-void MELKeyboardFree(MELKeyboard * _Nonnull self);
+MELKeyboard * _Nonnull MELKeyboardAlloc(void);
+void MELKeyboardInit(MELKeyboard * _Nonnull self);
+void MELKeyboardDeinit(MELKeyboard * _Nonnull self);
+void MELKeyboardDealloc(MELKeyboard * _Nonnull self);
 
 void MELKeyboardShow(MELKeyboard * _Nonnull self, const char * _Nullable newText, const unsigned int newTextLength);
 void MELKeyboardHide(MELKeyboard * _Nonnull self);

@@ -9,7 +9,7 @@
 
 #include "../src/explosion.h"
 
-static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle);
+static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle, float initialDelta);
 
 static const MELShootingStyleClass ParticuleShootingStyleClass = (MELShootingStyleClass) {
     .name = MELShootingStyleClassNameParticule,
@@ -32,7 +32,7 @@ void ParticuleShootingStyleInit(MELShootingStyle * _Nonnull self, const MELShoot
     };
 }
 
-static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle) {
+static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle, float initialDelta) {
     const MELShootingStyleDefinition *definition = self->definition;
     const float space = definition->space;
     ExplosionConstructorWithDefinition((MELPoint) {

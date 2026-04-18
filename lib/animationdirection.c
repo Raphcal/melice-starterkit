@@ -9,6 +9,13 @@
 
 #include "melmath.h"
 
+const MELAnimationDirection MELAnimationDirectionByDirection[4] = {
+    MELAnimationDirectionLeft,
+    MELAnimationDirectionRight,
+    MELAnimationDirectionTop,
+    MELAnimationDirectionBottom,
+};
+
 static MELAnimationDirection stepForAngle(GLfloat radians) {
     int degrees = MELRadiansToDegreesAsInteger(radians);
     switch (degrees) {

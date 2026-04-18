@@ -38,7 +38,7 @@ void MELAlignmentSet(LCDSprite * _Nonnull sprite, MELHorizontalAlignment horizon
     MELRectangle frame = self->frame;
     frame.origin = MELOriginForSizeAndAlignment(origin, frame.size, horizontalAlignment, verticalAlignment);
     self->frame = frame;
-    playdate->sprite->moveTo(sprite, frame.origin.x, frame.origin.y);
+    playdate->sprite->moveTo(sprite, MOVETO_POINT(frame.origin));
 }
 
 LCDSprite * _Nonnull MELAlignmentWith(LCDSprite * _Nonnull sprite, MELHorizontalAlignment horizontalAlignment, MELVerticalAlignment verticalAlignment, MELPoint origin) {

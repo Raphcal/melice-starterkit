@@ -8,6 +8,11 @@
 #include "bitmap.h"
 #include "melmath.h"
 
+#if ENABLE_MINIZ
+#define MINIZ_NO_TIME 1
+#include "miniz.h"
+#endif
+
 MELListImplement(LCDBitmapRef);
 
 typedef struct {
@@ -58,16 +63,16 @@ void MELOutputStreamWriteBitmap(MELOutputStream * _Nonnull outputStream, LCDBitm
         .planes = 1,
         .bitsPerPixel = bitsInAByte * bytesPerColors
     };
-    MELOutputStreamWriteByte(outputStream, fileHeader.magic[0]);
-    MELOutputStreamWriteByte(outputStream, fileHeader.magic[1]);
-    MELOutputStreamWriteInt(outputStream, fileHeader.fileSize);
-    MELOutputStreamWriteInt(outputStream, fileHeader.reserved);
-    MELOutputStreamWriteInt(outputStream, fileHeader.contentPosition);
-    MELOutputStreamWriteInt(outputStream, coreHeader.headerLength);
-    MELOutputStreamWriteShort(outputStream, coreHeader.width);
-    MELOutputStreamWriteShort(outputStream, coreHeader.height);
-    MELOutputStreamWriteShort(outputStream, coreHeader.planes);
-    MELOutputStreamWriteShort(outputStream, coreHeader.bitsPerPixel);
+    MELOutputStreamWriteUInt8(outputStream, fileHeader.magic[0]);
+    MELOutputStreamWriteUInt8(outputStream, fileHeader.magic[1]);
+    MELOutputStreamWriteInt32(outputStream, fileHeader.fileSize);
+    MELOutputStreamWriteInt32(outputStream, fileHeader.reserved);
+    MELOutputStreamWriteInt32(outputStream, fileHeader.contentPosition);
+    MELOutputStreamWriteInt32(outputStream, coreHeader.headerLength);
+    MELOutputStreamWriteInt16(outputStream, coreHeader.width);
+    MELOutputStreamWriteInt16(outputStream, coreHeader.height);
+    MELOutputStreamWriteInt16(outputStream, coreHeader.planes);
+    MELOutputStreamWriteInt16(outputStream, coreHeader.bitsPerPixel);
 
     const int32_t count = width * height;
     for (int32_t index = 0; index < count; index++) {
@@ -78,10 +83,52 @@ void MELOutputStreamWriteBitmap(MELOutputStream * _Nonnull outputStream, LCDBitm
         const int bitIndex = (1 << (bitsInAByte - 1)) >> (x % bitsInAByte);
 
         const uint8_t color = data[byteIndex] & bitIndex ? 0xFF : 0x00;
-        MELOutputStreamWriteByte(outputStream, color); // Red
-        MELOutputStreamWriteByte(outputStream, color); // Green
-        MELOutputStreamWriteByte(outputStream, color); // Blue
+        MELOutputStreamWriteUInt8(outputStream, color); // Red
+        MELOutputStreamWriteUInt8(outputStream, color); // Green
+        MELOutputStreamWriteUInt8(outputStream, color); // Blue
     }
+}
+
+void MELOutputStreamWritePNG(MELOutputStream * _Nonnull outputStream, LCDBitmap * _Nonnull bitmap) {
+#if ENABLE_MINIZ
+    const int32_t bitsInAByte = 8;
+    const int32_t channelCount = 2;
+
+    int width, height, rowBytes;
+    uint8_t *data;
+    uint8_t *mask;
+    playdate->graphics->getBitmapData(bitmap, &width, &height, &rowBytes, &mask, &data);
+
+    uint8_t *rgba = playdate->system->realloc(NULL, width * height * channelCount);
+
+    const int32_t count = width * height;
+    for (int32_t index = 0; index < count; index++) {
+        const int32_t x = index % width;
+        const int32_t y = index / width;
+
+        const int32_t byteIndex = x / bitsInAByte + y * rowBytes;
+        const int bitIndex = (1 << (bitsInAByte - 1)) >> (x % bitsInAByte);
+
+        const uint8_t color = (data[byteIndex] & bitIndex) ? 0xFF : 0x00;
+        const uint8_t alpha = mask != NULL
+            ? ((mask[byteIndex] & bitIndex) ? 0xFF : 0x00)
+            : 0xFF;
+
+        const unsigned int rgbaIndex = index * channelCount;
+        rgba[rgbaIndex] = color;
+        rgba[rgbaIndex + 1] = alpha;
+    }
+
+    size_t pngSize;
+    uint8_t *pngData = tdefl_write_image_to_png_file_in_memory(rgba, width, height, channelCount, &pngSize);
+
+    MELOutputStreamWrite(outputStream, pngData, (unsigned int)pngSize);
+
+    mz_free(pngData);
+    playdate->system->realloc(rgba, 0);
+#else
+    playdate->system->logToConsole("Unable to write PNG: miniz is disabled");
+#endif
 }
 
 LCDBitmap * _Nonnull LCDBitmapLoadOrError(const char * _Nonnull path) {
@@ -161,6 +208,7 @@ LCDBitmap * _Nonnull LCDBitmapCopyAndShadeImage(LCDBitmap * _Nonnull bitmap, flo
     playdate->graphics->getBitmapData(bitmap, &width, &height, NULL, NULL, NULL);
     LCDBitmap *copy = playdate->graphics->newBitmap(width, height, kColorClear);
     playdate->graphics->pushContext(copy);
+    playdate->graphics->setDrawMode(kDrawModeCopy);
     playdate->graphics->drawBitmap(bitmap, 0, 0, kBitmapUnflipped);
     playdate->graphics->popContext();
     LCDBitmapShadeImage(copy, brightness);

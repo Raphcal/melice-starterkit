@@ -193,6 +193,7 @@ static void draw(MELDialog * _Nonnull self, LCDSprite * _Nonnull sprite, float h
         image = graphics->newBitmap(width, height, kColorClear);
     }
     graphics->pushContext(image);
+    graphics->setDrawMode(kDrawModeCopy);
     if (self->config.border) {
         MELNineSliceDrawInRect(self->config.border, (MELRectangle) {
             .size = {

@@ -14,7 +14,7 @@
 #include "point.h"
 #include "sprite.h"
 
-LCDSprite * _Nonnull BulletConstructor(const MELShootingStyleDefinition * _Nonnull definition, MELPoint origin, MELPoint speed);
+LCDSprite * _Nonnull BulletConstructor(const MELShootingStyleDefinition * _Nonnull definition, MELPoint origin, MELPoint speed, float initialDelta);
 
 const MELSpriteClass * _Nonnull BulletGetClass(void);
 

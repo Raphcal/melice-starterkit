@@ -43,6 +43,7 @@ MELNineSlice * _Nonnull MELNineSliceMake(LCDBitmap * _Nonnull image, MELIntRecta
         MELIntRectangle rect = rects[index];
         LCDBitmap *slice = gfx->newBitmap(rect.size.width, rect.size.height, kColorClear);
         gfx->pushContext(slice);
+        gfx->setDrawMode(kDrawModeCopy);
         gfx->drawBitmap(image, -rect.origin.x, -rect.origin.y, kBitmapUnflipped);
         gfx->popContext();
         self->slices[index] = slice;
@@ -90,6 +91,7 @@ static void prerender(MELNineSlice * _Nonnull self, MELIntSize size) {
     const struct playdate_graphics *gfx = playdate->graphics;
     LCDBitmap *cache = gfx->newBitmap(size.width, size.height, kColorClear);
     gfx->pushContext(cache);
+    gfx->setDrawMode(kDrawModeCopy);
     gfx->drawBitmap(slices[0], 0, 0, kBitmapUnflipped);
     if (innerRect.size.width > 0) {
         gfx->tileBitmap(slices[1], innerRect.origin.x, 0, innerRect.size.width, innerRect.origin.y, kBitmapUnflipped);

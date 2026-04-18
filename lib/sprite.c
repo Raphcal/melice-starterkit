@@ -19,7 +19,7 @@ LCDSprite * _Nonnull MELSpriteInit(MELSprite * _Nonnull self, MELSpriteDefinitio
     const struct playdate_sprite *spriteAPI = playdate->sprite;
     LCDSprite *sprite = spriteAPI->newSprite();
     MELPoint origin = instance->center;
-    spriteAPI->moveTo(sprite, origin.x, origin.y);
+    spriteAPI->moveTo(sprite, MOVETO_POINT(origin));
     spriteAPI->setZIndex(sprite, instance->zIndex);
 
     *self = (MELSprite) {
@@ -50,7 +50,7 @@ LCDSprite * _Nonnull MELSpriteInit(MELSprite * _Nonnull self, MELSpriteDefinitio
 LCDSprite * _Nonnull MELSpriteInitWithCenter(MELSprite * _Nonnull self, MELSpriteDefinition * _Nonnull definition, MELPoint center) {
     const struct playdate_sprite *spriteAPI = playdate->sprite;
     LCDSprite *sprite = spriteAPI->newSprite();
-    spriteAPI->moveTo(sprite, center.x, center.y);
+    playdate->sprite->moveTo(sprite, MOVETO_POINT(center));
 
     *self = (MELSprite) {
         .class = &MELSpriteClassDefault,
@@ -60,6 +60,7 @@ LCDSprite * _Nonnull MELSpriteInitWithCenter(MELSprite * _Nonnull self, MELSprit
             .size = definition->size
         },
         .direction = MELDirectionRight,
+        .hitTimer = 0.0f,
     };
     MELSpriteSetAnimation(self, AnimationNameStand);
 
@@ -88,16 +89,22 @@ LCDSprite * _Nonnull MELSpriteInitHiddenWithUpdate(MELSprite * _Nonnull self, vo
     return sprite;
 }
 
+void MELSpriteCallDealloc(LCDSprite * _Nonnull sprite) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    self->class->destroy(sprite);
+}
+
 void MELSpriteDealloc(LCDSprite * _Nonnull sprite) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
+    MELScene *scene = MELSceneGetCurrent();
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
     playdate->system->logToConsole("MELSpriteDealloc(%x, %x): %d", sprite, self, self->definition.name);
-    int index = LCDSpriteRefListRemoveSwapEntry(&currentScene->sprites, sprite);
+    int index = LCDSpriteRefListRemoveSwapEntry(&scene->sprites, sprite);
     if (index < 0) {
         playdate->system->logToConsole("LCDSpriteRefListRemoveSwapEntry: sprite %x not found (%d)", sprite, index);
     }
 #else
-    LCDSpriteRefListRemoveSwapEntry(&currentScene->sprites, sprite);
+    LCDSpriteRefListRemoveSwapEntry(&scene->sprites, sprite);
 #endif
     MELAnimationDealloc(self->animation);
     self->animation = NULL;
@@ -137,7 +144,7 @@ void MELSpriteUpdate(LCDSprite * _Nonnull sprite) {
     const MELPoint origin = self->frame.origin;
     const float x = (fixed & MELSpritePositionFixedX) ? origin.x : origin.x - camera.frame.origin.x;
     const float y = (fixed & MELSpritePositionFixedY) ? origin.y : origin.y - camera.frame.origin.y;
-    playdate->sprite->moveTo(sprite, x, y);
+    playdate->sprite->moveTo(sprite, MOVETO_XY(x, y));
     playdate->sprite->setImage(sprite, playdate->graphics->getTableBitmap(self->definition.palette, animation->frame.atlasIndex), MELDirectionFlip[self->direction]);
 }
 
@@ -147,8 +154,20 @@ void MELSpriteDraw(MELSprite * _Nonnull self, LCDSprite * _Nonnull sprite) {
     MELAnimationUpdate(animation, DELTA);
 
     const MELPoint origin = self->frame.origin;
-    playdate->sprite->moveTo(sprite, origin.x, origin.y);
+    playdate->sprite->moveTo(sprite, MOVETO_POINT(origin));
     playdate->sprite->setImage(sprite, playdate->graphics->getTableBitmap(self->definition.palette, animation->frame.atlasIndex), kBitmapUnflipped);
+
+    MELSpriteChangeDrawModeWhenHit(self, sprite);
+}
+
+void MELSpriteChangeDrawModeWhenHit(MELSprite * _Nonnull self, LCDSprite * _Nonnull sprite) {
+    const float hitTimer = MELFloatMax(self->hitTimer - DELTA, 0.0f);
+    const LCDBitmapDrawMode drawMode = (int)(hitTimer * 20.0f) % 2 ? kDrawModeFillBlack : kDrawModeCopy;
+    self->hitTimer = hitTimer;
+    if (drawMode != self->drawMode) {
+        self->drawMode = drawMode;
+        playdate->sprite->setDrawMode(sprite, drawMode);
+    }
 }
 
 void MELSpriteSetAnimationAndDirection(MELSprite * _Nonnull self, AnimationName animationName, MELAnimationDirection direction) {
@@ -162,7 +181,7 @@ void MELSpriteSetAnimationAndDirection(MELSprite * _Nonnull self, AnimationName 
 }
 
 void MELSpriteSetAnimation(MELSprite * _Nonnull self, AnimationName animationName) {
-    MELSpriteSetAnimationAndDirection(self, animationName, self->direction == MELDirectionRight ? MELAnimationDirectionRight : MELAnimationDirectionLeft);
+    MELSpriteSetAnimationAndDirection(self, animationName, MELAnimationDirectionByDirection[self->direction]);
 }
 
 void MELSpriteSetLeft(MELSprite * _Nonnull self, float left) {
@@ -188,14 +207,17 @@ void MELSpriteUpdateDisappearing(LCDSprite * _Nonnull sprite) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
 
     if (MELAnimationIsLastFrame(self->animation)) {
-        MELSpriteDealloc(sprite);
+        self->class->destroy(sprite);
         return;
     }
     const float delta = DELTA;
     self->animation->class->update(self->animation, delta);
 
-    MELPoint origin = self->frame.origin;
-    playdate->sprite->moveTo(sprite, origin.x, origin.y);
+    const MELSpritePositionFixed fixed = self->fixed;
+    const MELPoint origin = self->frame.origin;
+    const float x = (fixed & MELSpritePositionFixedX) ? origin.x : origin.x - camera.frame.origin.x;
+    const float y = (fixed & MELSpritePositionFixedY) ? origin.y : origin.y - camera.frame.origin.y;
+    playdate->sprite->moveTo(sprite, MOVETO_XY(x, y));
 
     MELAnimationFrame frame = self->animation->frame;
     playdate->sprite->setImage(sprite, playdate->graphics->getTableBitmap(self->definition.palette, frame.atlasIndex), MELDirectionFlip[self->direction]);
@@ -209,10 +231,12 @@ void MELSpriteMakeDisappear(LCDSprite * _Nonnull sprite) {
         return;
     }
 
+    // FIXME: Code suspect, à revoir !!! Le sprite ne devrait pas être retiré comme ça de currentScene.
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
     playdate->system->logToConsole("MELSpriteMakeDisappear(%x, %x): %d", sprite, self, self->definition.name);
 #endif
-    LCDSpriteRefListRemoveSwapEntry(&currentScene->sprites, sprite);
+    MELScene *scene = MELSceneGetCurrent();
+    LCDSpriteRefListRemoveSwapEntry(&scene->sprites, sprite);
     MELSpriteInstance *instance = self->instance;
     if (instance) {
         instance->destroyed = true;
@@ -353,17 +377,22 @@ LCDSprite * _Nullable MELSpriteLoad(MELInputStream * _Nonnull inputStream) {
     return sprite;
 }
 
-MELRectangle MELSpriteGetFrame(LCDSprite * _Nonnull sprite) {
+const MELSpriteClass * _Nullable LCDSpriteGetClass(LCDSprite * _Nonnull sprite) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
-    return self->frame;
+    return self->class;
 }
 
-float MELSpriteGetWidth(LCDSprite * _Nonnull sprite) {
+MELSpriteInstance * _Nullable LCDSpriteGetInstance(LCDSprite * _Nonnull sprite) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    return self->instance;
+}
+
+float LCDSpriteGetWidth(LCDSprite * _Nonnull sprite) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     return self->frame.size.width;
 }
 
-float MELSpriteGetHeight(LCDSprite * _Nonnull sprite) {
+float LCDSpriteGetHeight(LCDSprite * _Nonnull sprite) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     return self->frame.size.height;
 }
@@ -372,9 +401,36 @@ MELRectangle LCDSpriteGetFrame(LCDSprite * _Nonnull sprite) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     return self->frame;
 }
+MELRectangle LCDSpriteSetFrame(LCDSprite * _Nonnull sprite, MELRectangle frame) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    const MELRectangle oldFrame = self->frame;
+    self->frame = frame;
+    return oldFrame;
+}
+MELPoint LCDSpriteSetOrigin(LCDSprite * _Nonnull sprite, MELPoint origin) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    const MELPoint oldOrigin = self->frame.origin;
+    self->frame.origin = origin;
+    return oldOrigin;
+}
 void LCDSpriteMoveBy(LCDSprite * _Nonnull sprite, MELPoint translation) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     MELSpriteMoveBy(self, translation);
+
+    const MELSpritePositionFixed fixed = self->fixed;
+    const MELPoint origin = self->frame.origin;
+    const float x = (fixed & MELSpritePositionFixedX) ? origin.x : origin.x - camera.frame.origin.x;
+    const float y = (fixed & MELSpritePositionFixedY) ? origin.y : origin.y - camera.frame.origin.y;
+    playdate->sprite->moveTo(sprite, MOVETO_XY(x, y));
+}
+void LCDSpriteMoveTo(LCDSprite * _Nonnull sprite, MELPoint destination) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    self->frame.origin = destination;
+
+    const MELSpritePositionFixed fixed = self->fixed;
+    const float x = (fixed & MELSpritePositionFixedX) ? destination.x : destination.x - camera.frame.origin.x;
+    const float y = (fixed & MELSpritePositionFixedY) ? destination.y : destination.y - camera.frame.origin.y;
+    playdate->sprite->moveTo(sprite, MOVETO_XY(x, y));
 }
 void LCDSpriteSetClass(LCDSprite * _Nonnull sprite, const MELSpriteClass * _Nonnull class) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);

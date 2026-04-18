@@ -39,11 +39,16 @@ static void invert(MELShootingStyle * _Nonnull self, const MELShootingStyleInver
 #endif
 
 void MELShootingStyleShootFromSprite(MELShootingStyle * _Nonnull self, MELSprite * _Nonnull sprite, float angle) {
+    if (!sprite->hitPoints && !self->canShootWhenHitPointsAreZero) {
+        // Le sprite n'a plus de points de vie. Pas de tir.
+        return;
+    }
     const MELTimeInterval delta = DELTA;
     MELTimeInterval shootInterval = self->shootInterval;
     if (shootInterval > 0) {
         shootInterval -= delta;
     } else {
+        const float initialDelta = -shootInterval;
         const MELShootingStyleDefinition *definition = self->definition;
         shootInterval += definition->shootInterval;
 
@@ -56,7 +61,7 @@ void MELShootingStyleShootFromSprite(MELShootingStyle * _Nonnull self, MELSprite
 
         // Salve de tir
         // TODO: Calculer le décalage initial des tirs en fonction de la valeur de shootInterval.
-        self->class->createBullets(self, origin, angle);
+        self->class->createBullets(self, origin, angle, initialDelta);
 
         self->bulletAmount += definition->bulletAmountVariation;
 

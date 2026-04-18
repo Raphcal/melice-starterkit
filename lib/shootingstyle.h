@@ -15,11 +15,13 @@ typedef enum {
     MELShootingStyleClassNameCircular,
     MELShootingStyleClassNameSimple,
     MELShootingStyleClassNameParticule,
+    MELShootingStyleClassNameAimed,
+    MELShootingStyleClassNameSinus,
 } MELShootingStyleClassName;
 
 typedef struct {
     MELShootingStyleClassName name;
-    void (* _Nonnull createBullets)(MELShootingStyle * _Nonnull self, MELPoint origin, float angle);
+    void (* _Nonnull createBullets)(MELShootingStyle * _Nonnull self, MELPoint origin, float angle, float initialDelta);
 } MELShootingStyleClass;
 
 const MELShootingStyleClass * _Nullable MELShootingStyleClassForName(MELShootingStyleClassName className);
@@ -28,6 +30,7 @@ const MELShootingStyleClass * _Nullable MELShootingStyleClassForName(MELShooting
 typedef struct shootingstyle {
     const MELShootingStyleClass * _Nonnull class;
     const MELShootingStyleDefinition * _Nonnull definition;
+    void * _Nullable userdata;
 
     MELTimeInterval shootInterval;
     unsigned int bulletAmount;

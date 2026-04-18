@@ -11,7 +11,7 @@
 #include "melmath.h"
 #include "random.h"
 
-static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle);
+static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle, float initialDelta);
 
 static const MELShootingStyleClass CircularShootingStyleClass = (MELShootingStyleClass) {
     .name = MELShootingStyleClassNameCircular,
@@ -34,7 +34,7 @@ void CircularShootingStyleInit(MELShootingStyle * _Nonnull self, const CircularS
     };
 }
 
-static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle) {
+static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle, float initialDelta) {
     CircularShootingStyleDefinition *definition = (CircularShootingStyleDefinition *) self->definition;
 
     const float bulletSpeed = definition->super.bulletSpeed;
@@ -52,7 +52,7 @@ static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, flo
         BulletConstructor(&definition->super, origin, (MELPoint) {
             .x = cosf(angle) * bulletSpeed,
             .y = sinf(angle) * bulletSpeed,
-        });
+        }, initialDelta);
         angle += angleIncrement;
     }
 }

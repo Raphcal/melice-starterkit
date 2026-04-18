@@ -28,6 +28,7 @@
 #include "layersprite.h"
 #include "axe.h"
 #include "direction.h"
+#include "geomap.h"
 #include "sprite.h"
 #include "spriteinstance.h"
 #include "spritetype.h"
@@ -54,6 +55,8 @@
 #include "circularshootingstyle.h"
 #include "particuleshootingstyle.h"
 #include "simpleshootingstyle.h"
+#include "aimedshootingstyle.h"
+#include "sinussimpleshootingstyle.h"
 #include "image.h"
 #include "text.h"
 #include "timer.h"
@@ -81,6 +84,7 @@
 #include "operation.h"
 #include "random.h"
 #include "screen.h"
+#include "scrollbar.h"
 #include "uuid.h"
 
 #endif /* melice_h */

@@ -55,6 +55,20 @@ uint16_t * _Nullable MELUTF16StringMakeWithUTF8String(const char * _Nullable sou
  */
 unsigned int MELStringLengthToDisplayUInt(unsigned int value);
 
+void MELStringSet2DigitsNumber(uint8_t value, char * _Nonnull buffer);
+void MELStringSet4DigitsNumber(unsigned int value, char * _Nonnull buffer);
+void MELStringSetNumber(uint32_t value, unsigned int digitCount, char * _Nonnull buffer);
+
+/**
+ * Formatte la durée en seconde donnée en date.
+ * Le format est en 2 métriques seulement, par exemple :
+ * - heures/minutes : 12h 53m
+ * - minutes/secondes : 4m 12s
+ * - secondes : 23s
+ * Il vaut mieux prévoir un buffer d'au moins 10 caractères. Durée max : 9999h 59m.
+ */
+void MELStringFormatDuration(float duration, char * _Nonnull buffer);
+
 /**
  * Converti la valeur donnée en texte.
  *
@@ -63,6 +77,7 @@ unsigned int MELStringLengthToDisplayUInt(unsigned int value);
 char * _Nonnull MELUInt32ToString(uint32_t value);
 char * _Nonnull MELUInt32ToStringWithBuffer(uint32_t value, char * _Nullable buffer, int * _Nonnull bufferCapacity);
 void MELUInt32ToStringWithFixedSizeBuffer(uint32_t value, char * _Nonnull buffer, const int bufferCapacity);
+void MELUInt32ToStringWithFixedSizeBufferAlignRight(uint32_t value, char * _Nonnull buffer, const int bufferCapacity);
 
 uint32_t MELStringToUInt32(const char * _Nonnull string);
 

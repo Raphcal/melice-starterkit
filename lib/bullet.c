@@ -17,6 +17,7 @@ typedef struct {
 } Bullet;
 
 static void update(LCDSprite * _Nonnull sprite);
+static void updateWithDelta(Bullet * _Nonnull self, LCDSprite * _Nonnull sprite, const float delta);
 static void save(MELSprite * _Nonnull sprite, MELOutputStream * _Nonnull outputStream);
 static MELSprite * _Nullable load(MELSpriteDefinition * _Nonnull definition, LCDSprite * _Nonnull sprite, MELInputStream * _Nonnull inputStream);
 
@@ -26,7 +27,7 @@ static const MELSpriteClass BulletClass = (MELSpriteClass) {
     .load = load,
 };
 
-LCDSprite * _Nonnull BulletConstructor(const MELShootingStyleDefinition * _Nonnull definition, MELPoint origin, MELPoint speed) {
+LCDSprite * _Nonnull BulletConstructor(const MELShootingStyleDefinition * _Nonnull definition, MELPoint origin, MELPoint speed, float initialDelta) {
     Bullet *self = playdate->system->realloc(NULL, sizeof(Bullet));
     MELSpriteDefinition *bulletDefinition = definition->bulletDefinition;
 
@@ -38,6 +39,7 @@ LCDSprite * _Nonnull BulletConstructor(const MELShootingStyleDefinition * _Nonnu
                 .origin = origin,
                 .size = bulletDefinition->size
             },
+            .hitPoints = definition->damage,
         },
         .speed = speed,
     };
@@ -51,12 +53,14 @@ LCDSprite * _Nonnull BulletConstructor(const MELShootingStyleDefinition * _Nonnu
     playdate->sprite->setUpdateFunction(sprite, update);
     playdate->sprite->addSprite(sprite);
     playdate->sprite->setUserdata(sprite, self);
-    playdate->sprite->setZIndex(sprite, 10);
+    playdate->sprite->setZIndex(sprite, ZINDEX_BULLETS);
 
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
     playdate->system->logToConsole("Push Bullet(%x, %x): %d", sprite, self, self->super.definition.name);
 #endif
-    LCDSpriteRefListPush(&currentScene->sprites, sprite);
+    MELSceneAddSprite(sprite);
+
+    updateWithDelta(self, sprite, initialDelta);
 
     return sprite;
 }
@@ -83,9 +87,7 @@ static MELSprite * _Nullable load(MELSpriteDefinition * _Nonnull definition, LCD
     return &self->super;
 }
 
-static void update(LCDSprite * _Nonnull sprite) {
-    Bullet *self = playdate->sprite->getUserdata(sprite);
-    const float delta = DELTA;
+static void updateWithDelta(Bullet * _Nonnull self, LCDSprite * _Nonnull sprite, const float delta) {
     const MELPoint speed = self->speed;
     MELRectangle frame = self->super.frame;
     frame.origin = (MELPoint) {
@@ -102,7 +104,10 @@ static void update(LCDSprite * _Nonnull sprite) {
     MELAnimation *animation = self->super.animation;
     MELAnimationUpdate(animation, delta);
 
-    playdate->sprite->moveTo(sprite, frame.origin.x, frame.origin.y);
+    playdate->sprite->moveTo(sprite, MOVETO_POINT(frame.origin));
     playdate->sprite->setImage(sprite, playdate->graphics->getTableBitmap(self->super.definition.palette, animation->frame.atlasIndex), kBitmapUnflipped);
 }
 
+static void update(LCDSprite * _Nonnull sprite) {
+    updateWithDelta(playdate->sprite->getUserdata(sprite), sprite, DELTA);
+}

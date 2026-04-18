@@ -20,7 +20,11 @@ MELMap * _Nullable MELMapOpen(const char * _Nonnull path) {
         return NULL;
     }
 
+#if MELMAP_IGNORE_TILESIZE
+    const int tileSize = 32;
+#else
     const int tileSize = MELInputStreamReadInt(&inputStream);
+#endif
 
     MELMap *self = playdate->system->realloc(NULL, sizeof(MELMap));
     MELMap map = {
@@ -83,7 +87,11 @@ void MELMapDealloc(MELMap * _Nonnull self) {
 }
 
 void MELMapReadHeader(MELMap * _Nonnull self, MELInputStream * _Nonnull inputStream) {
+#if MELMAP_IGNORE_TILESIZE
+    const int tileSize = 32;
+#else
     const int tileSize = MELInputStreamReadInt(inputStream);
+#endif
     MELMap map = {
         .tileSize = MELIntSizeMake(tileSize, tileSize),
         .grounds = MELLayerRefListEmpty,

@@ -286,6 +286,111 @@ unsigned int MELStringLengthToDisplayUInt(unsigned int value) {
     : (unsigned int)log10f(value) + 1;
 }
 
+void MELStringSet2DigitsNumber(uint8_t value, char * _Nonnull buffer) {
+    buffer[0] = '0' + value / 10;
+    buffer[1] = '0' + value % 10;
+}
+void MELStringSet4DigitsNumber(unsigned int value, char * _Nonnull buffer) {
+    if (value < 10) {
+        buffer[0] = '0' + value;
+        buffer[1] = ' ';
+        buffer[2] = ' ';
+        buffer[3] = ' ';
+    } else if (value < 100) {
+        buffer[0] = '0' + value / 10;
+        buffer[1] = '0' + value % 10;
+        buffer[2] = ' ';
+        buffer[3] = ' ';
+    } else if (value < 1000) {
+        buffer[0] = '0' + value / 100;
+        buffer[1] = '0' + (value / 10) % 10;
+        buffer[2] = '0' + value % 10;
+        buffer[3] = ' ';
+    } else if (value < 10000) {
+        buffer[0] = '0' + value / 1000;
+        buffer[1] = '0' + (value / 100) % 10;
+        buffer[2] = '0' + (value / 10) % 10;
+        buffer[3] = '0' + value % 10;
+    } else {
+        buffer[0] = '9';
+        buffer[1] = '9';
+        buffer[2] = '9';
+        buffer[3] = '9';
+    }
+}
+
+void MELStringSetNumber(uint32_t value, unsigned int digitCount, char * _Nonnull buffer) {
+    const unsigned int length = MELStringLengthToDisplayUInt(value);
+    if (length > digitCount) {
+        for (int index = 0; index < digitCount; index++) {
+            buffer[index] = '9';
+        }
+        return;
+    }
+    for (int index = length - 1; index >= 0; index--) {
+        buffer[index] = '0' + (value % 10);
+        value /= 10;
+    }
+    for (int index = length; index < digitCount; index++) {
+        buffer[index] = ' ';
+    }
+}
+
+void MELStringFormatDuration(float duration, char * _Nonnull buffer) {
+    if (duration < 1.0f) {
+        buffer[0] = '0';
+        buffer[1] = 's';
+        buffer[2] = '\0';
+        return;
+    }
+
+    const int seconds = ((int)duration) % 60;
+    const int minutes = ((int)(duration / 60.0f)) % 60;
+    const int hours = (duration / 3600.0f);
+    const int values[3] = {hours, minutes, seconds};
+    const char metrics[3] = {'h', 'm', 's'};
+
+    uint8_t metricCount = 0;
+    int index = 0;
+    for (int metric = 0; metric < 3 && metricCount < 2; metric++) {
+        const int value = values[metric];
+        if (metricCount == 0 && value == 0) {
+            continue;
+        }
+        if (metricCount > 0) {
+            buffer[index++] = ' ';
+        }
+        if (value < 10) {
+            buffer[index] = '0' + value;
+            index++;
+        } else if (value < 100) {
+            buffer[index] = '0' + value / 10;
+            buffer[index + 1] = '0' + value % 10;
+            index += 2;
+        } else if (value < 1000) {
+            buffer[index] = '0' + value / 100;
+            buffer[index + 1] = '0' + (value / 10) % 10;
+            buffer[index + 2] = '0' + value % 10;
+            index += 3;
+        } else if (value < 10000) {
+            buffer[index] = '0' + value / 1000;
+            buffer[index + 1] = '0' + (value / 100) % 10;
+            buffer[index + 2] = '0' + (value / 10) % 10;
+            buffer[index + 3] = '0' + value % 10;
+            index += 4;
+        } else {
+            buffer[index] = '9';
+            buffer[index + 1] = '9';
+            buffer[index + 2] = '9';
+            buffer[index + 3] = '9';
+            index += 4;
+        }
+        buffer[index++] = metrics[metric];
+        metricCount++;
+    }
+    buffer[index] = '\0';
+}
+
 char * _Nonnull MELUInt32ToString(uint32_t value) {
     const unsigned int digitCount = MELStringLengthToDisplayUInt(value);
     char *result = playdate->system->realloc(NULL, digitCount + 1);
@@ -317,6 +422,14 @@ void MELUInt32ToStringWithFixedSizeBuffer(uint32_t value, char * _Nonnull buffer
     buffer[digitCount] = '\0';
     for (int index = digitCount - 1; index >= 0; index--) {
         buffer[index] = '0' + (value % 10);
+        value /= 10;
+    }
+}
+
+void MELUInt32ToStringWithFixedSizeBufferAlignRight(uint32_t value, char * _Nonnull buffer, const int bufferCapacity) {
+    const unsigned int digitCount = MELIntMin(MELStringLengthToDisplayUInt(value), bufferCapacity);
+    for (int index = 1; index <= digitCount; index++) {
+        buffer[bufferCapacity - index] = '0' + (value % 10);
         value /= 10;
     }
 }

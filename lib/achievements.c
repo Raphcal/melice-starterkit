@@ -487,6 +487,11 @@ void MELAchievementSaveStatus(void) {
         const MELAchievement achievement = achievementData.achievements.memory[index];
         const MELAchievementStatus status = achievementStatus.memory[index];
 
+        if (achievement.isSuperSecret && !status.grantedAt) {
+            // Les succès super secrets ne sont pas ajoutés au fichier tant qu'ils ne sont pas débloqués.
+            continue;
+        }
+
         writeObjectStart(&jsonWriter);
         writePropertyString(&jsonWriter, "id", achievement.id);
         writePropertyLocalizableString(&jsonWriter, "name", achievement.name);
@@ -558,10 +563,12 @@ void MELAchievementGrant(unsigned int achievementIndex) {
 }
 
 void MELAchievementGrantAt(unsigned int achievementIndex, uint32_t grantedAt) {
+#if DEBUG
     if (achievementIndex >= achievementStatus.count) {
         playdate->system->logToConsole("Unable to grant achievement: bad index. Expected less than: %d, but was: %d", achievementStatus.count, achievementIndex);
         return;
     }
+#endif
     MELAchievementStatus *status = achievementStatus.memory + achievementIndex;
     if (!status->grantedAt) {
         status->grantedAt = grantedAt;

@@ -11,7 +11,7 @@
 #include "melmath.h"
 #include "random.h"
 
-static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle);
+static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle, float initialDelta);
 
 static const MELShootingStyleClass SimpleShootingStyleClass = (MELShootingStyleClass) {
     .name = MELShootingStyleClassNameSimple,
@@ -33,11 +33,11 @@ void SimpleShootingStyleInit(MELShootingStyle * _Nonnull self, const MELShooting
     };
 }
 
-static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle) {
+static void createBullets(MELShootingStyle * _Nonnull self, MELPoint origin, float angle, float initialDelta) {
     const MELShootingStyleDefinition *definition = self->definition;
     const float bulletSpeed = definition->bulletSpeed;
     BulletConstructor(definition, origin, (MELPoint) {
         .x = bulletSpeed * cosf(angle),
         .y = bulletSpeed * sinf(angle)
-    });
+    }, initialDelta);
 }

@@ -121,7 +121,7 @@ void MELOutputStreamWriteInt32(MELOutputStream * _Nonnull self, int32_t value) {
     MELOutputStreamWriteNumeric(self, value, sizeof(int32_t));
 }
 
-void MELOutputStreamWriteShort(MELOutputStream * _Nonnull self, int16_t value) {
+void MELOutputStreamWriteInt16(MELOutputStream * _Nonnull self, int16_t value) {
     MELOutputStreamWriteNumeric(self, value, sizeof(int16_t));
 }
 

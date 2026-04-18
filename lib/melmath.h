@@ -324,7 +324,7 @@ float MELEaseOutBounce(float from, float to, float value);
 
 float MELEaseOutCirc(float from, float to, float value);
 
-float MELEaseExpo(float from, float to, float value);
+float MELEaseOutExpo(float from, float to, float value);
 
 MELBoolean MELFloatEquals(float lhs, float rhs);
 

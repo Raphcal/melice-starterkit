@@ -46,4 +46,8 @@ int LCDBitmapGetWidth(LCDBitmap * _Nonnull bitmap);
 int LCDBitmapGetHeight(LCDBitmap * _Nonnull bitmap);
 MELIntSize LCDBitmapGetSize(LCDBitmap * _Nonnull bitmap);
 
+void MELOutputStreamWriteBitmap(MELOutputStream * _Nonnull outputStream, LCDBitmap * _Nonnull bitmap);
+
+void MELOutputStreamWritePNG(MELOutputStream * _Nonnull outputStream, LCDBitmap * _Nonnull bitmap);
+
 #endif /* bitmap_h */

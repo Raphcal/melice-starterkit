@@ -13,5 +13,6 @@
 typedef void (* _Nullable MELTimerCallback)(void * _Nullable userdata);
 
 LCDSprite * _Nonnull MELTimerConstructor(float delay, MELTimerCallback callback, void * _Nullable userdata);
+LCDSprite * _Nonnull MELTimerConstructorWithAutoRelease(float delay, MELTimerCallback callback, void * _Nullable userdata, MELBoolean autoReleaseUserdata);
 
 #endif /* timer_h */

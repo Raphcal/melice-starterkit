@@ -35,7 +35,10 @@ static void sha256Transform(MELSHA256Context * _Nonnull self, const uint8_t * _N
     h = self->state[7];
 
     for (index = 0, dataIndex = 0; index < 16; index++, dataIndex += 4) {
-        w[index] = (data[dataIndex] << 24) | (data[dataIndex + 1] << 16) | (data[dataIndex + 2] << 8) | (data[dataIndex + 3]);
+        w[index] = ((uint32_t)data[dataIndex] << 24)
+            | ((uint32_t)data[dataIndex + 1] << 16)
+            | ((uint32_t)data[dataIndex + 2] << 8)
+            | ((uint32_t)data[dataIndex + 3]);
 
         temp1 = h
             // S1

@@ -32,7 +32,7 @@ static const MELLocalizedString kAchievementUnlocked = (MELLocalizedString) {
     }
 };
 
-static const LCDColor kGrey75Pattern = (uintptr_t) (LCDPattern) {
+const LCDColor kGrey75Pattern = (uintptr_t) (LCDPattern) {
     // Bitmap, 0 = noir, 1 = blanc
     0b11111111,
     0b11111111,
@@ -54,7 +54,7 @@ static const LCDColor kGrey75Pattern = (uintptr_t) (LCDPattern) {
     0b11011101,
 };
 
-static const LCDColor kGrey50Pattern = (uintptr_t) (LCDPattern) {
+const LCDColor kGrey50Pattern = (uintptr_t) (LCDPattern) {
     // Bitmap, 0 = noir, 1 = blanc
     0b11111111,
     0b11111111,
@@ -76,7 +76,7 @@ static const LCDColor kGrey50Pattern = (uintptr_t) (LCDPattern) {
     0b01010101,
 };
 
-static const LCDColor kGrey25Pattern = (uintptr_t) (LCDPattern) {
+const LCDColor kGrey25Pattern = (uintptr_t) (LCDPattern) {
     // Bitmap, 0 = noir, 1 = blanc
     0b11111111,
     0b11111111,
@@ -98,7 +98,7 @@ static const LCDColor kGrey25Pattern = (uintptr_t) (LCDPattern) {
     0b00100010,
 };
 
-static const LCDColor kGrey12Pattern = (uintptr_t) (LCDPattern) {
+const LCDColor kGrey12Pattern = (uintptr_t) (LCDPattern) {
     // Bitmap, 0 = noir, 1 = blanc
     0b11111111,
     0b11111111,
@@ -120,8 +120,7 @@ static const LCDColor kGrey12Pattern = (uintptr_t) (LCDPattern) {
     0b00001000,
 };
 
-float MELAchievementToastAdjustLeft = 0.0f;
-float MELAchievementToastAdjustWidth = 0.0f;
+MELRectangle MELAchievementToastAdjust;
 
 // TODO: Générer un LCDBitmap "Achievement Unlocked!" et un LCDBitmap avec le titre du succès et faire un crop pour afficher le texte pendant l'apparition du toast.
 // Utiliser playdate->graphics->setScreenClipRect(int x, int y, int width, int height); pour l'affichage du texte.
@@ -188,6 +187,20 @@ LCDSprite * _Nullable MELAchievementToastConstructor(MELAchievement achievement)
     return sprite;
 }
 
+LCDColor LCDColorBlackWithOpacity(float opacity) {
+    if (opacity <= 0.12f) {
+        return kGrey12Pattern;
+    } else if (opacity <= 0.25f) {
+        return kGrey25Pattern;
+    } else if (opacity <= 0.5f) {
+        return kGrey50Pattern;
+    } else if (opacity <= 0.75f) {
+        return kGrey75Pattern;
+    } else {
+        return kColorBlack;
+    }
+}
+
 static void dealloc(LCDSprite * _Nonnull sprite) {
     MELAchievementToast *self = playdate->sprite->getUserdata(sprite);
     if (self->samplePlayer != NULL) {
@@ -226,15 +239,10 @@ static void drawRoundedRect(MELRectangle rectangle, int radius, float lineWidth,
     int lineWidthAsInt = MELIntMax(lineWidth, 1);
 
     const struct playdate_graphics *gfx = playdate->graphics;
-    if (lineWidth <= 0.12f) {
-        color = kGrey12Pattern;
-    } else if (lineWidth <= 0.25f) {
-        color = kGrey25Pattern;
-    } else if (lineWidth <= 0.5f) {
-        color = kGrey50Pattern;
-    } else if (lineWidth <= 0.75f) {
-        color = kGrey75Pattern;
+    if (lineWidth < 1.0f) {
+        color = LCDColorBlackWithOpacity(lineWidth);
     }
+    
     gfx->drawRoundRect(topLeft.x, topLeft.y, rectangle.size.width, rectangle.size.height, radius, lineWidthAsInt, color);
 }
 
@@ -270,12 +278,12 @@ static void init(MELAchievementToast * _Nonnull self, LCDSprite * _Nonnull sprit
     }
     MELRectangle frame = (MELRectangle) {
         .origin = {
-            .x = TOTAL_WIDTH / 2 + MELAchievementToastAdjustLeft,
-            .y = TOTAL_HEIGHT / 2
+            .x = TOTAL_WIDTH / 2 + MELAchievementToastAdjust.origin.x,
+            .y = TOTAL_HEIGHT / 2 + MELAchievementToastAdjust.origin.y
         },
         .size = {
-            .width = TOAST_WIDTH - MELAchievementToastAdjustWidth,
-            .height = TOAST_HEIGHT
+            .width = TOAST_WIDTH + MELAchievementToastAdjust.size.width,
+            .height = TOAST_HEIGHT + MELAchievementToastAdjust.size.height
         }
     };
 
@@ -321,6 +329,7 @@ static void updateDisappear(LCDSprite * _Nonnull sprite) {
     const struct playdate_graphics *gfx = playdate->graphics;
     gfx->clearBitmap(image, kColorClear);
     gfx->pushContext(image);
+    gfx->setDrawMode(kDrawModeCopy);
 
     const MELPoint center = self->super.frame.origin;
     MELRectangle rect = (MELRectangle) {
@@ -388,6 +397,7 @@ static void updateWait(LCDSprite * _Nonnull sprite) {
         LCDBitmap *image = playdate->sprite->getImage(sprite);
         const struct playdate_graphics *gfx = playdate->graphics;
         gfx->pushContext(image);
+        gfx->setDrawMode(kDrawModeCopy);
 
         int iconWidth = 0;
         if (self->icon) {
@@ -424,7 +434,7 @@ static void updateAppear(LCDSprite * _Nonnull sprite) {
     const float kDuration = 1.0f;
     const float time = self->time += DELTA;
     const float progress = MELEaseOutBack(0, kDuration, time);
-    const float shadowProgress = MELEaseExpo(0.5f, kDuration, time);
+    const float shadowProgress = MELEaseOutExpo(0.5f, kDuration, time);
 
     if (time >= kDuration) {
         self->time = 0.0f;
@@ -436,6 +446,7 @@ static void updateAppear(LCDSprite * _Nonnull sprite) {
     const struct playdate_graphics *gfx = playdate->graphics;
     gfx->clearBitmap(image, kColorClear);
     gfx->pushContext(image);
+    gfx->setDrawMode(kDrawModeCopy);
 
     const MELPoint center = self->super.frame.origin;
     MELRectangle rect = (MELRectangle) {

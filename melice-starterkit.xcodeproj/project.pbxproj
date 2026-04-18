@@ -211,6 +211,14 @@
 		64A70E452E637FC000961CFF /* random.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC992DC65DA5004DCD0B /* random.c */; };
 		64A70E462E637FC000961CFF /* uuid.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489ECB42DC65DA5004DCD0B /* uuid.c */; };
 		64A70E472E637FC000961CFF /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 6489EC502DC65D7D004DCD0B /* main.c */; };
+		64ADB5B62F92BC8700E0976E /* aimedshootingstyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 64ADB5B42F92BC8700E0976E /* aimedshootingstyle.h */; };
+		64ADB5B72F92BC8700E0976E /* aimedshootingstyle.c in Sources */ = {isa = PBXBuildFile; fileRef = 64ADB5B52F92BC8700E0976E /* aimedshootingstyle.c */; };
+		64ADB5B82F92BC8700E0976E /* aimedshootingstyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 64ADB5B42F92BC8700E0976E /* aimedshootingstyle.h */; };
+		64ADB5B92F92BC8700E0976E /* aimedshootingstyle.c in Sources */ = {isa = PBXBuildFile; fileRef = 64ADB5B52F92BC8700E0976E /* aimedshootingstyle.c */; };
+		64ADB5BC2F92BC9800E0976E /* sinussimpleshootingstyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 64ADB5BA2F92BC9800E0976E /* sinussimpleshootingstyle.h */; };
+		64ADB5BD2F92BC9800E0976E /* sinussimpleshootingstyle.c in Sources */ = {isa = PBXBuildFile; fileRef = 64ADB5BB2F92BC9800E0976E /* sinussimpleshootingstyle.c */; };
+		64ADB5BE2F92BC9800E0976E /* sinussimpleshootingstyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 64ADB5BA2F92BC9800E0976E /* sinussimpleshootingstyle.h */; };
+		64ADB5BF2F92BC9800E0976E /* sinussimpleshootingstyle.c in Sources */ = {isa = PBXBuildFile; fileRef = 64ADB5BB2F92BC9800E0976E /* sinussimpleshootingstyle.c */; };
 		64C2A2FC2E662CEC00520678 /* explosion.h in Headers */ = {isa = PBXBuildFile; fileRef = 64C2A2FA2E662CEC00520678 /* explosion.h */; };
 		64C2A2FD2E662CEC00520678 /* explosion.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C2A2FB2E662CEC00520678 /* explosion.c */; };
 		64C2A2FE2E662CEC00520678 /* explosion.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C2A2FB2E662CEC00520678 /* explosion.c */; };
@@ -423,6 +431,10 @@
 		649E146B2E624F4D00584F64 /* classes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = classes.h; sourceTree = "<group>"; };
 		649E146C2E624F4D00584F64 /* classes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = classes.c; sourceTree = "<group>"; };
 		64A70E4D2E637FC000961CFF /* libmelice-starterkit Playdate.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libmelice-starterkit Playdate.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		64ADB5B42F92BC8700E0976E /* aimedshootingstyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aimedshootingstyle.h; sourceTree = "<group>"; };
+		64ADB5B52F92BC8700E0976E /* aimedshootingstyle.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = aimedshootingstyle.c; sourceTree = "<group>"; };
+		64ADB5BA2F92BC9800E0976E /* sinussimpleshootingstyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sinussimpleshootingstyle.h; sourceTree = "<group>"; };
+		64ADB5BB2F92BC9800E0976E /* sinussimpleshootingstyle.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sinussimpleshootingstyle.c; sourceTree = "<group>"; };
 		64C2A2FA2E662CEC00520678 /* explosion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = explosion.h; sourceTree = "<group>"; };
 		64C2A2FB2E662CEC00520678 /* explosion.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = explosion.c; sourceTree = "<group>"; };
 		64C2A3002E662CFE00520678 /* gamescene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gamescene.h; sourceTree = "<group>"; };
@@ -791,6 +803,8 @@
 			children = (
 				64C2A38E2E66375B00520678 /* bullet.h */,
 				64C2A38F2E66375B00520678 /* bullet.c */,
+				64ADB5B42F92BC8700E0976E /* aimedshootingstyle.h */,
+				64ADB5B52F92BC8700E0976E /* aimedshootingstyle.c */,
 				64C2A3902E66375B00520678 /* burstshootingstyle.h */,
 				64C2A3912E66375B00520678 /* burstshootingstyle.c */,
 				64C2A3922E66375B00520678 /* circularshootingstyle.h */,
@@ -802,6 +816,8 @@
 				64C2A3812E66374700520678 /* shootingstyledefinition.h */,
 				64C2A3822E66374700520678 /* simpleshootingstyle.h */,
 				64C2A3832E66374700520678 /* simpleshootingstyle.c */,
+				64ADB5BA2F92BC9800E0976E /* sinussimpleshootingstyle.h */,
+				64ADB5BB2F92BC9800E0976E /* sinussimpleshootingstyle.c */,
 			);
 			name = shots;
 			sourceTree = "<group>";
@@ -864,6 +880,7 @@
 				649E13EA2E624D9B00584F64 /* hitbox.h in Headers */,
 				649E13EB2E624D9B00584F64 /* hitboxtype.h in Headers */,
 				649E13EC2E624D9B00584F64 /* simplespritehitbox.h in Headers */,
+				64ADB5BE2F92BC9800E0976E /* sinussimpleshootingstyle.h in Headers */,
 				64C2A3C12E66388700520678 /* nineslice.h in Headers */,
 				649E13ED2E624D9B00584F64 /* axe.h in Headers */,
 				649E13EE2E624D9B00584F64 /* rectangle.h in Headers */,
@@ -897,6 +914,7 @@
 				64C2A4602E663E4F00520678 /* eventbus.h in Headers */,
 				649E14012E624D9B00584F64 /* statichitbox.h in Headers */,
 				649E14022E624D9B00584F64 /* subsprite.h in Headers */,
+				64ADB5B62F92BC8700E0976E /* aimedshootingstyle.h in Headers */,
 				64C2A3A22E6637DB00520678 /* timer.h in Headers */,
 				64C2A4132E663A9E00520678 /* files.h in Headers */,
 				649E14032E624D9B00584F64 /* direction.h in Headers */,
@@ -953,6 +971,7 @@
 				64A70DED2E637FC000961CFF /* hitbox.h in Headers */,
 				64A70DEE2E637FC000961CFF /* hitboxtype.h in Headers */,
 				64A70DEF2E637FC000961CFF /* simplespritehitbox.h in Headers */,
+				64ADB5BC2F92BC9800E0976E /* sinussimpleshootingstyle.h in Headers */,
 				64C2A3C32E66388700520678 /* nineslice.h in Headers */,
 				64A70DF02E637FC000961CFF /* axe.h in Headers */,
 				64A70DF12E637FC000961CFF /* rectangle.h in Headers */,
@@ -986,6 +1005,7 @@
 				64C2A45E2E663E4F00520678 /* eventbus.h in Headers */,
 				64A70E062E637FC000961CFF /* statichitbox.h in Headers */,
 				64A70E072E637FC000961CFF /* subsprite.h in Headers */,
+				64ADB5B82F92BC8700E0976E /* aimedshootingstyle.h in Headers */,
 				64C2A3A42E6637DB00520678 /* timer.h in Headers */,
 				64C2A4112E663A9E00520678 /* files.h in Headers */,
 				64A70E082E637FC000961CFF /* direction.h in Headers */,
@@ -1072,7 +1092,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1640;
+				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					6489EC472DC65D36004DCD0B = {
 						CreatedOnToolsVersion = 16.3;
@@ -1156,6 +1176,7 @@
 				649E141C2E624DA500584F64 /* playonceanimation.c in Sources */,
 				649E141D2E624DA500584F64 /* singleframeanimation.c in Sources */,
 				649E141E2E624DA500584F64 /* synchronizedanimation.c in Sources */,
+				64ADB5BF2F92BC9800E0976E /* sinussimpleshootingstyle.c in Sources */,
 				64C2A39A2E66375B00520678 /* circularshootingstyle.c in Sources */,
 				64C2A39B2E66375B00520678 /* burstshootingstyle.c in Sources */,
 				64C2A39C2E66375B00520678 /* bullet.c in Sources */,
@@ -1193,6 +1214,7 @@
 				649E14302E624DA500584F64 /* spritedefinition.c in Sources */,
 				649E14312E624DA500584F64 /* spritehitbox.c in Sources */,
 				649E14322E624DA500584F64 /* spriteinstance.c in Sources */,
+				64ADB5B72F92BC8700E0976E /* aimedshootingstyle.c in Sources */,
 				64C2A3CD2E6638A100520678 /* dialog.c in Sources */,
 				649E14332E624DA500584F64 /* statichitbox.c in Sources */,
 				649E14342E624DA500584F64 /* subsprite.c in Sources */,
@@ -1235,6 +1257,7 @@
 				64A70E222E637FC000961CFF /* playonceanimation.c in Sources */,
 				64A70E232E637FC000961CFF /* singleframeanimation.c in Sources */,
 				64A70E242E637FC000961CFF /* synchronizedanimation.c in Sources */,
+				64ADB5BD2F92BC9800E0976E /* sinussimpleshootingstyle.c in Sources */,
 				64C2A3972E66375B00520678 /* circularshootingstyle.c in Sources */,
 				64C2A3982E66375B00520678 /* burstshootingstyle.c in Sources */,
 				64C2A3992E66375B00520678 /* bullet.c in Sources */,
@@ -1272,6 +1295,7 @@
 				64A70E362E637FC000961CFF /* spritedefinition.c in Sources */,
 				64A70E372E637FC000961CFF /* spritehitbox.c in Sources */,
 				64A70E382E637FC000961CFF /* spriteinstance.c in Sources */,
+				64ADB5B92F92BC8700E0976E /* aimedshootingstyle.c in Sources */,
 				64C2A3D02E6638A100520678 /* dialog.c in Sources */,
 				64A70E392E637FC000961CFF /* statichitbox.c in Sources */,
 				64A70E3A2E637FC000961CFF /* subsprite.c in Sources */,

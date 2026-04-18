@@ -10,6 +10,7 @@
 #include "primitives.h"
 #include "melmath.h"
 #include "bitmap.h"
+#include "../lib/melice.h"
 
 typedef struct {
     MELFade super;
@@ -35,6 +36,7 @@ MELScene * _Nonnull MELFadeToBlackSceneAlloc(MELScene * _Nonnull oldScene, MELSc
                 .init = init,
                 .dealloc = dealloc,
                 .update = updateFadeIn,
+                .addSprite = MELFadeAddSprite,
             },
             .oldScene = oldScene,
             .nextScene = nextScene,
@@ -88,6 +90,7 @@ static void setOpacity(MELFadeToBlackScene * _Nonnull self, float opacity) {
     LCDBitmap *fade = self->fade;
     playdate->graphics->clearBitmap(fade, kColorClear);
     playdate->graphics->pushContext(fade);
+    playdate->graphics->setDrawMode(kDrawModeCopy);
     playdate->graphics->tileBitmap(pattern, 0, 0, LCD_COLUMNS, LCD_ROWS, kBitmapUnflipped);
     playdate->graphics->popContext();
 }

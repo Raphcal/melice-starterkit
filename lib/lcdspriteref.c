@@ -16,18 +16,19 @@ void LCDSpriteRefListDeallocReverse(LCDSpriteRefList * _Nonnull self) {
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
     playdate->system->logToConsole("LCDSpriteRefListDeallocReverse");
 #endif
-    // FIXME: Création d'une copie défensive à cause de GameOverScene. Après suppression de GameOverScene, supprimer ceci.
-    LCDSpriteRefList sprites = LCDSpriteRefListMakeWithList(*self);
+    const LCDSpriteRefList sprites = *self;
     for (int index = sprites.count - 1; index >= 0; index--) {
         LCDSprite *sprite = sprites.memory[index];
+#if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
+        playdate->system->logToConsole("Destroy %x", sprite);
+#endif
         MELSprite *melSprite = playdate->sprite->getUserdata(sprite);
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
-        playdate->system->logToConsole("Destroy %x, name: %d, type: %d", sprite, melSprite != NULL ? melSprite->definition.type : 0, melSprite != NULL ? melSprite->definition.name : 0);
+        playdate->system->logToConsole("- melSprite: %x, name: %d, type: %d", melSprite, melSprite != NULL ? melSprite->definition.type : 0, melSprite != NULL ? melSprite->definition.name : 0);
 #endif
         melSprite->class->destroy(sprite);
     }
     LCDSpriteRefListDeinit(self);
-    LCDSpriteRefListDeinit(&sprites);
 }
 
 void LCDSpriteDeinit(LCDSprite * _Nonnull sprite) {

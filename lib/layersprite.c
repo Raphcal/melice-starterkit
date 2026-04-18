@@ -132,7 +132,9 @@ static void update(LCDSprite * _Nonnull sprite) {
     const MELRectangle frame = self->super.frame;
     const MELPoint scrollRate = self->scrollRate;
 
-    playdate->sprite->moveTo(sprite, frame.origin.x + self->leftPadding - camera.frame.origin.x * scrollRate.x + frame.size.width / 2.0f, frame.origin.y - camera.frame.origin.y * scrollRate.y + frame.size.height / 2.0f);
+    const float x = frame.origin.x + self->leftPadding - camera.frame.origin.x * scrollRate.x + frame.size.width / 2.0f;
+    const float y = frame.origin.y - camera.frame.origin.y * scrollRate.y + frame.size.height / 2.0f;
+    playdate->sprite->moveTo(sprite, MOVETO_XY(x, y));
 }
 
 /**
@@ -148,5 +150,7 @@ static void updateRepeat(LCDSprite * _Nonnull sprite) {
     const int32_t leftPadding = self->leftPadding;
     const int32_t left = (int32_t)(frame.origin.x - camera.frame.origin.x * scrollRate.x) % ((int)frame.size.width);
 
-    playdate->sprite->moveTo(sprite, left + leftPadding + frame.size.width / 2.0f, frame.origin.y - camera.frame.origin.y * scrollRate.y + frame.size.height / 2.0f);
+    const float x = left + leftPadding + frame.size.width / 2.0f;
+    const float y = frame.origin.y - camera.frame.origin.y * scrollRate.y + frame.size.height / 2.0f;
+    playdate->sprite->moveTo(sprite, MOVETO_XY(x, y));
 }

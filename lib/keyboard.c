@@ -181,7 +181,6 @@ static MELBoolean isShowOrHideAnimation(MELKeyboardAnimationType animationType) 
 }
 
 static void drawKeyboard(MELKeyboard * _Nonnull self) {
-    // playdate->graphics->pushContext();
     const struct playdate_graphics gfx = *playdate->graphics;
 
     const MELKeyboardAnimationType currentAnimationType = self->currentAnimationType;
@@ -833,9 +832,13 @@ static void loadFontAndImages(void) {
 
 #pragma mark - Public functions
 
-MELKeyboard * _Nonnull MELKeyboardNew(void) {
+MELKeyboard * _Nonnull MELKeyboardAlloc(void) {
     MELKeyboard *self = playdate->system->realloc(NULL, sizeof(MELKeyboard));
+    MELKeyboardInit(self);
+    return self;
+}
 
+void MELKeyboardInit(MELKeyboard * _Nonnull self) {
     loadFontAndImages();
     const int selectionY = LCD_ROWS / 2 - rowHeight / 2 - 2;
     const MELKeyboardColumn selectedColumn = kColumnUpper;
@@ -879,13 +882,16 @@ MELKeyboard * _Nonnull MELKeyboardNew(void) {
 
         .text = MELCharListEmpty,
     };
-    return self;
 }
 
-void MELKeyboardFree(MELKeyboard * _Nonnull self) {
+void MELKeyboardDeinit(MELKeyboard * _Nonnull self) {
     MELCharListDeinit(&self->text);
     MELCharListDeinit(&self->originalText);
     freeSounds(self);
+}
+
+void MELKeyboardDealloc(MELKeyboard * _Nonnull self) {
+    MELKeyboardDeinit(self);
     playdate->system->realloc(self, 0);
 }
 

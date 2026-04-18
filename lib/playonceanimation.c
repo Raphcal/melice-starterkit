@@ -24,6 +24,12 @@ static void MELPlayOnceAnimationStart(MELPlayOnceAnimation * _Nonnull self) {
     self->startDate = playdate->system->getCurrentTimeMilliseconds();
 }
 
+void MELPlayOnceAnimationRestart(MELAnimation * _Nonnull self) {
+    if (self->class == &MELPlayOnceAnimationClass) {
+        MELPlayOnceAnimationStart((MELPlayOnceAnimation *)self);
+    }
+}
+
 static void MELPlayOnceAnimationUpdate(MELPlayOnceAnimation * _Nonnull self, MELTimeInterval timeSinceLastUpdate) {
     const unsigned int timeSinceStart = playdate->system->getCurrentTimeMilliseconds() - self->startDate;
     const MELTimeInterval framesPerSecond = MELAnimationFramesPerSecond((MELAnimation *)self);

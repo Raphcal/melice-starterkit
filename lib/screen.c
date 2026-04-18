@@ -8,6 +8,16 @@
 #include "screen.h"
 
 const MELRectangle MELScreen = (MELRectangle) {
+#if MELSCREEN_ORIENTATION_VERTICAL
+    .origin = {
+        .x = LCD_ROWS / 2,
+        .y = LCD_COLUMNS / 2,
+    },
+    .size = {
+        .width = LCD_ROWS,
+        .height = LCD_COLUMNS,
+    }
+#else
     .origin = {
         .x = LCD_COLUMNS / 2,
         .y = LCD_ROWS / 2,
@@ -16,4 +26,5 @@ const MELRectangle MELScreen = (MELRectangle) {
         .width = LCD_COLUMNS,
         .height = LCD_ROWS,
     }
+#endif
 };

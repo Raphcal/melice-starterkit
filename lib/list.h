@@ -37,6 +37,7 @@ unsigned int capacity; \
 \
 extern const type##List type##ListEmpty;\
 type##List type##ListMake(void);\
+type##List type##ListMakeSingleton(type value);\
 type##List type##ListMakeWithInitialCapacity(unsigned int initialCapacity);\
 type##List type##ListMakeWrappingMemoryAndCount(type * _Nullable memory, unsigned int count);\
 type##List type##ListMakeWithList(type##List other);\
@@ -74,6 +75,11 @@ type##List type##ListMakeWithInitialCapacity(unsigned int initialCapacity) {\
         return type##ListEmpty;\
     }\
     return (type##List) { playdate->system->realloc(NULL, initialCapacity * sizeof(type)), 0, initialCapacity };\
+}\
+type##List type##ListMakeSingleton(type value) {\
+    type *memory = playdate->system->realloc(NULL, sizeof(type));\
+    *memory = value;\
+    return (type##List) { memory, 1, 1 };\
 }\
 type##List type##ListMakeWrappingMemoryAndCount(type * _Nullable memory, unsigned int count) {\
     if (memory == NULL) {\

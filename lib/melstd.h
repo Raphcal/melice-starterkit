@@ -8,6 +8,10 @@
 #ifndef melstd_h
 #define melstd_h
 
+#define MELSPRITEINSTANCE_IGNORE_ANIMATION_NAME 0
+#define MELMAP_IGNORE_TILESIZE 0
+#define MELSCREEN_ORIENTATION_VERTICAL 0
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

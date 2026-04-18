@@ -1,9 +1,11 @@
 #include "stride.h"
 
 #include "camera.h"
+#include "scene.h"
 
 typedef struct {
     void * _Nullable oldUserdata;
+    void (* _Nullable delegate)(LCDSprite * _Nonnull sprite);
     float time;
     float delay;
     float duration;
@@ -24,16 +26,28 @@ void MELStrideSpriteFromAndTo(LCDSprite * _Nonnull sprite, MELPoint from, MELPoi
     MELStrideSpriteTo(sprite, to, delay, duration);
 }
 
+void MELStrideSpriteFrom(LCDSprite * _Nonnull sprite, MELPoint from, float delay, float duration) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    const MELPoint to = self->frame.origin;
+    self->frame.origin = from;
+    MELStrideSpriteTo(sprite, to, delay, duration);
+}
+
 void MELStrideSpriteTo(LCDSprite * _Nonnull sprite, MELPoint to, float delay, float duration) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     if (self->userdata && self->autoReleaseUserdata) {
+        // Pas possible de désallouer proprement userdata en cas de désallocation pendant un stride
+        // donc désallocation immédiate pour éviter les leaks. C'est pas vraiment logique de
+        // sauvegarder l'état "autoReleaseUserdata" ensuite mais bon.
+        //
+        // Permet aussi d'annuler et changer un stride en cours.
         playdate->system->realloc(self->userdata, 0);
         self->userdata = NULL;
     }
     MELStride *stride = playdate->system->realloc(NULL, sizeof(MELStride));
-    MELPoint from = self->frame.origin;
+    const MELPoint from = self->frame.origin;
     *stride = (MELStride) {
-        .origin = self->frame.origin,
+        .origin = from,
         .distance = {
             .width = to.x - from.x,
             .height = to.y - from.y
@@ -43,6 +57,7 @@ void MELStrideSpriteTo(LCDSprite * _Nonnull sprite, MELPoint to, float delay, fl
         .easingFunction = MELEaseInOut,
         .oldUserdata = self->userdata,
         .oldAutoReleaseUserdata = self->autoReleaseUserdata,
+        .delegate = MELSpriteNoopUpdate,
     };
     self->userdata = stride;
     self->autoReleaseUserdata = true;
@@ -58,10 +73,6 @@ LCDSprite * _Nonnull MELStrideConstructor(MELSpriteDefinition * _Nonnull definit
     MELSprite *self = playdate->system->realloc(NULL, sizeof(MELSprite));
     LCDSprite *sprite = MELSpriteInitWithCenter(self, definition, from);
     MELStrideSpriteTo(sprite, to, delay, duration);
-
-#if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
-    playdate->system->logToConsole("Push MELStrideConstructor(%x, %x): %d", sprite, self, self->definition.name);
-#endif
     return sprite;
 }
 
@@ -112,6 +123,7 @@ void MELStrideSkip(LCDSprite * _Nullable sprite) {
     const float y = (fixed & MELSpritePositionFixedY) ? origin.y : origin.y - camera.frame.origin.y;
     playdate->sprite->moveTo(sprite, x, y);
     playdate->sprite->setUpdateFunction(sprite, getUpdateFunction(stride, self->class));
+    stride->delegate(sprite);
 
     playdate->system->realloc(stride, 0);
 }
@@ -152,6 +164,14 @@ void MELStrideSetDestroyWhenStrideEnds(LCDSprite * _Nonnull sprite, MELBoolean d
     }
 }
 
+void MELStrideSetDelegate(LCDSprite * _Nonnull sprite, void (* _Nullable delegate)(LCDSprite * _Nonnull sprite)) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    if (self->userdata) {
+        MELStride *stride = self->userdata;
+        stride->delegate = delegate != NULL ? delegate : MELSpriteNoopUpdate;
+    }
+}
+
 void MELStrideUpdate(LCDSprite * _Nonnull sprite) {
     MELSprite *self = playdate->sprite->getUserdata(sprite);
 
@@ -181,6 +201,7 @@ void MELStrideUpdate(LCDSprite * _Nonnull sprite) {
         const float x = (fixed & MELSpritePositionFixedX) ? origin.x : origin.x - camera.frame.origin.x;
         const float y = (fixed & MELSpritePositionFixedY) ? origin.y : origin.y - camera.frame.origin.y;
         playdate->sprite->moveTo(sprite, x, y);
+        stride->delegate(sprite);
         return;
     }
     MELStrideSkip(sprite);
@@ -199,4 +220,54 @@ static void (* _Nonnull getUpdateFunction(MELStride * _Nonnull self, const MELSp
     } else {
         return MELSpriteUpdate;
     }
+}
+
+#pragma mark - Stride Camera
+
+static void updateStrideCamera(LCDSprite * _Nonnull sprite) {
+    MELSprite *self = playdate->sprite->getUserdata(sprite);
+    MELStride *stride = self->userdata;
+    const float duration = stride->duration;
+    float time = stride->time;
+    if (time < duration) {
+        stride->time = time = MELFloatMin(time + DELTA, duration);
+        const float progress = stride->easingFunction(stride->delay, duration, time);
+
+        camera.frame.origin = (MELPoint) {
+            .x = stride->origin.x + stride->distance.width * progress,
+            .y = stride->origin.y + stride->distance.height * progress,
+        };
+        return;
+    }
+    camera.frame.origin = (MELPoint) {
+        .x = stride->origin.x + stride->distance.width,
+        .y = stride->origin.y + stride->distance.height,
+    };
+    MELSpriteDealloc(sprite);
+}
+
+void MELStrideCameraTo(MELPoint to, float delay, float duration) {
+    MELSprite *self = new(MELSprite);
+    LCDSprite *sprite = MELSpriteInitHiddenWithUpdate(self, updateStrideCamera);
+
+    MELStride *stride = playdate->system->realloc(NULL, sizeof(MELStride));
+    const MELPoint from = camera.frame.origin;
+    *stride = (MELStride) {
+        .origin = self->frame.origin,
+        .distance = {
+            .width = to.x - from.x,
+            .height = to.y - from.y
+        },
+        .delay = delay,
+        .duration = delay + duration,
+        .easingFunction = MELEaseInOut,
+        .oldUserdata = self->userdata,
+        .oldAutoReleaseUserdata = self->autoReleaseUserdata,
+        .destroyWhenStrideEnds = true,
+    };
+    self->userdata = stride;
+    self->autoReleaseUserdata = true;
+    playdate->sprite->setUpdateFunction(sprite, updateStrideCamera);
+
+    MELSceneAddSprite(sprite);
 }

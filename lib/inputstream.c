@@ -157,8 +157,13 @@ void MELInputStreamRead(MELInputStream * _Nonnull self, void * _Nonnull destinat
         MELInputStreamCompact(self);
         MELInputStreamFillBuffer(self);
         if (MELInputStreamRemaining(self) < size) {
-            playdate->system->error("Unable to read %d bytes from given inputstream, only %d remaining.", size, MELInputStreamRemaining(self));
             memset(destination, 0, size);
+            if (self->exceptionHandler) {
+                playdate->system->logToConsole("Caught: Unable to read %d bytes from given inputstream, only %d remaining.", size, MELInputStreamRemaining(self));
+                longjmp(*self->exceptionHandler, 1);
+            } else {
+                playdate->system->error("Unable to read %d bytes from given inputstream, only %d remaining.", size, MELInputStreamRemaining(self));
+            }
             return;
         }
     }

@@ -23,6 +23,14 @@
 #include "../gen/animationnames.h"
 #include "../src/classes.h"
 
+#if MELSCREEN_ORIENTATION_VERTICAL
+#define MOVETO_XY(x,y) (y), LCD_ROWS - 1 - (x)
+#define MOVETO_POINT(point) point.y, LCD_ROWS - 1 - point.x
+#else
+#define MOVETO_XY(x,y) x, y
+#define MOVETO_POINT(point) point.x, point.y
+#endif
+
 typedef struct mellayer MELLayer;
 
 typedef struct melspriteclass {
@@ -54,13 +62,19 @@ typedef struct melsprite {
     MELDirection direction;
     MELHitbox * _Nullable hitbox;
 
+    int hitPoints;
+    int score;
+
     // Lien avec le SpriteLoader
     MELSpriteInstance * _Nullable instance;
     void * _Nullable userdata;
     MELBoolean autoReleaseUserdata;
 
+    MELTimeInterval hitTimer;
+
     // Permet de fixer la position x ou y par rapport à la caméra.
     MELSpritePositionFixed fixed;
+    LCDBitmapDrawMode drawMode;
 } MELSprite;
 
 /**
@@ -96,10 +110,19 @@ LCDSprite * _Nonnull MELSpriteInitHiddenWithUpdate(MELSprite * _Nonnull self, vo
 
 /**
  * Désalloue l'instance de `MELSprite` positionnée en `userdata` du `LCDSprite` donné et supprime le `LCDSprite`.
+ * Cette méthode est une base pour les méthodes dealloc des sprites. Elle ne doit pas être appelée directement pour désalouer un sprite.
+ * Il est préférable d'appeler `self->class->destroy(sprite)` pour éviter les fuites mémoires ou la fonction utilitaire `MELSpriteCallDealloc`.
  *
  * @param sprite Sprite à supprimer et désallouer
  */
 void MELSpriteDealloc(LCDSprite * _Nonnull sprite);
+
+/**
+ * Appelle la méthode `destroy` sur la classe du sprite donné.
+ *
+ * @param sprite Sprite à supprimer et désallouer
+ */
+void MELSpriteCallDealloc(LCDSprite * _Nonnull sprite);
 
 void MELSpriteNoopUpdate(LCDSprite * _Nonnull sprite);
 void MELSpriteNoopDraw(LCDSprite * _Nonnull sprite, PDRect bounds, PDRect drawrect);
@@ -108,6 +131,7 @@ void MELSpriteUpdate(LCDSprite * _Nonnull sprite);
 void MELSpriteUpdateDisappearing(LCDSprite * _Nonnull sprite);
 
 void MELSpriteDraw(MELSprite * _Nonnull self, LCDSprite * _Nonnull sprite);
+void MELSpriteChangeDrawModeWhenHit(MELSprite * _Nonnull self, LCDSprite * _Nonnull sprite);
 
 void MELSpriteSave(LCDSprite * _Nonnull sprite, MELOutputStream * _Nonnull outputStream);
 LCDSprite * _Nullable MELSpriteLoad(MELInputStream * _Nonnull inputStream);
@@ -125,12 +149,17 @@ void MELSpriteMakeDisappear(LCDSprite * _Nonnull sprite);
 
 MELBoolean MELSpriteIsLookingToward(MELSprite * _Nonnull self, MELPoint point);
 
-MELRectangle MELSpriteGetFrame(LCDSprite * _Nonnull sprite);
-float MELSpriteGetWidth(LCDSprite * _Nonnull sprite);
-float MELSpriteGetHeight(LCDSprite * _Nonnull sprite);
-
+void MELSpriteMoveTo(LCDSprite * _Nonnull sprite, float x, float y);
+const MELSpriteClass * _Nullable LCDSpriteGetClass(LCDSprite * _Nonnull sprite);
+MELSpriteInstance * _Nullable LCDSpriteGetInstance(LCDSprite * _Nonnull sprite);
 MELRectangle LCDSpriteGetFrame(LCDSprite * _Nonnull sprite);
+MELRectangle LCDSpriteSetFrame(LCDSprite * _Nonnull sprite, MELRectangle frame);
+MELPoint LCDSpriteSetOrigin(LCDSprite * _Nonnull sprite, MELPoint origin);
+float LCDSpriteGetWidth(LCDSprite * _Nonnull sprite);
+float LCDSpriteGetHeight(LCDSprite * _Nonnull sprite);
+
 void LCDSpriteMoveBy(LCDSprite * _Nonnull sprite, MELPoint translation);
+void LCDSpriteMoveTo(LCDSprite * _Nonnull sprite, MELPoint destination);
 void LCDSpriteSetClass(LCDSprite * _Nonnull sprite, const MELSpriteClass * _Nonnull class);
 void LCDSpriteSetPositionFixed(LCDSprite * _Nonnull sprite, MELSpritePositionFixed fixed);
 

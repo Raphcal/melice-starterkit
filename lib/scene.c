@@ -41,6 +41,19 @@ void MELSceneMakeCurrent(MELScene * _Nonnull self) {
     MELSceneAddOrRemoveBackToTitleMenuItem();
 }
 
+MELScene * _Nonnull MELSceneGetCurrent(void) {
+    MELScene *scene = currentScene;
+    if (scene->type == SceneTypeFade) {
+        MELFade *fade = (MELFade *)scene;
+        if (fade->oldScene) {
+            scene = fade->oldScene;
+        } else if (fade->nextScene) {
+            scene = fade->nextScene;
+        }
+    }
+    return scene;
+}
+
 void MELSceneAddOrRemoveBackToTitleMenuItem(void) {
     if (!backToTitleMenuItem && currentScene->type != SceneTypeTitle) {
         backToTitleMenuItem = playdate->system->addMenuItem("Back to title", backToTitle, NULL);
@@ -151,4 +164,47 @@ void MELSceneFadeTo(MELScene * _Nonnull nextScene, MELScene * _Nonnull (* _Nonnu
     currentScene = fade;
     fade->init(fade);
     playdate->system->setUpdateCallback(fade->update, fade);
+}
+
+void MELSceneAddSprite(LCDSprite * _Nonnull sprite) {
+    if (currentScene->addSprite) {
+        currentScene->addSprite(currentScene, sprite);
+    } else {
+#if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
+        MELSprite *melSprite = playdate->sprite->getUserdata(sprite);
+        playdate->system->logToConsole("MELSceneAddSprite push sprite %x, name: %d, type: %d", sprite, melSprite != NULL ? melSprite->definition.type : 0, melSprite != NULL ? melSprite->definition.name : 0);
+#endif
+#if DEBUG
+        const LCDSpriteRefList sprites = currentScene->sprites;
+        for (unsigned int index = 0; index < sprites.count; index++) {
+            if (sprites.memory[index] == sprite) {
+                playdate->system->error("MELSceneAddSprite error: trying to add sprite %x twice!", sprite);
+            }
+        }
+#endif
+        LCDSpriteRefListPush(&currentScene->sprites, sprite);
+    }
+}
+
+void MELFadeAddSprite(MELScene * _Nonnull scene, LCDSprite * _Nonnull sprite) {
+    MELFade *self = (MELFade *)scene;
+    if (self->oldScene != NULL) {
+#if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
+        MELSprite *melSprite = playdate->sprite->getUserdata(sprite);
+        playdate->system->logToConsole("MELFadeAddSprite add sprite %x to oldScene, name: %d, type: %d", sprite, melSprite != NULL ? melSprite->definition.type : 0, melSprite != NULL ? melSprite->definition.name : 0);
+#endif
+        LCDSpriteRefListPush(&self->oldScene->sprites, sprite);
+    } else if (self->nextScene != NULL) {
+#if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
+        MELSprite *melSprite = playdate->sprite->getUserdata(sprite);
+        playdate->system->logToConsole("MELFadeAddSprite add sprite %x to nextScene, name: %d, type: %d", sprite, melSprite != NULL ? melSprite->definition.type : 0, melSprite != NULL ? melSprite->definition.name : 0);
+#endif
+        LCDSpriteRefListPush(&self->nextScene->sprites, sprite);
+    } else {
+#if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
+        MELSprite *melSprite = playdate->sprite->getUserdata(sprite);
+        playdate->system->logToConsole("MELFadeAddSprite add sprite %x to fade, name: %d, type: %d", sprite, melSprite != NULL ? melSprite->definition.type : 0, melSprite != NULL ? melSprite->definition.name : 0);
+#endif
+        LCDSpriteRefListPush(&self->super.sprites, sprite);
+    }
 }

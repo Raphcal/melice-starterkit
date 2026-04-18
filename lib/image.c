@@ -35,7 +35,7 @@ static void update(LCDSprite * _Nonnull sprite) {
     const MELPoint origin = self->frame.origin;
     const float x = (fixed & MELSpritePositionFixedX) ? origin.x : origin.x - camera.frame.origin.x;
     const float y = (fixed & MELSpritePositionFixedY) ? origin.y : origin.y - camera.frame.origin.y;
-    playdate->sprite->moveTo(sprite, x, y);
+    playdate->sprite->moveTo(sprite, MOVETO_XY(x, y));
 }
 
 static void setOriginWithAlignment(MELSprite * _Nonnull self, LCDSprite * _Nonnull sprite, MELPoint origin, MELHorizontalAlignment horizontalAlignment, MELVerticalAlignment verticalAlignment) {
@@ -62,7 +62,7 @@ static void setOriginWithAlignment(MELSprite * _Nonnull self, LCDSprite * _Nonnu
     }
 
     self->frame.origin = origin;
-    playdate->sprite->moveTo(sprite, origin.x, origin.y);
+    playdate->sprite->moveTo(sprite, MOVETO_POINT(origin));
 }
 
 void MELImageSetStatic(LCDSprite * _Nonnull sprite, MELPoint origin, MELHorizontalAlignment horizontalAlignment, MELVerticalAlignment verticalAlignment) {
@@ -90,8 +90,15 @@ LCDSprite * _Nonnull MELImageConstructorWithAlignment(LCDBitmap * _Nonnull image
     return sprite;
 }
 LCDSprite * _Nonnull MELImageConstructorWithSpritePalette(MELPoint origin, SpriteName spriteName, int imageIndex) {
-    LCDBitmapTable *table = SpriteNameLoadBitmapTable(spriteName);
-    LCDBitmap *image = playdate->graphics->getTableBitmap(table, imageIndex);
+    LCDBitmapTable *table = NULL;
+    LCDBitmap *image = NULL;
+    MELSpriteDefinition *definition = SpriteNameGetDefinition(spriteName);
+    if (definition->palette) {
+        image = playdate->graphics->getTableBitmap(definition->palette, imageIndex);
+    } else {
+        table = SpriteNameLoadBitmapTable(spriteName);
+        image = playdate->graphics->getTableBitmap(table, imageIndex);
+    }
     LCDSprite *sprite = MELImageConstructorWithSelf(playdate->system->realloc(NULL, sizeof(MELSprite)), origin, image);
     MELSprite *self = playdate->sprite->getUserdata(sprite);
     self->userdata = table;
@@ -112,7 +119,7 @@ LCDSprite * _Nonnull MELImageConstructorWithSelf(MELSprite * _Nonnull self, MELP
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
     playdate->system->logToConsole("Push MELImage(%x, %x): %d", sprite, self, self->definition.name);
 #endif
-    LCDSpriteRefListPush(&currentScene->sprites, sprite);
+    MELSceneAddSprite(sprite);
     return sprite;
 }
 
@@ -124,8 +131,13 @@ LCDSprite * _Nonnull MELImageConstructorWithSelfDontPush(MELSprite * _Nonnull se
         .class = &MELImageClass,
         .frame = {
             .size = {
+#if MELSCREEN_ORIENTATION_VERTICAL
+                .width = height,
+                .height = width
+#else
                 .width = width,
                 .height = height
+#endif
             },
             .origin = origin,
         },
@@ -135,7 +147,7 @@ LCDSprite * _Nonnull MELImageConstructorWithSelfDontPush(MELSprite * _Nonnull se
     playdate->sprite->setUpdateFunction(sprite, &update);
     playdate->sprite->setImage(sprite, image, kBitmapUnflipped);
     playdate->sprite->setUserdata(sprite, self);
-    playdate->sprite->moveTo(sprite, origin.x - camera.frame.origin.x, origin.y - camera.frame.origin.y);
+    playdate->sprite->moveTo(sprite, MOVETO_XY(origin.x - camera.frame.origin.x, origin.y - camera.frame.origin.y));
     playdate->sprite->addSprite(sprite);
 
     return sprite;

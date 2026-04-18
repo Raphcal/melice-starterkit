@@ -10,6 +10,7 @@
 #include "spritehitbox.h"
 #include "simplespritehitbox.h"
 #include "scene.h"
+#include "../src/explosion.h"
 
 MELListImplement(MELSubSpriteRef);
 MELListImplementSaveRef(MELSubSprite);
@@ -19,6 +20,7 @@ static const MELSpriteClass MELSubSpriteClass = (MELSpriteClass) {
 };
 
 static void update(LCDSprite * _Nonnull sprite);
+static void updateCollidable(LCDSprite * _Nonnull sprite);
 
 MELSubSprite * _Nonnull MELSubSpriteAlloc(LCDSprite * _Nonnull parent, MELSpriteDefinition * _Nonnull definition, AnimationName animation) {
     MELSubSprite *self = playdate->system->realloc(NULL, sizeof(MELSubSprite));
@@ -51,7 +53,7 @@ void MELSubSpriteInit(MELSubSprite * _Nonnull self, LCDSprite * _Nonnull parent,
     }
 
     playdate->sprite->setUserdata(sprite, self);
-    playdate->sprite->setUpdateFunction(sprite, update);
+    playdate->sprite->setUpdateFunction(sprite, definition->type == MELSpriteTypeCollidable ? updateCollidable : update);
     playdate->sprite->addSprite(sprite);
 }
 
@@ -60,7 +62,7 @@ MELSubSprite * _Nonnull MELSubSpriteAllocAndPush(LCDSprite * _Nonnull parent, ME
 #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
     playdate->system->logToConsole("MELSubSpriteAllocAndPush(%x, %x): %d", self->sprite, self, self->super.definition.name);
 #endif
-    LCDSpriteRefListPush(&currentScene->sprites, self->sprite);
+    MELSceneAddSprite(self->sprite);
     return self;
 }
 
@@ -102,6 +104,10 @@ void MELSubSpriteSave(MELSubSprite * _Nonnull sprite, MELOutputStream * _Nonnull
     MELAnimationSave(self.super.animation, outputStream);
     MELOutputStreamWriteRectangle(outputStream, self.super.frame);
     MELOutputStreamWriteByte(outputStream, self.super.direction);
+    MELOutputStreamWriteInt(outputStream, self.super.hitPoints);
+    MELOutputStreamWriteInt(outputStream, self.super.score);
+    MELOutputStreamWriteFloat(outputStream, self.super.hitTimer);
+    MELOutputStreamWriteByte(outputStream, self.super.drawMode);
 
     MELOutputStreamWriteBoolean(outputStream, self.super.hitbox != NULL);
     if (self.super.hitbox) {
@@ -152,6 +158,10 @@ MELSubSprite * _Nullable MELSubSpriteLoad(MELInputStream * _Nonnull inputStream)
     MELAnimation *animation = MELAnimationLoad(inputStream, animationDefinition);
     const MELRectangle frame = MELInputStreamReadRectangle(inputStream);
     const MELDirection direction = (MELDirection) MELInputStreamReadByte(inputStream);
+    const int hitPoints = MELInputStreamReadInt(inputStream);
+    const int score = MELInputStreamReadInt(inputStream);
+    const float hitTimer = MELInputStreamReadFloat(inputStream);
+    const LCDBitmapDrawMode drawMode = MELInputStreamReadByte(inputStream);
 
     *self = (MELSubSprite) {
         .super = {
@@ -162,6 +172,10 @@ MELSubSprite * _Nullable MELSubSpriteLoad(MELInputStream * _Nonnull inputStream)
             .animation = animation,
             .frame = frame,
             .direction = direction,
+            .hitPoints = hitPoints,
+            .score = score,
+            .hitTimer = hitTimer,
+            .drawMode = drawMode,
         },
         .sprite = sprite,
     };
@@ -171,7 +185,7 @@ MELSubSprite * _Nullable MELSubSpriteLoad(MELInputStream * _Nonnull inputStream)
         self->super.hitbox = MELHitboxLoad(inputStream, &self->super);
     }
 
-    playdate->sprite->setUpdateFunction(sprite, update);
+    playdate->sprite->setUpdateFunction(sprite, definition->type == MELSpriteTypeCollidable ? updateCollidable : update);
     playdate->sprite->setUserdata(sprite, self);
     playdate->sprite->setZIndex(sprite, MELInputStreamReadShort(inputStream));
     playdate->sprite->setVisible(sprite, MELInputStreamReadBoolean(inputStream));
@@ -210,6 +224,48 @@ static void update(LCDSprite * _Nonnull sprite) {
     MELAnimationUpdate(animation, DELTA);
 
     MELPoint origin = self->frame.origin;
-    playdate->sprite->moveTo(sprite, origin.x, origin.y);
+    playdate->sprite->moveTo(sprite, MOVETO_POINT(origin));
     playdate->sprite->setImage(sprite, playdate->graphics->getTableBitmap(self->definition.palette, animation->frame.atlasIndex), MELDirectionFlip[self->direction]);
+}
+
+static void updateCollidable(LCDSprite * _Nonnull sprite) {
+    MELSubSprite *self = playdate->sprite->getUserdata(sprite);
+    const int hitPoints = self->super.hitPoints;
+
+    if (hitPoints == 0 && self->sprite == NULL) {
+        // Sprite détruit.
+        return;
+    } else if (hitPoints <= 0) {
+        // Ne positionne que la référence du sprite à `NULL`.
+        // `self` sera désalloué par la méthode `destroy` du sprite parent par `MELSubSpriteDeallocFromParent`.
+        self->super.hitPoints = 0;
+        self->sprite = NULL;
+
+        ExplosionConstructor(self->super.frame.origin, AnimationNameStand);
+
+    #if LOG_SPRITE_PUSH_AND_REMOVE_FROM_SCENE_SPRITES
+        playdate->system->logToConsole("MELSubSprite#update(%x, %x) hitPoints <= 0: %d", sprite, self, self->super.definition.name);
+    #endif
+        LCDSpriteRefListRemoveSwapEntry(&currentScene->sprites, sprite);
+        MELAnimationDealloc(self->super.animation);
+        if (self->super.hitbox != NULL) {
+            MELHitboxDeinit(self->super.hitbox);
+            playdate->system->realloc(self->super.hitbox, 0);
+            self->super.hitbox = NULL;
+        }
+        if (self->super.instance != NULL) {
+            self->super.instance->sprite = NULL;
+        }
+        playdate->sprite->removeSprite(sprite);
+        playdate->sprite->freeSprite(sprite);
+        return;
+    }
+
+    const float delta = DELTA;
+    MELAnimation *animation = self->super.animation;
+    MELAnimationUpdate(self->super.animation, delta);
+
+    MELPoint origin = self->super.frame.origin;
+    playdate->sprite->moveTo(sprite, MOVETO_POINT(origin));
+    playdate->sprite->setImage(sprite, playdate->graphics->getTableBitmap(self->super.definition.palette, animation->frame.atlasIndex), MELDirectionFlip[self->super.direction]);
 }

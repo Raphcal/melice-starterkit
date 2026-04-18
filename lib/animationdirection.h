@@ -51,5 +51,6 @@ typedef enum {
 } MELAnimationAimDirection;
 
 MELAnimationDirectionFlip MELAnimationDirectionFlipForAngle(float angle, MELDirection direction);
+extern const MELAnimationDirection MELAnimationDirectionByDirection[4];
 
 #endif /* animationdirection_h */

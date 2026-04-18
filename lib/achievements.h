@@ -27,6 +27,7 @@ typedef struct {
     uint32_t hashcode;
     MELBoolean progressIsPercentage;
     MELBoolean isSecret;
+    MELBoolean isSuperSecret;
 } MELAchievement;
 
 MELListDefine(MELAchievement);

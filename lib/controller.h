@@ -12,6 +12,7 @@
 
 typedef struct {
     MELPoint axe;
+    MELPoint pressedAxe;
     MELBoolean pressedA;
     MELBoolean pressedB;
     MELBoolean pressingA;
@@ -19,5 +20,7 @@ typedef struct {
 } MELController;
 
 MELController MELControllerMake(void);
+
+MELBoolean MELControllerIsIdle(const MELController self);
 
 #endif /* controller_h */

@@ -21,8 +21,6 @@ typedef struct melscene MELScene;
 typedef enum {
     SceneTypeTitle,
     SceneTypeGame,
-    SceneTypeScore,
-    SceneTypeOnlineMenu,
     SceneTypeFade,
 } SceneType;
 
@@ -32,6 +30,7 @@ typedef struct melscene {
     void (* _Nonnull dealloc)(MELScene * _Nonnull self);
     int (* _Nonnull update)(void * _Nonnull self);
     void (* _Nullable beforeQuit)(MELScene * _Nonnull self);
+    void (* _Nullable addSprite)(MELScene * _Nonnull self, LCDSprite * _Nonnull sprite);
     LCDSpriteRefList sprites;
 } MELScene;
 
@@ -49,7 +48,10 @@ extern MELScene * _Nullable currentScene;
  * @note `MELSceneMakeCurrent` désalloue la scène actuelle. Il faut donc généralement faire un return juste après l'appel à cette fonction.
  */
 void MELSceneMakeCurrent(MELScene * _Nonnull self);
+MELScene * _Nonnull MELSceneGetCurrent(void);
 void MELSceneAddOrRemoveBackToTitleMenuItem(void);
+void MELSceneAddSprite(LCDSprite * _Nonnull sprite);
+void MELFadeAddSprite(MELScene * _Nonnull self, LCDSprite * _Nonnull sprite);
 LCDSprite * _Nullable MELSceneFindSpriteByName(SpriteName spriteName);
 LCDSprite * _Nullable MELSceneFindSpriteByClassName(SpriteClassName className);
 LCDSprite * _Nullable MELSceneFindSpriteByTag(const uint8_t tag);

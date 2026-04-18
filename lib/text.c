@@ -16,6 +16,38 @@ static LCDBitmap * _Nonnull drawText(LCDFont * _Nonnull font, LCDBitmapDrawMode 
 LCDSprite * _Nonnull MELTextConstructor(MELPoint origin, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, const char * _Nonnull text, int length) {
     return MELImageConstructor(origin, drawText(font, drawMode, 0, text, length));
 }
+LCDSprite * _Nonnull MELTextConstructorWithAlignment(MELPoint origin, LCDFont * _Nonnull font, const char * _Nonnull text, MELHorizontalAlignment horizontalAlignment, MELVerticalAlignment verticalAlignment) {
+    LCDSprite *sprite = MELImageConstructor(MELPointZero, drawText(font, kDrawModeCopy, 0, text, 999));
+    MELAlignmentSet(sprite, horizontalAlignment, verticalAlignment, origin);
+    return sprite;
+}
+
+LCDSprite * _Nullable MELTextConstructorArgInt(MELPoint origin, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, MELHorizontalAlignment alignment, const char * _Nonnull format, int arg) {
+    LCDSprite *sprite = NULL;
+    char *text = NULL;
+    playdate->system->formatString(&text, format, arg);
+    if (text) {
+        const unsigned int length = (unsigned int) strlen(text);
+        sprite = MELImageConstructor(origin, drawText(font, drawMode, 0, text, length));
+        free(text);
+        MELAlignmentSet(sprite, alignment, MELVerticalAlignmentMiddle, origin);
+    }
+    return sprite;
+}
+
+
+LCDSprite * _Nullable MELTextConstructorArgFloat(MELPoint origin, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, MELHorizontalAlignment alignment, const char * _Nonnull format, float arg) {
+    LCDSprite *sprite = NULL;
+    char *text = NULL;
+    playdate->system->formatString(&text, format, (double)arg);
+    if (text) {
+        const unsigned int length = (unsigned int) strlen(text);
+        sprite = MELImageConstructor(origin, drawText(font, drawMode, 0, text, length));
+        free(text);
+        MELAlignmentSet(sprite, alignment, MELVerticalAlignmentMiddle, origin);
+    }
+    return sprite;
+}
 
 LCDSprite * _Nonnull MELTextConstructorDontPush(MELPoint origin, LCDFont * _Nonnull font, LCDBitmapDrawMode drawMode, const char * _Nonnull text, int length) {
     MELSprite *self = playdate->system->realloc(NULL, sizeof(MELSprite));
@@ -46,7 +78,7 @@ void MELTextSetWithLeading(LCDSprite * _Nullable sprite, LCDFont * _Nonnull font
 
     playdate->sprite->setImage(sprite, image, kBitmapUnflipped);
     playdate->sprite->setSize(sprite, newWidth, newHeight);
-    playdate->sprite->moveTo(sprite, frame.origin.x, frame.origin.y);
+    playdate->sprite->moveTo(sprite, MOVETO_POINT(frame.origin));
     playdate->sprite->markDirty(sprite);
 }
 
@@ -69,6 +101,16 @@ static LCDBitmap * _Nonnull drawText(LCDFont * _Nonnull font, LCDBitmapDrawMode 
     gfx->drawText(text, length, kDefaultEncoding, 0, 0);
     gfx->setTextLeading(0);
     gfx->popContext();
+
+#if MELSCREEN_ORIENTATION_VERTICAL
+    LCDBitmap *target = playdate->graphics->newBitmap(height, width, kColorClear);
+    gfx->pushContext(target);
+    gfx->setDrawMode(drawMode);
+    gfx->drawRotatedBitmap(bitmap, height / 2, width / 2, 270, 0.5f, 0.5f, 1, 1);
+    gfx->popContext();
+    gfx->freeBitmap(bitmap);
+    bitmap = target;
+#endif
 
     return bitmap;
 }
