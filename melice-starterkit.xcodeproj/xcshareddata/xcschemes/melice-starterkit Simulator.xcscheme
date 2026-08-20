@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "2630"
-   version = "1.7">
+   version = "2.3">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES"
@@ -42,7 +42,9 @@
       allowLocationSimulation = "YES">
       <PathRunnable
          runnableDebuggingMode = "0"
-         FilePath = "/Users/raphael/Developer/PlaydateSDK/bin/Playdate Simulator.app">
+         BundleIdentifier = "date.play.simulator"
+         Location = "home"
+         FilePath = "Developer/PlaydateSDK-3.1.1/bin/Playdate Simulator.app">
       </PathRunnable>
       <MacroExpansion>
          <BuildableReference
@@ -55,7 +57,7 @@
       </MacroExpansion>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "&quot;$(SRCROOT)/RenameMe.pdx&quot;"
+            argument = "&quot;$(PROJECT_DIR)/RenameMe.pdx&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
